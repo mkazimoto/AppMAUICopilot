@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="CameraApp.Views.LoginPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
+             xmlns:converters="clr-namespace:CameraApp.Converters"
+             x:DataType="viewmodels:LoginViewModel"
+             Title="TOTVS RM - Login"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <Grid Padding="20" RowSpacing="20" VerticalOptions="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackLayout Grid.Row="0" Spacing="15" Margin="0,40,0,0">
+                <Label Text="�" 
+                       FontSize="64" 
+                       HorizontalOptions="Center" />
+                <Label Text="TOTVS Camera App" 
+                       FontSize="28" 
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" 
+                       TextColor="{DynamicResource Primary}" />
+                <Label Text="Sistema de Câmera com Autenticação RM"
+                       FontSize="16"
+                       HorizontalOptions="Center"
+                       TextColor="{DynamicResource Gray600}" />
+                <BoxView HeightRequest="2" 
+                         BackgroundColor="{DynamicResource Primary}" 
+                         HorizontalOptions="Center"
+                         WidthRequest="100"
+                         Margin="0,10,0,0" />
+            </StackLayout>
+
+            <!-- Formulário de Login -->
+            <Border Grid.Row="1" 
+                    IsVisible="{Binding ShowLoginForm}"
+                    BackgroundColor="{DynamicResource Gray100}"
+                    Stroke="{DynamicResource Gray300}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="20">
+                <StackLayout Spacing="15">
+                    <Label Text="Dados de Acesso" 
+                           FontSize="18" 
+                           FontAttributes="Bold"
+                           TextColor="{DynamicResource Primary}" />
+
+                    <!-- Username -->
+                    <StackLayout>
+                        <Label Text="Usuário *" 
+                               FontSize="14" 
+                               TextColor="{DynamicResource Gray900}" />
+                        <Entry Text="{Binding Username}"
+                               Placeholder="Digite seu usuário"
+                               IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+                               ReturnType="Next" />
+                    </StackLayout>
+
+                    <!-- Password -->
+                    <StackLayout>
+                        <Label Text="Senha *" 
+                               FontSize="14" 
+                               TextColor="{DynamicResource Gray900}" />
+                        <Entry Text="{Binding Password}"
+                               Placeholder="Digite sua senha"
+                               IsPassword="True"
+                               IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+                               ReturnType="Next" />
+                    </StackLayout>
+
+                    <!-- Service Alias (Opcional) -->
+                    <StackLayout>
+                        <Label Text="Alias do Serviço (Opcional)" 
+                               FontSize="14" 
+                               TextColor="{DynamicResource Gray900}" />
+                        <Entry Text="{Binding ServiceAlias}"
+                               Placeholder="Ex: CorporeRM"
+                               IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+                               ReturnType="Done" />
+                        <Label Text="Configure apenas se necessário para seu ambiente"
+                               FontSize="12"
+                               TextColor="{DynamicResource Gray600}" />
+                    </StackLayout>
+
+                    <!-- Botões -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
+                        <Button Grid.Column="0"
+                                Text="Limpar"
+                                Command="{Binding ClearCredentialsCommand}"
+                                BackgroundColor="{DynamicResource Gray300}"
+                                TextColor="{DynamicResource Gray900}"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}" />
+                        
+                        <Button Grid.Column="1"
+                                Text="Entrar"
+                                Command="{Binding LoginCommand}"
+                                BackgroundColor="{DynamicResource Primary}"
+                                TextColor="White"
+                                IsEnabled="{Binding CanLogin}" />
+                    </Grid>
+                </StackLayout>
+            </Border>
+
+            <!-- Seção de Logout -->
+            <Border Grid.Row="2" 
+                    IsVisible="{Binding ShowLogoutSection}"
+                    BackgroundColor="{DynamicResource Success}"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="20">
+                <StackLayout Spacing="15">
+                    <Label Text="✅ Autenticado com Sucesso!" 
+                           FontSize="18" 
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center" />
+                    
+                    <Label Text="Você está conectado às APIs do TOTVS RM"
+                           FontSize="14"
+                           TextColor="White"
+                           HorizontalOptions="Center" />
+
+                    <Button Text="Sair"
+                            Command="{Binding LogoutCommand}"
+                            BackgroundColor="{DynamicResource Danger}"
+                            TextColor="White"
+                            IsEnabled="{Binding CanLogout}"
+                            HorizontalOptions="Center"
+                            WidthRequest="150" />
+                </StackLayout>
+            </Border>
+
+            <!-- Loading e Mensagens -->
+            <StackLayout Grid.Row="3" Spacing="10">
+                <!-- Indicador de Loading -->
+                <ActivityIndicator IsVisible="{Binding IsLoading}"
+                                   IsRunning="{Binding IsLoading}"
+                                   Color="{DynamicResource Primary}"
+                                   VerticalOptions="Center" />
+
+                <Label IsVisible="{Binding IsLoading}"
+                       Text="Autenticando..."
+                       FontSize="14"
+                       HorizontalOptions="Center"
+                       TextColor="{DynamicResource Primary}" />
+
+                <!-- Mensagens de Erro -->
+                <Border IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}"
+                        BackgroundColor="{DynamicResource Danger}"
+                        StrokeShape="RoundRectangle 5"
+                        Padding="15"
+                        Margin="0,10,0,0">
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="Red"
+                           FontSize="14"
+                           HorizontalOptions="Center" />
+                </Border>
+            </StackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

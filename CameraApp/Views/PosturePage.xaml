@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="CameraApp.Views.PosturePage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
+             x:DataType="viewmodels:PosturePageViewModel"
+             Title="Monitor de Postura">
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="20">
+            
+            <!-- Status Geral -->
+            <Border BackgroundColor="LightGray" Padding="15" StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                <StackLayout Spacing="10">
+                    <Label Text="Status do Monitoramento" 
+                           FontSize="18" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center"/>
+                    
+                    <Label Text="{Binding StatusMessage}" 
+                           FontSize="16" 
+                           HorizontalOptions="Center"/>
+                    
+                    <Label Text="{Binding PostureStatus}" 
+                           FontSize="24" 
+                           FontAttributes="Bold" 
+                           TextColor="{Binding StatusColor}"
+                           HorizontalOptions="Center"/>
+                </StackLayout>
+            </Border>
+
+            <!-- Controles -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Grid.Column="0"
+                        Text="Iniciar"
+                        Command="{Binding StartMonitoringCommand}"
+                        IsEnabled="{Binding IsMonitoring, Converter={StaticResource InvertedBoolConverter}}"
+                        BackgroundColor="Green"
+                        TextColor="White"/>
+                
+                <Button Grid.Column="1"
+                        Text="Parar"
+                        Command="{Binding StopMonitoringCommand}"
+                        IsEnabled="{Binding IsMonitoring}"
+                        BackgroundColor="Red"
+                        TextColor="White"/>
+            </Grid>
+
+            <!-- Dados do Acelerômetro -->
+            <Border BackgroundColor="LightBlue" Padding="15" StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                <StackLayout Spacing="10">
+                    <Label Text="Dados do Acelerômetro" 
+                           FontSize="16" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center"/>
+                    
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="5">
+                        <Label Grid.Row="0" Grid.Column="0" Text="X:" FontAttributes="Bold"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding AccelerometerX, StringFormat='{0:F3}'}"/>
+                        
+                        <Label Grid.Row="1" Grid.Column="0" Text="Y:" FontAttributes="Bold"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding AccelerometerY, StringFormat='{0:F3}'}"/>
+                        
+                        <Label Grid.Row="2" Grid.Column="0" Text="Z:" FontAttributes="Bold"/>
+                        <Label Grid.Row="2" Grid.Column="1" Text="{Binding AccelerometerZ, StringFormat='{0:F3}'}"/>
+                        
+                        <Label Grid.Row="3" Grid.Column="0" Text="Inclinação:" FontAttributes="Bold"/>
+                        <Label Grid.Row="3" Grid.Column="1" Text="{Binding Inclination, StringFormat='{0:F1}°'}"/>
+                    </Grid>
+                </StackLayout>
+            </Border>
+
+            <!-- Configurações -->
+            <Border BackgroundColor="LightYellow" Padding="15" StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                <StackLayout Spacing="15">
+                    <Label Text="Configurações" 
+                           FontSize="16" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center"/>
+                    
+                    <StackLayout Spacing="10">
+                        <Label Text="{Binding Sensitivity, StringFormat='Sensibilidade: {0:P0}'}" 
+                               FontSize="14"/>
+                        <Slider Minimum="0.1" 
+                                Maximum="1.0" 
+                                Value="{Binding Sensitivity}"
+                                ThumbColor="Blue"/>
+                        <Label Text="Menor valor = mais sensível" 
+                               FontSize="12" 
+                               TextColor="Gray" 
+                               HorizontalOptions="Center"/>
+                    </StackLayout>
+                    
+                    <StackLayout Spacing="10">
+                        <Label Text="{Binding AlertDelay, StringFormat='Tempo para Alerta: {0}s'}" 
+                               FontSize="14"/>
+                        <Slider Minimum="1" 
+                                Maximum="15" 
+                                Value="{Binding AlertDelay}"
+                                ThumbColor="Orange"/>
+                        <Label Text="Tempo antes de disparar alerta" 
+                               FontSize="12" 
+                               TextColor="Gray" 
+                               HorizontalOptions="Center"/>
+                    </StackLayout>
+                </StackLayout>
+            </Border>
+
+            <!-- Estatísticas de Alertas -->
+            <Border BackgroundColor="LightPink" Padding="15" StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                <StackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Grid.Column="0"
+                               Text="Estatísticas de Alertas" 
+                               FontSize="16" 
+                               FontAttributes="Bold" 
+                               VerticalOptions="Center"/>
+                        
+                        <Button Grid.Column="1"
+                                Text="Reset"
+                                Command="{Binding ResetStatsCommand}"
+                                BackgroundColor="Gray"
+                                TextColor="White"
+                                FontSize="12"
+                                Padding="10,5"/>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="5">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Total de alertas:" FontAttributes="Bold"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding AlertCount}"/>
+                        
+                        <Label Grid.Row="1" Grid.Column="0" Text="Último alerta:" FontAttributes="Bold"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding LastAlertTime, StringFormat='{0:HH:mm:ss}'}"/>
+                        
+                        <Label Grid.Row="2" Grid.Column="0" Text="Mensagem:" FontAttributes="Bold"/>
+                        <Label Grid.Row="2" Grid.Column="1" 
+                               Text="{Binding LastAlertMessage}" 
+                               FontSize="12"
+                               LineBreakMode="WordWrap"/>
+                    </Grid>
+                </StackLayout>
+            </Border>
+
+            <!-- Instruções -->
+            <Border BackgroundColor="LightGreen" Padding="15" StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                <StackLayout Spacing="10">
+                    <Label Text="Como usar:" 
+                           FontSize="16" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center"/>
+                    
+                    <Label FontSize="14" LineBreakMode="WordWrap">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="1. "/>
+                                <Span Text="Coloque o celular no bolso da camisa com a tela voltada para o peito" FontAttributes="Bold"/>
+                                <Span Text="&#x0a;&#x0a;2. "/>
+                                <Span Text="Toque em 'Iniciar' para começar o monitoramento" FontAttributes="Bold"/>
+                                <Span Text="&#x0a;&#x0a;3. "/>
+                                <Span Text="O aplicativo vibrará quando detectar postura incorreta" FontAttributes="Bold"/>
+                                <Span Text="&#x0a;&#x0a;4. "/>
+                                <Span Text="Ajuste a sensibilidade conforme necessário" FontAttributes="Bold"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </StackLayout>
+            </Border>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

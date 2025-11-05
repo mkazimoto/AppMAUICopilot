@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="CameraApp.Views.MapPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
+             x:DataType="viewmodels:MapPageViewModel"
+             Title="Mapa - Localização GPS">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header com informações da localização -->
+        <StackLayout Grid.Row="0" Padding="15" BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+            <Label Text="Sua Localização Atual" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   TextColor="White" 
+                   HorizontalOptions="Center" />
+            
+            <StackLayout IsVisible="{Binding HasLocation}">
+                <Label Text="{Binding LocationText}" 
+                       FontSize="14" 
+                       TextColor="White" 
+                       HorizontalOptions="Center" />
+                <Label Text="{Binding LastUpdateText}" 
+                       FontSize="12" 
+                       TextColor="White" 
+                       HorizontalOptions="Center" 
+                       Opacity="0.8" />
+            </StackLayout>
+            
+            <Label Text="Localização não disponível" 
+                   IsVisible="{Binding HasLocation, Converter={StaticResource InvertedBoolConverter}}"
+                   FontSize="14" 
+                   TextColor="White" 
+                   HorizontalOptions="Center" />
+        </StackLayout>
+
+        <!-- WebView para o mapa -->
+        <WebView Grid.Row="1" 
+                 x:Name="MapWebView"
+                 Source="{Binding MapUrl}" 
+                 BackgroundColor="LightGray" />
+
+        <!-- Loading indicator -->
+        <ActivityIndicator Grid.Row="1" 
+                          IsVisible="{Binding IsLoading}"
+                          IsRunning="{Binding IsLoading}"
+                          Color="{StaticResource Primary}"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center" />
+
+        <!-- Botões de ação -->
+        <StackLayout Grid.Row="2" Orientation="Horizontal" Padding="15" Spacing="10">
+            <Button Text="🗺️ Atualizar Localização"
+                    Command="{Binding GetLocationCommand}"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    HorizontalOptions="FillAndExpand" />
+            
+            <Button Text="🌍 Resetar Zoom"
+                    Command="{Binding ResetMapCommand}"
+                    BackgroundColor="{StaticResource Secondary}"
+                    TextColor="White"
+                    HorizontalOptions="FillAndExpand" />
+        </StackLayout>
+    </Grid>
+
+</ContentPage>
