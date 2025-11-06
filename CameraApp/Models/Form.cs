@@ -2,11 +2,11 @@ using System.Text.Json.Serialization;
 
 namespace CameraApp.Models;
 
-public class Form
+/// <summary>
+/// Representa um formulário no sistema
+/// </summary>
+public class Form : BaseEntity
 {
-    [JsonPropertyName("id")]
-    public string Id { get; set; } = string.Empty;
-
     [JsonPropertyName("formId")]
     public int FormId { get; set; }
 
@@ -24,25 +24,4 @@ public class Form
 
     [JsonPropertyName("totalScore")]
     public int TotalScore { get; set; }
-
-    [JsonPropertyName("recCreatedBy")]
-    public string RecCreatedBy { get; set; } = string.Empty;
-
-    [JsonPropertyName("recCreatedOn")]
-    public DateTime RecCreatedOn { get; set; }
-
-    [JsonPropertyName("recModifiedBy")]
-    public string RecModifiedBy { get; set; } = string.Empty;
-
-    [JsonPropertyName("recModifiedOn")]
-    public DateTime RecModifiedOn { get; set; }
-}
-
-public class FormResponse
-{
-    [JsonPropertyName("hasNext")]
-    public bool HasNext { get; set; }
-
-    [JsonPropertyName("items")]
-    public List<Form> Items { get; set; } = new();
 }
