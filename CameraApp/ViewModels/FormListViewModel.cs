@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using CameraApp.Models;
 using CameraApp.Services;
 using CameraApp.Exceptions;
+using CameraApp.Views;
 
 namespace CameraApp.ViewModels;
 
@@ -26,12 +27,6 @@ public partial class FormListViewModel : ObservableObject
     private int currentPage = 1;
 
     [ObservableProperty]
-    private int selectedCategoryId;
-
-    [ObservableProperty]
-    private int selectedStatusId;
-
-    [ObservableProperty]
     private DateTime startDate = DateTime.Today.AddDays(-30);
 
     [ObservableProperty]
@@ -40,10 +35,64 @@ public partial class FormListViewModel : ObservableObject
     [ObservableProperty]
     private string searchText = string.Empty;
 
+    [ObservableProperty]
+    private string searchTitle = string.Empty;
+
+    [ObservableProperty]
+    private string createdBy = string.Empty;
+
+    [ObservableProperty]
+    private bool filterSequentialScript;
+
+    [ObservableProperty]
+    private int? minScore;
+
+    [ObservableProperty]
+    private int? maxScore;
+
+    [ObservableProperty]
+    private int orderByIndex;
+
+    [ObservableProperty]
+    private bool orderAscending = true;
+
+    [ObservableProperty]
+    private FormFilter currentFilter = FormFilter.Default();
+
+    [ObservableProperty]
+    private bool hasActiveFilters;
+
+    [ObservableProperty]
+    private int activeFiltersCount;
+
+    // Listas para os Pickers
+    [ObservableProperty]
+    private ObservableCollection<CategoryItem> categories = new();
+
+    [ObservableProperty]
+    private CategoryItem? selectedCategoryItem;
+
+    [ObservableProperty]
+    private ObservableCollection<StatusItem> statusItems = new();
+
+    [ObservableProperty]
+    private StatusItem? selectedStatusItem;
+
     public FormListViewModel(IFormService formService, IAuthService authService)
     {
         _formService = formService;
         _authService = authService;
+
+          // Categorias de exemplo - em produção, viria da API
+        Categories.Add(new CategoryItem { Id = 1, Name = "Tarefa" });
+        Categories.Add(new CategoryItem { Id = 2, Name = "Medição" });
+        Categories.Add(new CategoryItem { Id = 3, Name = "Movimento" });
+        Categories.Add(new CategoryItem { Id = 4, Name = "Projeto" });
+
+        // Status de exemplo - em produção, viria da API
+        StatusItems.Add(new StatusItem { Id = 0, Name = "Rascunho" });
+        StatusItems.Add(new StatusItem { Id = 1, Name = "Publicado" });
+        StatusItems.Add(new StatusItem { Id = 2, Name = "Inativo" });
     }
 
     [RelayCommand]
@@ -62,7 +111,8 @@ public partial class FormListViewModel : ObservableObject
                 return;
             }
             
-            var response = await _formService.GetFormsAsync(CurrentPage, 10);
+            var filter = FormFilter.Default(CurrentPage, 10);
+            var response = await _formService.GetFormsAsync(filter);
             
             Forms.Clear();
             foreach (var form in response.Items)
@@ -99,7 +149,10 @@ public partial class FormListViewModel : ObservableObject
                 return;
             }
             
-            var response = await _formService.GetFormsAsync(CurrentPage, 10);
+            // Usa o filtro atual mas com a nova página
+            var filter = CurrentFilter.Clone();
+            filter.Page = CurrentPage;
+            var response = await _formService.GetFormsAsync(filter);
             
             foreach (var form in response.Items)
             {
@@ -119,122 +172,25 @@ public partial class FormListViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    public async Task FilterByCategoryAsync()
-    {
-        if (IsLoading || SelectedCategoryId <= 0) return;
-
-        try
-        {
-            IsLoading = true;
-            CurrentPage = 1;
-            
-            // Verificar autenticação antes de fazer a chamada
-            if (!await EnsureUserIsAuthenticatedAsync())
-            {
-                return;
-            }
-            
-            var response = await _formService.GetFormsByCategoryAsync(SelectedCategoryId, CurrentPage, 10);
-            
-            Forms.Clear();
-            foreach (var form in response.Items)
-            {
-                Forms.Add(form);
-            }
-            
-            HasNextPage = response.HasNext;
-        }
-        catch (Exception ex)
-        {
-            await ShowErrorAsync("filtrar por categoria", ex);
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    [RelayCommand]
-    public async Task FilterByStatusAsync()
-    {
-        if (IsLoading || SelectedStatusId <= 0) return;
-
-        try
-        {
-            IsLoading = true;
-            CurrentPage = 1;
-            
-            // Verificar autenticação antes de fazer a chamada
-            if (!await EnsureUserIsAuthenticatedAsync())
-            {
-                return;
-            }
-            
-            var response = await _formService.GetFormsByStatusAsync(SelectedStatusId, CurrentPage, 10);
-            
-            Forms.Clear();
-            foreach (var form in response.Items)
-            {
-                Forms.Add(form);
-            }
-            
-            HasNextPage = response.HasNext;
-        }
-        catch (Exception ex)
-        {
-            await ShowErrorAsync("filtrar por status", ex);
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    [RelayCommand]
-    public async Task FilterByDateRangeAsync()
-    {
-        if (IsLoading || StartDate > EndDate) return;
-
-        try
-        {
-            IsLoading = true;
-            CurrentPage = 1;
-            
-            // Verificar autenticação antes de fazer a chamada
-            if (!await EnsureUserIsAuthenticatedAsync())
-            {
-                return;
-            }
-            
-            var response = await _formService.GetFormsByDateRangeAsync(StartDate, EndDate, CurrentPage, 10);
-            
-            Forms.Clear();
-            foreach (var form in response.Items)
-            {
-                Forms.Add(form);
-            }
-            
-            HasNextPage = response.HasNext;
-        }
-        catch (Exception ex)
-        {
-            await ShowErrorAsync("filtrar por período", ex);
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
+    
     [RelayCommand]
     public async Task ClearFiltersAsync()
     {
-        SelectedCategoryId = 0;
-        SelectedStatusId = 0;
+        SelectedCategoryItem = null;
+        SelectedStatusItem = null;
         StartDate = DateTime.Today.AddDays(-30);
         EndDate = DateTime.Today;
         SearchText = string.Empty;
+        SearchTitle = string.Empty;
+        CreatedBy = string.Empty;
+        FilterSequentialScript = false;
+        MinScore = null;
+        MaxScore = null;
+        OrderByIndex = 0;
+        OrderAscending = true;
+        
+        CurrentFilter = FormFilter.Default();
+        UpdateFilterIndicators();
         
         await LoadFormsAsync();
     }
@@ -266,6 +222,157 @@ public partial class FormListViewModel : ObservableObject
     public async Task RefreshAsync()
     {
         await LoadFormsAsync();
+    }
+
+    [RelayCommand]
+    public async Task SearchByTitleAsync()
+    {
+        if (IsLoading) return;
+
+        try
+        {
+            IsLoading = true;
+            CurrentPage = 1;
+
+            if (!await EnsureUserIsAuthenticatedAsync())
+            {
+                return;
+            }
+
+            // Cria filtro com título
+            CurrentFilter = new FormFilter
+            {
+                Title = SearchTitle,
+                Page = CurrentPage,
+                PageSize = 10
+            };
+
+            var response = await _formService.GetFormsAsync(CurrentFilter);
+
+            Forms.Clear();
+            foreach (var form in response.Items)
+            {
+                Forms.Add(form);
+            }
+
+            HasNextPage = response.HasNext;
+            UpdateFilterIndicators();
+        }
+        catch (Exception ex)
+        {
+            await ShowErrorAsync("buscar por título", ex);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    public async Task OpenAdvancedFiltersAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(AdvancedFiltersPage));
+    }
+
+    [RelayCommand]
+    public async Task ApplyAdvancedFiltersAsync()
+    {
+        if (IsLoading) return;
+
+        try
+        {
+            IsLoading = true;
+            CurrentPage = 1;
+
+            if (!await EnsureUserIsAuthenticatedAsync())
+            {
+                return;
+            }
+
+            // Constrói o filtro com todos os critérios
+            CurrentFilter = new FormFilter
+            {
+                Title = SearchTitle,
+                CategoryId = SelectedCategoryItem?.Id,
+                StatusFormId = SelectedStatusItem?.Id,
+                StartDate = StartDate != default ? StartDate : null,
+                EndDate = EndDate != default ? EndDate : null,
+                CreatedBy = !string.IsNullOrEmpty(CreatedBy) ? CreatedBy : null,
+                SequentialScript = FilterSequentialScript ? true : null,
+                MinScore = MinScore,
+                MaxScore = MaxScore,
+                OrderBy = GetOrderByField(),
+                OrderAscending = OrderAscending,
+                Page = CurrentPage,
+                PageSize = 10
+            };
+
+            var response = await _formService.GetFormsAsync(CurrentFilter);
+
+            Forms.Clear();
+            foreach (var form in response.Items)
+            {
+                Forms.Add(form);
+            }
+
+            HasNextPage = response.HasNext;
+            UpdateFilterIndicators();
+
+            // Volta para a página de lista
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception ex)
+        {
+            await ShowErrorAsync("aplicar filtros", ex);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    public void ClearAdvancedFilters()
+    {
+        SelectedCategoryItem = null;
+        SelectedStatusItem = null;
+        SelectedCategoryItem = null;
+        SelectedStatusItem = null;
+        StartDate = DateTime.Today.AddDays(-30);
+        EndDate = DateTime.Today;
+        CreatedBy = string.Empty;
+        FilterSequentialScript = false;
+        MinScore = null;
+        MaxScore = null;
+        OrderByIndex = 0;
+        OrderAscending = true;
+    }
+
+    private string? GetOrderByField()
+    {
+        return OrderByIndex switch
+        {
+            0 => "title",
+            1 => "recCreatedOn",
+            2 => "recModifiedOn",
+            3 => "totalScore",
+            4 => "categoryId",
+            _ => null
+        };
+    }
+
+    private void UpdateFilterIndicators()
+    {
+        HasActiveFilters = CurrentFilter.HasFilters || !string.IsNullOrEmpty(SearchTitle);
+        
+        ActiveFiltersCount = 0;
+        if (!string.IsNullOrEmpty(SearchTitle)) ActiveFiltersCount++;
+        if (CurrentFilter.CategoryId.HasValue) ActiveFiltersCount++;
+        if (CurrentFilter.StatusFormId.HasValue) ActiveFiltersCount++;
+        if (CurrentFilter.StartDate.HasValue || CurrentFilter.EndDate.HasValue) ActiveFiltersCount++;
+        if (!string.IsNullOrEmpty(CurrentFilter.CreatedBy)) ActiveFiltersCount++;
+        if (CurrentFilter.SequentialScript.HasValue) ActiveFiltersCount++;
+        if (CurrentFilter.MinScore.HasValue || CurrentFilter.MaxScore.HasValue) ActiveFiltersCount++;
     }
 
     private async Task ShowErrorAsync(string operation, Exception ex)

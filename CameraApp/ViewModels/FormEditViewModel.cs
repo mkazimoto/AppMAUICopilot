@@ -224,17 +224,23 @@ public partial class FormEditViewModel : ObservableObject
             await currentPage.DisplayAlert(title, message, "OK");
         }
     }
+
+
 }
 
 // Classes auxiliares para os Pickers
-public class CategoryItem
+public partial class CategoryItem : ObservableObject
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    [ObservableProperty]
+    private int id;
+    [ObservableProperty]
+    private string name = string.Empty;
 }
 
-public class StatusItem
+public partial class StatusItem : ObservableObject
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    [ObservableProperty]
+    private int id;
+    [ObservableProperty]
+    private string name = string.Empty;
 }

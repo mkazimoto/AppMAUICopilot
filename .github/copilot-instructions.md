@@ -41,6 +41,7 @@ dotnet build -t:Run -f net9.0-android
 - Use `DataTemplate` e `ControlTemplate` para componentes reutilizáveis.
 - Centralize estilos e temas em `Resources/Styles.xaml`.
 - Utilize `SemanticProperties` para acessibilidade.
+- Use `Border` para definir áreas com bordas e fundos personalizados em vez de `Frame`.
 
 ## Navegação
 

@@ -10,5 +10,6 @@ public partial class AppShell : Shell
 		
 		// Registrar rotas para navegação
 		Routing.RegisterRoute("FormEditPage", typeof(FormEditPage));
+		Routing.RegisterRoute(nameof(AdvancedFiltersPage), typeof(AdvancedFiltersPage));
 	}
 }

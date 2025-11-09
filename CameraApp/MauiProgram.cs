@@ -54,6 +54,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<LoginPage>();
 		builder.Services.AddTransient<FormListPage>();
 		builder.Services.AddTransient<FormEditPage>();
+		builder.Services.AddTransient<AdvancedFiltersPage>();
 		builder.Services.AddTransient<MainShell>();
 
 #if DEBUG

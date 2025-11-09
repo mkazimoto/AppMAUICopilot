@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="CameraApp.Views.AdvancedFiltersPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
+             x:DataType="viewmodels:FormListViewModel"
+             Title="Filtros Avançados"
+             BackgroundColor="{StaticResource Gray100}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Categoria -->
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Categoria"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                    
+                    <Picker Title="Selecione uma categoria"
+                            ItemsSource="{Binding Categories}"
+                            ItemDisplayBinding="{Binding Name}"                           
+                            SelectedItem="{Binding SelectedCategoryItem}"
+                            TextColor="{StaticResource Gray900}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Status -->
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Status"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                    
+                    <Picker Title="Selecione um status"
+                            ItemsSource="{Binding StatusItems}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedStatusItem}"
+                            TextColor="{StaticResource Gray900}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Período -->
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Período de Criação"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                    
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="5">
+                            <Label Text="De:"
+                                   FontSize="12"
+                                   TextColor="{StaticResource Gray600}" />
+                            <DatePicker Date="{Binding StartDate}"
+                                        Format="dd/MM/yyyy"
+                                        TextColor="{StaticResource Gray900}" />
+                        </VerticalStackLayout>
+
+                        <Label Grid.Column="1"
+                               Text="até"
+                               VerticalOptions="End"
+                               Margin="0,0,0,10"
+                               TextColor="{StaticResource Gray600}" />
+
+                        <VerticalStackLayout Grid.Column="2" Spacing="5">
+                            <Label Text="Até:"
+                                   FontSize="12"
+                                   TextColor="{StaticResource Gray600}" />
+                            <DatePicker Date="{Binding EndDate}"
+                                        Format="dd/MM/yyyy"
+                                        TextColor="{StaticResource Gray900}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Criado por -->
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Criado Por"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                    
+                    <Entry Placeholder="Nome do usuário..."
+                           Text="{Binding CreatedBy}"
+                           PlaceholderColor="{StaticResource Gray600}"
+                           TextColor="{StaticResource Gray900}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Script Sequencial -->
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Tipo de Script"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                    
+                    <HorizontalStackLayout Spacing="20">
+                        <CheckBox IsChecked="{Binding FilterSequentialScript}"
+                                  Color="{StaticResource Primary}" />
+                        <Label Text="Apenas scripts sequenciais"
+                               VerticalOptions="Center"
+                               TextColor="{StaticResource Gray900}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Pontuação -->
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Pontuação"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                    
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="5">
+                            <Label Text="Mínimo:"
+                                   FontSize="12"
+                                   TextColor="{StaticResource Gray600}" />
+                            <Entry Placeholder="0"
+                                   Text="{Binding MinScore}"
+                                   Keyboard="Numeric"
+                                   PlaceholderColor="{StaticResource Gray600}"
+                                   TextColor="{StaticResource Gray900}" />
+                        </VerticalStackLayout>
+
+                        <Label Grid.Column="1"
+                               Text="—"
+                               VerticalOptions="End"
+                               Margin="0,0,0,10"
+                               TextColor="{StaticResource Gray600}" />
+
+                        <VerticalStackLayout Grid.Column="2" Spacing="5">
+                            <Label Text="Máximo:"
+                                   FontSize="12"
+                                   TextColor="{StaticResource Gray600}" />
+                            <Entry Placeholder="100"
+                                   Text="{Binding MaxScore}"
+                                   Keyboard="Numeric"
+                                   PlaceholderColor="{StaticResource Gray600}"
+                                   TextColor="{StaticResource Gray900}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Ordenação -->
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Ordenação"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                    
+                    <Picker Title="Ordenar por"
+                            SelectedIndex="{Binding OrderByIndex}"
+                            TextColor="{StaticResource Gray900}">
+                        <Picker.Items>
+                            <x:String>Título</x:String>
+                            <x:String>Data de Criação</x:String>
+                            <x:String>Data de Modificação</x:String>
+                            <x:String>Pontuação</x:String>
+                            <x:String>Categoria</x:String>
+                        </Picker.Items>
+                    </Picker>
+
+                    <HorizontalStackLayout Spacing="20">
+                        <CheckBox IsChecked="{Binding OrderAscending}"
+                                  Color="{StaticResource Primary}" />
+                        <Label Text="Ordem crescente"
+                               VerticalOptions="Center"
+                               TextColor="{StaticResource Gray900}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Botões de ação -->
+            <Grid ColumnSpacing="10" Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        Text="🗑️ Limpar Tudo"
+                        Command="{Binding ClearAdvancedFiltersCommand}"
+                        BackgroundColor="{StaticResource Secondary}"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Padding="0,15" />
+
+                <Button Grid.Column="1"
+                        Text="✓ Aplicar Filtros"
+                        Command="{Binding ApplyAdvancedFiltersCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Padding="0,15" />
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -18,13 +18,14 @@ public class FormService : IFormService
         _authService = authService;
     }
 
-    public async Task<FormResponse> GetFormsAsync(int page = 1, int pageSize = 10)
+    public async Task<FormResponse> GetFormsAsync(FormFilter filter)
     {
         try
         {
             await EnsureAuthenticatedAsync();
             
-            var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}?page={page}&pagesize={pageSize}";
+            var queryString = filter.BuildQueryString();
+            var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}?{queryString}";
             var response = await _httpClient.GetAsync(url);
             
             if (response.IsSuccessStatusCode)
@@ -46,99 +47,6 @@ public class FormService : IFormService
             // Log error e converte para ApiException
             Console.WriteLine($"Error getting forms: {ex.Message}");
             throw new ApiException($"Erro inesperado ao carregar formulários: {ex.Message}", ex);
-        }
-    }
-
-    public async Task<FormResponse> GetFormsByCategoryAsync(int categoryId, int page = 1, int pageSize = 10)
-    {
-        try
-        {
-            await EnsureAuthenticatedAsync();
-            
-            var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}?$filter=categoryId eq {categoryId}&page={page}&pagesize={pageSize}";
-            var response = await _httpClient.GetAsync(url);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<FormResponse>(jsonResponse, GetJsonOptions()) ?? new FormResponse();
-            }
-            
-            await HandleErrorResponseAsync(response);
-            return new FormResponse();
-        }
-        catch (ApiException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting forms by category: {ex.Message}");
-            throw new ApiException($"Erro ao filtrar formulários por categoria: {ex.Message}", ex);
-        }
-    }
-
-    public async Task<FormResponse> GetFormsByStatusAsync(int statusId, int page = 1, int pageSize = 10)
-    {
-        try
-        {
-            await EnsureAuthenticatedAsync();
-            
-            var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}?$filter=statusFormId eq {statusId}&page={page}&pagesize={pageSize}";
-            var response = await _httpClient.GetAsync(url);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<FormResponse>(jsonResponse, GetJsonOptions()) ?? new FormResponse();
-            }
-            
-            await HandleErrorResponseAsync(response);
-            return new FormResponse();
-        }
-        catch (ApiException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting forms by status: {ex.Message}");
-            throw new ApiException($"Erro ao filtrar formulários por status: {ex.Message}", ex);
-        }
-    }
-
-    public async Task<FormResponse> GetFormsByDateRangeAsync(DateTime startDate, DateTime endDate, int page = 1, int pageSize = 10)
-    {
-        try
-        {
-            await EnsureAuthenticatedAsync();
-            
-            // Formato de data conforme documentação TOTVS (ODATA)
-            var startDateStr = startDate.ToString("yyyy-MM-ddTHH:mm:ssZ");
-            var endDateStr = endDate.ToString("yyyy-MM-ddTHH:mm:ssZ");
-            
-            var filter = $"recCreatedOn ge {startDateStr} and recCreatedOn le {endDateStr}";
-            var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}?$filter={Uri.EscapeDataString(filter)}&page={page}&pagesize={pageSize}";
-            
-            var response = await _httpClient.GetAsync(url);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<FormResponse>(jsonResponse, GetJsonOptions()) ?? new FormResponse();
-            }
-            
-            await HandleErrorResponseAsync(response);
-            return new FormResponse();
-        }
-        catch (ApiException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting forms by date range: {ex.Message}");
-            throw new ApiException($"Erro ao filtrar formulários por período: {ex.Message}", ex);
         }
     }
 
