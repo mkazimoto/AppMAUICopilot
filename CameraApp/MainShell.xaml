@@ -4,7 +4,10 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:CameraApp.Views"
-    Title="CameraApp">
+    Title="CameraApp"
+    Shell.TitleColor="{StaticResource Primary}"
+    Shell.NavBarIsVisible="True"
+    Shell.TabBarIsVisible="True">
 
     <TabBar>
         <ShellContent
@@ -39,11 +42,11 @@
                    Text="TOTVS Camera App" 
                    VerticalOptions="Center"
                    FontAttributes="Bold" 
-                   TextColor="White" />
+                   TextColor="{StaticResource Primary}" />
             <Button Grid.Column="1"
                     Text="Sair"
                     BackgroundColor="Transparent"
-                    TextColor="White"
+                    TextColor="{StaticResource Primary}"
                     FontSize="12"
                     Clicked="OnLogoutClicked" />
         </Grid>

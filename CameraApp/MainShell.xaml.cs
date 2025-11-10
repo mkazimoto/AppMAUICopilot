@@ -4,19 +4,26 @@ namespace CameraApp;
 
 public partial class MainShell : Shell
 {
-    private readonly IAuthService _authService;
+  private readonly IAuthService _authService;
 
-    public MainShell(IAuthService authService)
-    {
-        InitializeComponent();
-        _authService = authService;
-    }
+  public MainShell(IAuthService authService)
+  {
+    InitializeComponent();
+    _authService = authService;
+  }
 
-    private async void OnLogoutClicked(object sender, EventArgs e)
-    {
-        await _authService.LogoutAsync();
-        
-        // Navegar de volta para a tela de login
-        Application.Current!.Windows[0].Page = new AppShell();
-    }
+  private async void OnLogoutClicked(object sender, EventArgs e)
+  {
+    // Exibir confirmação antes de prosseguir
+    bool confirm = await MainThread.InvokeOnMainThreadAsync(async () =>
+        await (Shell.Current?.DisplayAlert("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
+
+    if (!confirm)
+      return;
+
+    await _authService.LogoutAsync();
+
+    // Navegar de volta para a tela de login
+    Application.Current!.Windows[0].Page = new AppShell();
+  }
 }

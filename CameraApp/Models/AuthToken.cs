@@ -11,7 +11,7 @@ namespace CameraApp.Models
         public string TokenType { get; set; } = string.Empty;
 
         [JsonPropertyName("expires_in")]
-        public int ExpiresIn { get; set; } = 300; // 5 minutos por padrão
+        public int ExpiresIn { get; set; }
 
         [JsonPropertyName("refresh_token")]
         public string RefreshToken { get; set; } = string.Empty;

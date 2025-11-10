@@ -2,6 +2,7 @@ using CameraApp.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.ApplicationModel; // Para MainThread
 
 namespace CameraApp.ViewModels
 {
@@ -100,6 +101,14 @@ namespace CameraApp.ViewModels
         private async Task LogoutAsync()
         {
             if (IsLoading) return;
+
+            // Exibir confirmação antes de prosseguir
+            bool confirm = await MainThread.InvokeOnMainThreadAsync(async () =>
+                await (Shell.Current?.DisplayAlert("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
+            if (!confirm)
+            {
+                return; // Usuário cancelou
+            }
 
             try
             {

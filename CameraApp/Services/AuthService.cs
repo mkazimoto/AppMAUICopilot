@@ -79,6 +79,8 @@ namespace CameraApp.Services
           RefreshToken = refreshToken
         };
 
+        _httpClient.DefaultRequestHeaders.Remove("Authorization");
+
         var response = await _httpClient.PostAsJsonAsync($"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Auth}", refreshRequest);
 
         if (response.IsSuccessStatusCode)
