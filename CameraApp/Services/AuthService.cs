@@ -208,7 +208,6 @@ namespace CameraApp.Services
         }
 
         _logger.LogError("Falha na renovação automática do token");
-        await LogoutAsync(); // Força logout se renovação falhou
         return false;
       }
       catch (Exception ex)

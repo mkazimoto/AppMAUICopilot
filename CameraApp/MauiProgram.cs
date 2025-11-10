@@ -22,18 +22,37 @@ public static class MauiProgram
 			});
 
 		// Registrar serviços
+		
+		// Registrar IAuthService primeiro (usará HttpClient básico)
+		builder.Services.AddSingleton<IAuthService>(provider =>
+		{
+			var httpClient = new HttpClient(new HttpClientHandler())
+			{
+				Timeout = ApiConfig.RequestTimeout
+			};
+			var logger = provider.GetRequiredService<ILogger<AuthService>>();
+			return new AuthService(httpClient, logger);
+		});
+		
+		// Registrar HttpClient com AuthHttpHandler para outros serviços
 		builder.Services.AddSingleton<HttpClient>(provider =>
 		{
-			var client = new HttpClient();
-			client.Timeout = ApiConfig.RequestTimeout;
+			var authService = provider.GetRequiredService<IAuthService>();
+			var authHandler = new AuthHttpHandler(authService)
+			{
+				InnerHandler = new HttpClientHandler()
+			};
+			
+			var client = new HttpClient(authHandler)
+			{
+				Timeout = ApiConfig.RequestTimeout
+			};
 			return client;
 		});
 		
-		builder.Services.AddTransient<AuthHttpHandler>();
 		builder.Services.AddSingleton<ICameraService, CameraService>();
 		builder.Services.AddSingleton<ILocationService, LocationService>();
 		builder.Services.AddSingleton<IPostureService, PostureService>();
-		builder.Services.AddSingleton<IAuthService, AuthService>();
 		builder.Services.AddSingleton<IFormService, FormService>();
 		
 		// Registrar App

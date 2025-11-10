@@ -402,7 +402,13 @@ public partial class FormListViewModel : ObservableObject
             // Erro de autenticação - redirecionar para login
             await currentPage.DisplayAlert("Sessão Expirada", 
                 "Sua sessão expirou. Você será redirecionado para fazer login novamente.", "OK");
-            await Shell.Current.GoToAsync("//LoginPage");
+            
+            // Trocar a página raiz para AppShell (que contém LoginPage)
+            var window = Application.Current?.Windows?.FirstOrDefault();
+            if (window != null)
+            {
+                window.Page = new AppShell();
+            }
         }
         else if (ex is ApiException apiEx)
         {
@@ -434,7 +440,13 @@ public partial class FormListViewModel : ObservableObject
                 if (Application.Current?.Windows?.FirstOrDefault()?.Page is Page currentPage)
                 {
                     await currentPage.DisplayAlert("Erro", "Você precisa fazer login para acessar os formulários.", "OK");
-                    await Shell.Current.GoToAsync("//LoginPage");
+                    
+                    // Trocar a página raiz para AppShell (que contém LoginPage)
+                    var window = Application.Current?.Windows?.FirstOrDefault();
+                    if (window != null)
+                    {
+                        window.Page = new AppShell();
+                    }
                 }
                 return false;
             }
@@ -446,7 +458,13 @@ public partial class FormListViewModel : ObservableObject
                 if (Application.Current?.Windows?.FirstOrDefault()?.Page is Page currentPage)
                 {
                     await currentPage.DisplayAlert("Sessão Expirada", "Sua sessão expirou. Faça login novamente.", "OK");
-                    await Shell.Current.GoToAsync("//LoginPage");
+                    
+                    // Trocar a página raiz para AppShell (que contém LoginPage)
+                    var window = Application.Current?.Windows?.FirstOrDefault();
+                    if (window != null)
+                    {
+                        window.Page = new AppShell();
+                    }
                 }
                 return false;
             }
@@ -458,7 +476,13 @@ public partial class FormListViewModel : ObservableObject
             if (Application.Current?.Windows?.FirstOrDefault()?.Page is Page currentPage)
             {
                 await currentPage.DisplayAlert("Erro", $"Erro de autenticação: {ex.Message}", "OK");
-                await Shell.Current.GoToAsync("//LoginPage");
+                
+                // Trocar a página raiz para AppShell (que contém LoginPage)
+                var window = Application.Current?.Windows?.FirstOrDefault();
+                if (window != null)
+                {
+                    window.Page = new AppShell();
+                }
             }
             return false;
         }

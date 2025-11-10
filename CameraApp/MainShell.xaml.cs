@@ -14,16 +14,22 @@ public partial class MainShell : Shell
 
   private async void OnLogoutClicked(object sender, EventArgs e)
   {
-    // Exibir confirmação antes de prosseguir
+    // Exibir confirmaÃ§Ã£o antes de prosseguir
     bool confirm = await MainThread.InvokeOnMainThreadAsync(async () =>
-        await (Shell.Current?.DisplayAlert("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
+        await (Shell.Current?.DisplayAlert("ConfirmaÃ§Ã£o", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
 
     if (!confirm)
       return;
 
     await _authService.LogoutAsync();
 
-    // Navegar de volta para a tela de login
-    Application.Current!.Windows[0].Page = new AppShell();
+    // Trocar para o AppShell (tela de login)
+    await MainThread.InvokeOnMainThreadAsync(() =>
+    {
+      if (Application.Current?.Windows.Count > 0)
+      {
+        Application.Current.Windows[0].Page = new AppShell();
+      }
+    });
   }
 }
