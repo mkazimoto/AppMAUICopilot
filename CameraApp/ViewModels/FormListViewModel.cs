@@ -84,12 +84,14 @@ public partial class FormListViewModel : ObservableObject
         _authService = authService;
 
           // Categorias de exemplo - em produção, viria da API
+        Categories.Add(new CategoryItem { Id = 0, Name = "Todas as Categorias" });
         Categories.Add(new CategoryItem { Id = 1, Name = "Tarefa" });
         Categories.Add(new CategoryItem { Id = 2, Name = "Medição" });
         Categories.Add(new CategoryItem { Id = 3, Name = "Movimento" });
         Categories.Add(new CategoryItem { Id = 4, Name = "Projeto" });
 
         // Status de exemplo - em produção, viria da API
+        StatusItems.Add(new StatusItem { Id = -1, Name = "Todos os Status" });
         StatusItems.Add(new StatusItem { Id = 0, Name = "Rascunho" });
         StatusItems.Add(new StatusItem { Id = 1, Name = "Publicado" });
         StatusItems.Add(new StatusItem { Id = 2, Name = "Inativo" });
@@ -103,6 +105,32 @@ public partial class FormListViewModel : ObservableObject
         try
         {
             IsLoading = true;
+            await LoadFormsInternalAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    public async Task RefreshAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            await LoadFormsInternalAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private async Task LoadFormsInternalAsync()
+    {
+        try
+        {
             CurrentPage = 1;
             
             // Verificar autenticação antes de fazer a chamada
@@ -111,8 +139,7 @@ public partial class FormListViewModel : ObservableObject
                 return;
             }
             
-            var filter = FormFilter.Default(CurrentPage, 10);
-            var response = await _formService.GetFormsAsync(filter);
+            var response = await _formService.GetFormsAsync(CurrentFilter);
             
             Forms.Clear();
             foreach (var form in response.Items)
@@ -125,10 +152,6 @@ public partial class FormListViewModel : ObservableObject
         catch (Exception ex)
         {
             await ShowErrorAsync("carregar formulários", ex);
-        }
-        finally
-        {
-            IsLoading = false;
         }
     }
 
@@ -219,12 +242,6 @@ public partial class FormListViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public async Task RefreshAsync()
-    {
-        await LoadFormsAsync();
-    }
-
-    [RelayCommand]
     public async Task SearchByTitleAsync()
     {
         if (IsLoading) return;
@@ -293,8 +310,8 @@ public partial class FormListViewModel : ObservableObject
             CurrentFilter = new FormFilter
             {
                 Title = SearchTitle,
-                CategoryId = SelectedCategoryItem?.Id,
-                StatusFormId = SelectedStatusItem?.Id,
+                CategoryId = SelectedCategoryItem?.Id > 0 ? SelectedCategoryItem?.Id : null,
+                StatusFormId = SelectedStatusItem?.Id >= 0 ? SelectedStatusItem?.Id : null,
                 StartDate = StartDate != default ? StartDate : null,
                 EndDate = EndDate != default ? EndDate : null,
                 CreatedBy = !string.IsNullOrEmpty(CreatedBy) ? CreatedBy : null,

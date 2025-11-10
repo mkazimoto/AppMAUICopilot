@@ -18,10 +18,10 @@ public partial class FormEditViewModel : ObservableObject
     private string title = string.Empty;
 
     [ObservableProperty]
-    private int categoryId = 1;
+    private CategoryItem categoryItem = null;
 
     [ObservableProperty]
-    private int statusFormId = 1;
+    private StatusItem statusItem = null;
 
     [ObservableProperty]
     private bool sequentialScript;
@@ -76,8 +76,8 @@ public partial class FormEditViewModel : ObservableObject
         
         FormId = form.Id;
         Title = form.Title;
-        CategoryId = form.CategoryId;
-        StatusFormId = form.StatusFormId;
+        CategoryItem = Categories.First(c => c.Id == form.CategoryId);
+        StatusItem = StatusItems.First(s => s.Id == form.StatusFormId);
         SequentialScript = form.SequentialScript;
         TotalScore = form.TotalScore;
     }
@@ -90,8 +90,8 @@ public partial class FormEditViewModel : ObservableObject
         
         FormId = string.Empty;
         Title = string.Empty;
-        CategoryId = 1;
-        StatusFormId = 1;
+        CategoryItem = Categories.First(c => c.Id == 1);
+        StatusItem = StatusItems.First(s => s.Id == 0);
         SequentialScript = false;
         TotalScore = 0;
     }
@@ -115,8 +115,8 @@ public partial class FormEditViewModel : ObservableObject
             {
                 Id = FormId,
                 Title = Title,
-                CategoryId = CategoryId,
-                StatusFormId = StatusFormId,
+                CategoryId = CategoryItem.Id,
+                StatusFormId = StatusItem.Id,
                 SequentialScript = SequentialScript,
                 TotalScore = TotalScore,
                 RecCreatedBy = "user", // Em produção, pegar do contexto do usuário
@@ -213,8 +213,8 @@ public partial class FormEditViewModel : ObservableObject
     private bool ValidateForm()
     {
         return !string.IsNullOrWhiteSpace(Title) && 
-               CategoryId > 0 && 
-               StatusFormId > 0;
+               CategoryItem != null && 
+               StatusItem != null;
     }
 
     private async Task ShowAlertAsync(string title, string message)

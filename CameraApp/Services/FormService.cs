@@ -26,6 +26,10 @@ public class FormService : IFormService
             
             var queryString = filter.BuildQueryString();
             var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}?{queryString}";
+            
+            System.Diagnostics.Debug.WriteLine($"[FormService] GetFormsAsync URL: {url}");
+            System.Diagnostics.Debug.WriteLine($"[FormService] CategoryId: {filter.CategoryId}, StatusFormId: {filter.StatusFormId}");
+            
             var response = await _httpClient.GetAsync(url);
             
             if (response.IsSuccessStatusCode)

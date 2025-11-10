@@ -11,7 +11,7 @@ namespace CameraApp.Models
         public string TokenType { get; set; } = string.Empty;
 
         [JsonPropertyName("expires_in")]
-        public int ExpiresIn { get; set; }
+        public int ExpiresIn { get; set; } = 300; // 5 minutos por padrão
 
         [JsonPropertyName("refresh_token")]
         public string RefreshToken { get; set; } = string.Empty;
@@ -19,9 +19,7 @@ namespace CameraApp.Models
         public DateTime ExpiresAt { get; set; }
 
         public bool IsExpired => DateTime.Now >= ExpiresAt;
-        
-        public bool IsExpiringSoon => DateTime.Now >= ExpiresAt.AddMinutes(-5); // 5 minutos antes da expiração
-        
+                
         public TimeSpan TimeUntilExpiration => ExpiresAt - DateTime.Now;
     }
 
