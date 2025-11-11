@@ -432,59 +432,6 @@ public partial class FormListViewModel : ObservableObject
 
     private async Task<bool> EnsureUserIsAuthenticatedAsync()
     {
-        try
-        {
-            // Verifica se o usuário está autenticado e se o token é válido
-            if (!_authService.IsAuthenticated)
-            {
-                if (Application.Current?.Windows?.FirstOrDefault()?.Page is Page currentPage)
-                {
-                    await currentPage.DisplayAlert("Erro", "Você precisa fazer login para acessar os formulários.", "OK");
-                    
-                    // Trocar a página raiz para AppShell (que contém LoginPage)
-                    var window = Application.Current?.Windows?.FirstOrDefault();
-                    if (window != null)
-                    {
-                        window.Page = new AppShell();
-                    }
-                }
-                return false;
-            }
-
-            // Tenta garantir que o token é válido (renovação automática se necessário)
-            var tokenValid = await _authService.EnsureValidTokenAsync();
-            if (!tokenValid)
-            {
-                if (Application.Current?.Windows?.FirstOrDefault()?.Page is Page currentPage)
-                {
-                    await currentPage.DisplayAlert("Sessão Expirada", "Sua sessão expirou. Faça login novamente.", "OK");
-                    
-                    // Trocar a página raiz para AppShell (que contém LoginPage)
-                    var window = Application.Current?.Windows?.FirstOrDefault();
-                    if (window != null)
-                    {
-                        window.Page = new AppShell();
-                    }
-                }
-                return false;
-            }
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            if (Application.Current?.Windows?.FirstOrDefault()?.Page is Page currentPage)
-            {
-                await currentPage.DisplayAlert("Erro", $"Erro de autenticação: {ex.Message}", "OK");
-                
-                // Trocar a página raiz para AppShell (que contém LoginPage)
-                var window = Application.Current?.Windows?.FirstOrDefault();
-                if (window != null)
-                {
-                    window.Page = new AppShell();
-                }
-            }
-            return false;
-        }
+        return true;
     }
 }

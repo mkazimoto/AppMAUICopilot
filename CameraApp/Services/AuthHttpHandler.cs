@@ -26,26 +26,31 @@ namespace CameraApp.Services
                 _isRefreshing = true;
                 try
                 {
-                    // Tenta renovar o token
-                    var tokenRenewed = await _authService.EnsureValidTokenAsync();
-                    
-                    if (tokenRenewed)
+                    var refreshToken = await SecureStorage.GetAsync("refresh_token");
+
+                    if (refreshToken != null)
                     {
-                        // Token renovado, atualiza o header da requisição original e reenvia
-                        var newToken = _authService.CurrentToken;
-                        if (!string.IsNullOrEmpty(newToken))
+                        // Tenta renovar o token
+                        var tokenRenewed = await _authService.RefreshTokenAsync(refreshToken.ToString());
+
+                        if (tokenRenewed != null)
                         {
-                            request.Headers.Authorization = 
-                                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newToken);
-                            
-                            // Reenvia a requisição com o token renovado
-                            response = await base.SendAsync(request, cancellationToken);
+                            // Token renovado, atualiza o header da requisição original e reenvia                            
+                            var newToken = tokenRenewed.AccessToken;
+                            if (!string.IsNullOrEmpty(newToken))
+                            {
+                                request.Headers.Authorization =
+                                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newToken);
+
+                                // Reenvia a requisição com o token renovado
+                                response = await base.SendAsync(request, cancellationToken);
+                            }
                         }
-                    }
-                    else
-                    {
-                        // Se não conseguiu renovar, força logout
-                        await _authService.LogoutAsync();
+                        else
+                        {
+                            // Se não conseguiu renovar, força logout
+                            await _authService.LogoutAsync();
+                        }
                     }
                 }
                 finally
@@ -61,15 +66,15 @@ namespace CameraApp.Services
         {
             if (!_isRefreshing)
             {
-                var tokenValid = await _authService.EnsureValidTokenAsync();
-                
+                var accessToken = await SecureStorage.GetAsync("access_token");
+
                 // Atualiza o header de autorização da requisição
-                if (tokenValid)
+                if (accessToken != null)
                 {
-                    var token = _authService.CurrentToken;
+                    var token = accessToken;
                     if (!string.IsNullOrEmpty(token))
                     {
-                        request.Headers.Authorization = 
+                        request.Headers.Authorization =
                             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                     }
                 }

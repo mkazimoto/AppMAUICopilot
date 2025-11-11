@@ -18,10 +18,10 @@ public partial class FormEditViewModel : ObservableObject
     private string title = string.Empty;
 
     [ObservableProperty]
-    private CategoryItem categoryItem = null;
+    private CategoryItem categoryItem;
 
     [ObservableProperty]
-    private StatusItem statusItem = null;
+    private StatusItem statusItem;
 
     [ObservableProperty]
     private bool sequentialScript;

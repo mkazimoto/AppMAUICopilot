@@ -178,44 +178,19 @@ namespace CameraApp.Services
 
     public async Task<bool> EnsureValidTokenAsync()
     {
-      try
-      {
-        // Se não há token, não pode renovar automaticamente
-        if (_currentToken == null)
-        {
-          _logger.LogWarning("Nenhum token disponível para validação");
-          return false;
-        }
+      // var accessToken = await SecureStorage.GetAsync("access_token");
 
-        // Se o token ainda é válido e não está expirando em breve, retorna true
-        if (!_currentToken.IsExpired)
-        {
-          return true;
-        }
-        var refreshToken = _currentToken.RefreshToken;
+      // if (string.IsNullOrEmpty(accessToken))
+      // {
+      //   _logger.LogWarning("Nenhum token de acesso disponível");
+      //   return false;
+      // }
 
-        // Token expirado ou expirando em breve, tentar renovar
-        if (_currentToken.IsExpired)
-        {
-          var newToken = await RefreshTokenAsync(refreshToken);
-          if (newToken != null)
-          {
-            _logger.LogInformation("Token renovado automaticamente com sucesso");
-            return true;
-          }
+      // // Atualiza o header de autorização da requisição
+      // _httpClient.DefaultRequestHeaders.Authorization =
+      //     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-          _logger.LogInformation("Token expirado, tentando renovar automaticamente");
-        }
-
-        _logger.LogError("Falha na renovação automática do token");
-        return false;
-      }
-      catch (Exception ex)
-      {
-        _logger.LogError(ex, "Erro durante validação/renovação automática do token");
-        await LogoutAsync(); // Força logout em caso de erro
-        return false;
-      }
+      return true;
     }
   }
 }
