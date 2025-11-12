@@ -1,3 +1,5 @@
+using CameraApp.Config;
+
 namespace CameraApp.Services;
 
 /// <summary>
@@ -32,7 +34,7 @@ public class FormServiceGeneric : BaseService<Models.Form>
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<Models.ApiResponse<Models.Form>>(jsonResponse, GetJsonOptions());
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<Models.ApiResponse<Models.Form>>(jsonResponse, ApiConfig.GetJsonOptions());
                 
                 return new PaginatedResponse<Models.Form>
                 {
@@ -69,7 +71,7 @@ public class FormServiceGeneric : BaseService<Models.Form>
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<Models.ApiResponse<Models.Form>>(jsonResponse, GetJsonOptions());
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<Models.ApiResponse<Models.Form>>(jsonResponse, ApiConfig.GetJsonOptions());
                 
                 return new PaginatedResponse<Models.Form>
                 {

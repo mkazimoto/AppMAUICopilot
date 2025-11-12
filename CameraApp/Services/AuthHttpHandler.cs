@@ -1,4 +1,6 @@
+using System.Text.Json;
 using CameraApp.Config;
+using CameraApp.Models;
 using CameraApp.Services;
 
 namespace CameraApp.Services
@@ -22,9 +24,9 @@ namespace CameraApp.Services
             if (request.RequestUri != null &&
                 !request.RequestUri.AbsoluteUri.Contains(ApiConfig.Endpoints.Auth))
             {
-              // Primeiro, garante que o token é válido antes de enviar a requisição
-              await SetToken(request);
-                
+                // Primeiro, garante que o token é válido antes de enviar a requisição
+                await SetToken(request);
+
             }
 
             // Envia a requisição original
@@ -33,8 +35,19 @@ namespace CameraApp.Services
             if (request.RequestUri != null &&
                 !request.RequestUri.AbsoluteUri.Contains(ApiConfig.Endpoints.Auth))
             {
+                ApiError? apiError = null;
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(errorContent))
+                    {
+                        apiError = JsonSerializer.Deserialize<ApiError>(errorContent, ApiConfig.GetJsonOptions());
+                    }
+                }
+
                 // Se recebeu 401 e ainda não está renovando token, tenta renovar
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized && !_isRefreshing)
+                if ((apiError?.Code == "FE005" ||
+                     response.StatusCode == System.Net.HttpStatusCode.Unauthorized) && !_isRefreshing)
                 {
                     _isRefreshing = true;
                     try
@@ -90,5 +103,7 @@ namespace CameraApp.Services
             }
 
         }
+
+
     }
 }
