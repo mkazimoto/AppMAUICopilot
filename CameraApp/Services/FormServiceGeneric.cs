@@ -26,8 +26,6 @@ public class FormServiceGeneric : BaseService<Models.Form>
     {
         try
         {
-            await EnsureAuthenticatedAsync();
-            
             var url = $"{Config.ApiConfig.BaseUrl}{EndpointPath}?$filter=categoryId eq {categoryId}&page={page}&pagesize={pageSize}";
             var response = await _httpClient.GetAsync(url);
             
@@ -65,8 +63,6 @@ public class FormServiceGeneric : BaseService<Models.Form>
     {
         try
         {
-            await EnsureAuthenticatedAsync();
-            
             var url = $"{Config.ApiConfig.BaseUrl}{EndpointPath}?$filter=statusFormId eq {statusId}&page={page}&pagesize={pageSize}";
             var response = await _httpClient.GetAsync(url);
             

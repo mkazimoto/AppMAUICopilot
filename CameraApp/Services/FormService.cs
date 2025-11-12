@@ -22,8 +22,7 @@ public class FormService : IFormService
     {
         try
         {
-            await EnsureAuthenticatedAsync();
-            
+                       
             var queryString = filter.BuildQueryString();
             var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}?{queryString}";
             
@@ -58,7 +57,6 @@ public class FormService : IFormService
     {
         try
         {
-            await EnsureAuthenticatedAsync();
             
             var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}/{id}";
             var response = await _httpClient.GetAsync(url);
@@ -87,7 +85,6 @@ public class FormService : IFormService
     {
         try
         {
-            await EnsureAuthenticatedAsync();
             
             var json = JsonSerializer.Serialize(form, GetJsonOptions());
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -118,7 +115,6 @@ public class FormService : IFormService
     {
         try
         {
-            await EnsureAuthenticatedAsync();
             
             var json = JsonSerializer.Serialize(form, GetJsonOptions());
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -150,8 +146,7 @@ public class FormService : IFormService
     {
         try
         {
-            await EnsureAuthenticatedAsync();
-            
+             
             var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}/{id}";
             var response = await _httpClient.DeleteAsync(url);
 
@@ -174,39 +169,6 @@ public class FormService : IFormService
         }
     }
 
-    private async Task EnsureAuthenticatedAsync()
-    {
-        try
-        {
-            // Garante que o usuário está autenticado e que o token é válido
-            var tokenValid = await _authService.EnsureValidTokenAsync();
-            
-            if (!tokenValid)
-            {
-                throw new UnauthorizedAccessException("Token inválido ou expirado. Faça login novamente.");
-            }
-
-            var token = _authService.CurrentToken;
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = 
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            }
-            else
-            {
-                throw new UnauthorizedAccessException("Token não disponível. Faça login novamente.");
-            }
-        }
-        catch (UnauthorizedAccessException)
-        {
-            // Re-throw unauthorized exceptions
-            throw;
-        }
-        catch (Exception ex)
-        {
-            throw new UnauthorizedAccessException($"Erro na autenticação: {ex.Message}", ex);
-        }
-    }
 
     private static JsonSerializerOptions GetJsonOptions()
     {
@@ -239,23 +201,7 @@ public class FormService : IFormService
                 {
                     var apiError = JsonSerializer.Deserialize<ApiError>(errorContent, GetJsonOptions());
                     if (apiError != null && !string.IsNullOrEmpty(apiError.Code))
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[FormService] ApiError deserializado - Code: {apiError.Code}, Message: {apiError.Message}");
-                        
-                        // Se for erro 401, tenta renovar token
-                        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                        {
-                            var tokenRenewed = await _authService.EnsureValidTokenAsync();
-                            if (tokenRenewed)
-                            {
-                                throw new ApiException("Token expirado, tentativa de renovação realizada. Tente novamente.", (int)response.StatusCode);
-                            }
-                            else
-                            {
-                                throw new ApiException("Sessão expirada. Faça login novamente.", (int)response.StatusCode);
-                            }
-                        }
-                        
+                    {                        
                         // Para outros erros, lança a ApiException com os detalhes
                         throw new ApiException(apiError, (int)response.StatusCode);
                     }

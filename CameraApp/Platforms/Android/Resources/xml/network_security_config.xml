@@ -7,12 +7,12 @@
         <domain includeSubdomains="false">10.0.0.0</domain>
         <domain includeSubdomains="false">192.168.0.0</domain>
         <!-- IP específico do servidor TOTVS RM -->
-        <domain includeSubdomains="false">10.88.233.118</domain>
+        <domain includeSubdomains="false">10.82.138.36</domain>
     </domain-config>
     
     <!-- Configuração para toda a rede 10.x.x.x -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">10.88.233.0</domain>
+        <domain includeSubdomains="true">10.82.138.0</domain>
     </domain-config>
     
     <!-- Configuração base para permitir cleartext em desenvolvimento -->

@@ -31,7 +31,6 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         try
         {
-            await EnsureAuthenticatedAsync();
             
             var url = $"{ApiConfig.BaseUrl}{EndpointPath}?page={page}&pagesize={pageSize}";
             var response = await _httpClient.GetAsync(url);
@@ -92,7 +91,6 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         try
         {
-            await EnsureAuthenticatedAsync();
             
             var url = $"{ApiConfig.BaseUrl}{EndpointPath}/{id}";
             var response = await _httpClient.GetAsync(url);
@@ -124,8 +122,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         try
         {
-            await EnsureAuthenticatedAsync();
-            
+             
             var json = JsonSerializer.Serialize(entity, GetJsonOptions());
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             
@@ -158,7 +155,6 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         try
         {
-            await EnsureAuthenticatedAsync();
             
             var json = JsonSerializer.Serialize(entity, GetJsonOptions());
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -193,7 +189,6 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         try
         {
-            await EnsureAuthenticatedAsync();
             
             var url = $"{ApiConfig.BaseUrl}{EndpointPath}/{id}";
             var response = await _httpClient.DeleteAsync(url);
@@ -220,41 +215,6 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     #region Protected Helper Methods
 
     /// <summary>
-    /// Garante que o usuário está autenticado e o token é válido
-    /// </summary>
-    protected virtual async Task EnsureAuthenticatedAsync()
-    {
-        try
-        {
-            var tokenValid = await _authService.EnsureValidTokenAsync();
-            
-            if (!tokenValid)
-            {
-                throw new UnauthorizedAccessException("Token inválido ou expirado. Faça login novamente.");
-            }
-
-            var token = _authService.CurrentToken;
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = 
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            }
-            else
-            {
-                throw new UnauthorizedAccessException("Token não disponível. Faça login novamente.");
-            }
-        }
-        catch (UnauthorizedAccessException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            throw new UnauthorizedAccessException($"Erro na autenticação: {ex.Message}", ex);
-        }
-    }
-
-    /// <summary>
     /// Trata respostas de erro da API
     /// </summary>
     protected virtual async Task HandleErrorResponseAsync(HttpResponseMessage response)
@@ -278,21 +238,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
                 {
                     var apiError = JsonSerializer.Deserialize<ApiError>(errorContent, GetJsonOptions());
                     if (apiError != null && !string.IsNullOrEmpty(apiError.Code))
-                    {
-                        // Se for erro 401, tenta renovar token
-                        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                        {
-                            var tokenRenewed = await _authService.EnsureValidTokenAsync();
-                            if (tokenRenewed)
-                            {
-                                throw new ApiException("Token expirado, tentativa de renovação realizada. Tente novamente.", (int)response.StatusCode);
-                            }
-                            else
-                            {
-                                throw new ApiException("Sessão expirada. Faça login novamente.", (int)response.StatusCode);
-                            }
-                        }
-                        
+                    {                     
                         throw new ApiException(apiError, (int)response.StatusCode);
                     }
                 }

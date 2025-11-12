@@ -1,3 +1,4 @@
+using CameraApp.Config;
 using CameraApp.Services;
 
 namespace CameraApp.Services
@@ -12,10 +13,13 @@ namespace CameraApp.Services
             _authService = authService;
         }
 
+        /// <summary>
+        /// Intercepta requisições HTTP para adicionar o token de autenticação.
+        /// </summary>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Primeiro, garante que o token é válido antes de enviar a requisição
-            await EnsureValidTokenAsync(request);
+            await SetToken(request);
 
             // Envia a requisição original
             var response = await base.SendAsync(request, cancellationToken);
@@ -35,16 +39,10 @@ namespace CameraApp.Services
 
                         if (tokenRenewed != null)
                         {
-                            // Token renovado, atualiza o header da requisição original e reenvia                            
-                            var newToken = tokenRenewed.AccessToken;
-                            if (!string.IsNullOrEmpty(newToken))
-                            {
-                                request.Headers.Authorization =
-                                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newToken);
+                            await SetToken(request);
 
-                                // Reenvia a requisição com o token renovado
-                                response = await base.SendAsync(request, cancellationToken);
-                            }
+                            // Reenvia a requisição com o token renovado
+                            response = await base.SendAsync(request, cancellationToken);
                         }
                         else
                         {
@@ -62,23 +60,25 @@ namespace CameraApp.Services
             return response;
         }
 
-        private async Task EnsureValidTokenAsync(HttpRequestMessage request)
+        /// <summary>
+        /// Seta a token de acesso na requisição HTTP
+        /// </summary>
+        private async Task SetToken(HttpRequestMessage request)
         {
-            if (!_isRefreshing)
+            // A URL não é de autenticação ?
+            if (request.RequestUri != null &&
+                !request.RequestUri.AbsoluteUri.Contains(ApiConfig.Endpoints.Auth))
             {
                 var accessToken = await SecureStorage.GetAsync("access_token");
 
                 // Atualiza o header de autorização da requisição
-                if (accessToken != null)
+                if (!string.IsNullOrEmpty(accessToken))
                 {
-                    var token = accessToken;
-                    if (!string.IsNullOrEmpty(token))
-                    {
-                        request.Headers.Authorization =
-                            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                    }
+                    request.Headers.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                 }
             }
+
         }
     }
 }

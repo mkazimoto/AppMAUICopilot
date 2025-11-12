@@ -1,6 +1,6 @@
 # 🌐 Configurações de Rede Local - Android
 
-Foi implementada a configuração completa para permitir acesso à rede local e ao IP específico `10.88.233.118` no aplicativo Android.
+Foi implementada a configuração completa para permitir acesso à rede local e ao IP específico `10.82.138.36` no aplicativo Android.
 
 ## 🔧 Configurações Implementadas
 
@@ -31,12 +31,12 @@ Criado arquivo `Platforms/Android/Resources/xml/network_security_config.xml`:
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">localhost</domain>
         <domain includeSubdomains="false">127.0.0.1</domain>
-        <domain includeSubdomains="false">10.88.233.118</domain>
+        <domain includeSubdomains="false">10.82.138.36</domain>
     </domain-config>
     
     <!-- Rede 10.x.x.x completa -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">10.88.233.0</domain>
+        <domain includeSubdomains="true">10.82.138.0</domain>
     </domain-config>
     
     <!-- Configuração base para desenvolvimento -->
@@ -51,9 +51,9 @@ Criado arquivo `Platforms/Android/Resources/xml/network_security_config.xml`:
 ## 🎯 Funcionalidades Habilitadas
 
 ### ✅ **Acesso HTTP Local**
-- Comunicação com `http://10.88.233.118:8051`
+- Comunicação com `http://10.82.138.36:8051`
 - Suporte a cleartext traffic (HTTP não criptografado)
-- Acesso a toda rede `10.88.233.x`
+- Acesso a toda rede `10.82.138.x`
 
 ### ✅ **Permissões WiFi**
 - `ACCESS_WIFI_STATE`: Leitura do estado do WiFi
@@ -70,8 +70,8 @@ Criado arquivo `Platforms/Android/Resources/xml/network_security_config.xml`:
 ### **Domains Permitidos**
 - ✅ `localhost` - Desenvolvimento local
 - ✅ `127.0.0.1` - Loopback local  
-- ✅ `10.88.233.118` - Servidor TOTVS RM específico
-- ✅ `10.88.233.0/24` - Rede local completa
+- ✅ `10.82.138.36` - Servidor TOTVS RM específico
+- ✅ `10.82.138.0/24` - Rede local completa
 
 ### **Certificados**
 - Usa certificados do sistema Android
@@ -86,14 +86,14 @@ Criado arquivo `Platforms/Android/Resources/xml/network_security_config.xml`:
 3. **Digite as credenciais TOTVS**:
    - Usuário: `mestre`
    - Senha: `totvs`
-4. **Teste a conexão** com o servidor `10.88.233.118:8051`
+4. **Teste a conexão** com o servidor `10.82.138.36:8051`
 
 ### **Solução de Problemas**
 
 Se ainda houver problemas de conectividade:
 
 1. **Verificar rede WiFi**: Dispositivo na mesma rede que o servidor
-2. **Ping do servidor**: `ping 10.88.233.118` do dispositivo
+2. **Ping do servidor**: `ping 10.82.138.36` do dispositivo
 3. **Porta aberta**: Servidor rodando na porta `8051`
 4. **Firewall**: Verificar se não está bloqueando a conexão
 
@@ -101,12 +101,12 @@ Se ainda houver problemas de conectividade:
 
 ### **AuthService.cs**
 ```csharp
-private readonly string _baseUrl = "http://10.88.233.118:8051";
+private readonly string _baseUrl = "http://10.82.138.36:8051";
 ```
 
 ### **Endpoints da API**
-- **Login**: `POST http://10.88.233.118:8051/api/connect/token`
-- **Refresh**: `POST http://10.88.233.118:8051/api/connect/token`
+- **Login**: `POST http://10.82.138.36:8051/api/connect/token`
+- **Refresh**: `POST http://10.82.138.36:8051/api/connect/token`
 
 ## ⚡ Deploy Realizado
 
