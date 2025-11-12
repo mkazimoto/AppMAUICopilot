@@ -133,12 +133,7 @@ public partial class FormListViewModel : ObservableObject
         {
             CurrentPage = 1;
             
-            // Verificar autenticação antes de fazer a chamada
-            if (!await EnsureUserIsAuthenticatedAsync())
-            {
-                return;
-            }
-            
+         
             var response = await _formService.GetFormsAsync(CurrentFilter);
             
             Forms.Clear();
@@ -163,15 +158,8 @@ public partial class FormListViewModel : ObservableObject
         try
         {
             IsLoading = true;
-            CurrentPage++;
-            
-            // Verificar autenticação antes de fazer a chamada
-            if (!await EnsureUserIsAuthenticatedAsync())
-            {
-                CurrentPage--; // Revert page increment
-                return;
-            }
-            
+            CurrentPage++;            
+         
             // Usa o filtro atual mas com a nova página
             var filter = CurrentFilter.Clone();
             filter.Page = CurrentPage;
@@ -251,11 +239,6 @@ public partial class FormListViewModel : ObservableObject
             IsLoading = true;
             CurrentPage = 1;
 
-            if (!await EnsureUserIsAuthenticatedAsync())
-            {
-                return;
-            }
-
             // Cria filtro com título
             CurrentFilter = new FormFilter
             {
@@ -300,11 +283,6 @@ public partial class FormListViewModel : ObservableObject
         {
             IsLoading = true;
             CurrentPage = 1;
-
-            if (!await EnsureUserIsAuthenticatedAsync())
-            {
-                return;
-            }
 
             // Constrói o filtro com todos os critérios
             CurrentFilter = new FormFilter
@@ -430,8 +408,5 @@ public partial class FormListViewModel : ObservableObject
         }
     }
 
-    private async Task<bool> EnsureUserIsAuthenticatedAsync()
-    {
-        return true;
-    }
+
 }

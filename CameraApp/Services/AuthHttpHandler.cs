@@ -18,42 +18,52 @@ namespace CameraApp.Services
         /// </summary>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            // Primeiro, garante que o token é válido antes de enviar a requisição
-            await SetToken(request);
+            // A URL não é de autenticação ?
+            if (request.RequestUri != null &&
+                !request.RequestUri.AbsoluteUri.Contains(ApiConfig.Endpoints.Auth))
+            {
+              // Primeiro, garante que o token é válido antes de enviar a requisição
+              await SetToken(request);
+                
+            }
 
             // Envia a requisição original
             var response = await base.SendAsync(request, cancellationToken);
 
-            // Se recebeu 401 e ainda não está renovando token, tenta renovar
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized && !_isRefreshing)
+            if (request.RequestUri != null &&
+                !request.RequestUri.AbsoluteUri.Contains(ApiConfig.Endpoints.Auth))
             {
-                _isRefreshing = true;
-                try
+                // Se recebeu 401 e ainda não está renovando token, tenta renovar
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized && !_isRefreshing)
                 {
-                    var refreshToken = await SecureStorage.GetAsync("refresh_token");
-
-                    if (refreshToken != null)
+                    _isRefreshing = true;
+                    try
                     {
-                        // Tenta renovar o token
-                        var tokenRenewed = await _authService.RefreshTokenAsync(refreshToken.ToString());
+                        var refreshToken = await SecureStorage.GetAsync("refresh_token");
 
-                        if (tokenRenewed != null)
+                        if (refreshToken != null)
                         {
-                            await SetToken(request);
+                            // Tenta renovar o token
+                            var tokenRenewed = await _authService.RefreshTokenAsync(refreshToken.ToString());
 
-                            // Reenvia a requisição com o token renovado
-                            response = await base.SendAsync(request, cancellationToken);
-                        }
-                        else
-                        {
-                            // Se não conseguiu renovar, força logout
-                            await _authService.LogoutAsync();
+                            if (tokenRenewed != null)
+                            {
+                                await SetToken(request);
+
+                                // Reenvia a requisição com o token renovado
+                                response = await base.SendAsync(request, cancellationToken);
+                            }
+                            else
+                            {
+                                // Se não conseguiu renovar, força logout
+                                await _authService.LogoutAsync();
+                            }
                         }
                     }
-                }
-                finally
-                {
-                    _isRefreshing = false;
+                    finally
+                    {
+                        _isRefreshing = false;
+                    }
                 }
             }
 

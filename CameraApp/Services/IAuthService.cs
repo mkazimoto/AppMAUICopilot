@@ -8,7 +8,7 @@ namespace CameraApp.Services
         Task<AuthToken?> RefreshTokenAsync(string refreshToken);
         Task LogoutAsync();
         Task<bool> TryRestoreTokenAsync();
-        Task<bool> EnsureValidTokenAsync();
+
         bool IsAuthenticated { get; }
         string? CurrentToken { get; }
         event EventHandler<bool> AuthenticationChanged;

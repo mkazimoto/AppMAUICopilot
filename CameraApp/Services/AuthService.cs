@@ -174,21 +174,5 @@ namespace CameraApp.Services
       return false;
     }
 
-    public async Task<bool> EnsureValidTokenAsync()
-    {
-      // var accessToken = await SecureStorage.GetAsync("access_token");
-
-      // if (string.IsNullOrEmpty(accessToken))
-      // {
-      //   _logger.LogWarning("Nenhum token de acesso disponível");
-      //   return false;
-      // }
-
-      // // Atualiza o header de autorização da requisição
-      // _httpClient.DefaultRequestHeaders.Authorization =
-      //     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-
-      return true;
-    }
   }
 }
