@@ -70,6 +70,10 @@
             "Microsoft.Testing.Extensions.TrxReport": {
               "target": "Package",
               "version": "[1.4.3, )"
+            },
+            "NSubstitute": {
+              "target": "Package",
+              "version": "[5.3.0, )"
             }
           },
           "imports": [

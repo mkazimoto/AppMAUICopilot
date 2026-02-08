@@ -2,9 +2,9 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/MAUI
-/CameraApp/bin
-/CameraApp/obj
-/.vs
-/CameraApp.Test/bin
-/CameraApp.Test/obj
+.vs/
+**/.vs
+*.user
+*.suo
+**/bin/
+**/obj/
