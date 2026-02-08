@@ -3,6 +3,8 @@
 ################################################################################
 
 /.vs/MAUI
-/CameraApp/bin/Debug
+/CameraApp/bin
 /CameraApp/obj
 /.vs
+/CameraApp.Test/bin
+/CameraApp.Test/obj
