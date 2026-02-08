@@ -312,3 +312,8 @@ C:\git\AppMAUICopilot\CameraApp.Test\obj\Debug\net9.0\refint\CameraApp.Test.dll
 C:\git\AppMAUICopilot\CameraApp.Test\obj\Debug\net9.0\CameraApp.Test.pdb
 C:\git\AppMAUICopilot\CameraApp.Test\obj\Debug\net9.0\CameraApp.Test.genruntimeconfig.cache
 C:\git\AppMAUICopilot\CameraApp.Test\obj\Debug\net9.0\ref\CameraApp.Test.dll
+C:\git\AppMAUICopilot\CameraApp.Test\bin\Debug\net9.0\Castle.Core.dll
+C:\git\AppMAUICopilot\CameraApp.Test\bin\Debug\net9.0\NSubstitute.dll
+C:\git\AppMAUICopilot\CameraApp.Test\bin\Debug\net9.0\System.Diagnostics.EventLog.dll
+C:\git\AppMAUICopilot\CameraApp.Test\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Diagnostics.EventLog.Messages.dll
+C:\git\AppMAUICopilot\CameraApp.Test\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Diagnostics.EventLog.dll

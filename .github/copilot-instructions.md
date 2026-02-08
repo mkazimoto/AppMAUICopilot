@@ -9,9 +9,9 @@ Estas instruções orientam o uso do GitHub Copilot em projetos .NET MAUI, promo
 dotnet new maui -n MeuAppMaui
 ```
 
-- Altere o target framework para Android e iOS:
+- Altere o target framework para Net 9 (testes unitários), Android e iOS:
 ```
-<TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
+<TargetFrameworks>net9.0;net9.0-android;net9.0-ios</TargetFrameworks>
 ```		
 
 - Mantenha apenas as pastas Android e IOS:
