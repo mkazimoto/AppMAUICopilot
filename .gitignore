@@ -8,6 +8,8 @@ CameraApp/bin/*
 CameraApp/obj/*
 CameraApp.Test/bin/*
 CameraApp.Test/obj/*
+**/bin/*
+**/obj/*
 **/.vs
 *.user
 *.suo
