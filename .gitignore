@@ -6,5 +6,11 @@
 **/.vs
 *.user
 *.suo
-**/bin/
-**/obj/
+**/bin/*/
+**/obj/*/
+/CameraApp/bin/*
+/CameraApp/obj/*
+/CameraApp.Test/bin/*
+/CameraApp.Test/obj/*
+CameraApp.Test/bin/Debug/net9.0/*/	
+CameraApp.Test/bin/Debug/net9.0/CameraApp.dll
