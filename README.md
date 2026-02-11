@@ -2,6 +2,12 @@
 
 Este é um aplicativo .NET MAUI que permite tirar fotos usando a câmera do dispositivo ou selecionar imagens da galeria.
 
+<img width="288" height="646" alt="screenshot-camera" src="https://github.com/user-attachments/assets/3bb26049-7219-4415-8682-9147fa84f629" />
+
+<img width="288" height="645" alt="screenshot-mapa" src="https://github.com/user-attachments/assets/6867237f-12cd-4592-b4b0-fe6a72ba356e" />
+
+<img width="290" height="646" alt="screenshot-postura" src="https://github.com/user-attachments/assets/d4515a3a-a0aa-4786-9eb7-c63006877ede" />
+
 ## Funcionalidades
 
 - ✅ Tirar fotos usando a câmera
