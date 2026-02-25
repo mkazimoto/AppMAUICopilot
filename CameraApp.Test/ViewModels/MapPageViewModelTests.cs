@@ -57,7 +57,7 @@ public class MapPageViewModelTests
     public async Task GetLocationAsync_WhenLocationRetrieved_UpdatesProperties()
     {
         // Arrange
-        var mockLocation = CreateMockLocation(-23.550520, -46.633308); // São Paulo coordinates
+        var mockLocation = CreateMockLocation(-23.550520, -46.633308); // Sï¿½o Paulo coordinates
         _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
 
         // Act
@@ -302,7 +302,7 @@ public class MapPageViewModelTests
         // Assert
         Assert.IsTrue(decodedUrl.Contains("marker"));
         Assert.IsTrue(decodedUrl.Contains("circle"));
-        Assert.IsTrue(decodedUrl.Contains("Sua Localização"));
+        Assert.IsTrue(decodedUrl.Contains("Sua Localizaï¿½ï¿½o"));
     }
 
     [TestMethod]
@@ -313,7 +313,7 @@ public class MapPageViewModelTests
 
         // Assert - Check that the marker is not actually added to the map (not in the executable code)
         Assert.IsFalse(decodedUrl.Contains("L.marker"));
-        Assert.IsFalse(decodedUrl.Contains("Sua Localização"));
+        Assert.IsFalse(decodedUrl.Contains("Sua Localizaï¿½ï¿½o"));
     }
 
     #endregion
@@ -420,9 +420,9 @@ public class MapPageViewModelTests
     public async Task Workflow_MultipleLocationUpdates_MaintainsLatestLocation()
     {
         // Arrange
-        var location1 = CreateMockLocation(-23.550520, -46.633308); // São Paulo
+        var location1 = CreateMockLocation(-23.550520, -46.633308); // Sï¿½o Paulo
         var location2 = CreateMockLocation(-22.906847, -43.172896); // Rio
-        var location3 = CreateMockLocation(-15.826691, -47.921822); // Brasília
+        var location3 = CreateMockLocation(-15.826691, -47.921822); // Brasï¿½lia
 
         _locationService.GetCurrentLocationAsync().Returns(
             Task.FromResult<Location?>(location1),
@@ -434,11 +434,11 @@ public class MapPageViewModelTests
         await InvokeGetLocationAsync();
         await InvokeGetLocationAsync();
 
-        // Assert - Should have the last location (Brasília)
+        // Assert - Should have the last location (Brasï¿½lia)
         Assert.IsTrue(_viewModel.LocationText.Contains("-15.8") || _viewModel.LocationText.Contains("-15,8"));
         Assert.IsTrue(_viewModel.LocationText.Contains("-47.9") || _viewModel.LocationText.Contains("-47,9"));
 
-        // Act - Reset should show Brasília
+        // Act - Reset should show Brasï¿½lia
         InvokeResetMap();
         Assert.IsTrue(_viewModel.MapUrl.Contains("-15.8") || _viewModel.MapUrl.Contains("-15,8"));
     }
