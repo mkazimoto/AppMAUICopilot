@@ -54,7 +54,6 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ILocationService, LocationService>();
 		builder.Services.AddSingleton<IPostureService, PostureService>();
 		builder.Services.AddSingleton<IFormService, FormService>();
-		builder.Services.AddSingleton<IThemeService, ThemeService>();
 		
 		// Registrar App
 		builder.Services.AddSingleton<App>();

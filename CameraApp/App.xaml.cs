@@ -5,14 +5,11 @@ namespace CameraApp;
 public partial class App : Application
 {
 	private readonly IAuthService _authService;
-	private readonly IThemeService _themeService;
 
-	public App(IAuthService authService, IThemeService themeService)
+	public App(IAuthService authService)
 	{
 		InitializeComponent();
 		_authService = authService;
-		_themeService = themeService;
-		_themeService.Initialize();
 	}
 
 	protected override Window CreateWindow(IActivationState? activationState)
