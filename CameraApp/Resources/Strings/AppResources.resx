@@ -231,14 +231,91 @@
   </data>
 
   <!-- Câmera -->
+  <data name="Camera_AppTitle" xml:space="preserve">
+    <value>App de Câmera</value>
+  </data>
   <data name="Camera_TakePhoto" xml:space="preserve">
     <value>Tirar Foto</value>
+  </data>
+  <data name="Camera_Gallery" xml:space="preserve">
+    <value>Galeria</value>
+  </data>
+  <data name="Camera_ClearPhoto" xml:space="preserve">
+    <value>Limpar Foto</value>
+  </data>
+  <data name="Camera_NoPhotoMessage" xml:space="preserve">
+    <value>Nenhuma foto selecionada.&#x0a;Use os botões acima para tirar uma foto ou selecionar da galeria.</value>
   </data>
   <data name="Camera_SelectPhoto" xml:space="preserve">
     <value>Selecionar da Galeria</value>
   </data>
   <data name="Camera_Send" xml:space="preserve">
     <value>Enviar</value>
+  </data>
+
+  <!-- Filtros Avançados -->
+  <data name="Filter_Title" xml:space="preserve">
+    <value>Filtros Avançados</value>
+  </data>
+  <data name="Filter_Category" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="Filter_SelectCategory" xml:space="preserve">
+    <value>Selecione uma categoria</value>
+  </data>
+  <data name="Filter_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Filter_SelectStatus" xml:space="preserve">
+    <value>Selecione um status</value>
+  </data>
+  <data name="Filter_Period" xml:space="preserve">
+    <value>Período de Criação</value>
+  </data>
+  <data name="Filter_From" xml:space="preserve">
+    <value>De:</value>
+  </data>
+  <data name="Filter_Until" xml:space="preserve">
+    <value>até</value>
+  </data>
+  <data name="Filter_UntilLabel" xml:space="preserve">
+    <value>Até:</value>
+  </data>
+  <data name="Filter_CreatedBy" xml:space="preserve">
+    <value>Criado Por</value>
+  </data>
+  <data name="Filter_CreatedByPlaceholder" xml:space="preserve">
+    <value>Nome do usuário...</value>
+  </data>
+  <data name="Filter_ScriptType" xml:space="preserve">
+    <value>Tipo de Script</value>
+  </data>
+  <data name="Filter_OnlySequential" xml:space="preserve">
+    <value>Apenas scripts sequenciais</value>
+  </data>
+  <data name="Filter_Score" xml:space="preserve">
+    <value>Pontuação</value>
+  </data>
+  <data name="Filter_ScoreMin" xml:space="preserve">
+    <value>Mínimo:</value>
+  </data>
+  <data name="Filter_ScoreMax" xml:space="preserve">
+    <value>Máximo:</value>
+  </data>
+  <data name="Filter_OrderBy" xml:space="preserve">
+    <value>Ordenação</value>
+  </data>
+  <data name="Filter_OrderByTitle" xml:space="preserve">
+    <value>Ordenar por</value>
+  </data>
+  <data name="Filter_OrderAscending" xml:space="preserve">
+    <value>Ordem crescente</value>
+  </data>
+  <data name="Filter_ClearAll" xml:space="preserve">
+    <value>🗑️ Limpar Tudo</value>
+  </data>
+  <data name="Filter_Apply" xml:space="preserve">
+    <value>✓ Aplicar Filtros</value>
   </data>
 
   <!-- Geral -->

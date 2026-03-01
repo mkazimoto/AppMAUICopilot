@@ -95,9 +95,36 @@ public static class AppResources
     public static string Posture_HowToUse => Get("Posture_HowToUse");
 
     // ── Câmera ─────────────────────────────────────────────────────────────
+    public static string Camera_AppTitle => Get("Camera_AppTitle");
     public static string Camera_TakePhoto => Get("Camera_TakePhoto");
+    public static string Camera_Gallery => Get("Camera_Gallery");
+    public static string Camera_ClearPhoto => Get("Camera_ClearPhoto");
+    public static string Camera_NoPhotoMessage => Get("Camera_NoPhotoMessage");
     public static string Camera_SelectPhoto => Get("Camera_SelectPhoto");
     public static string Camera_Send => Get("Camera_Send");
+
+    // ── Filtros Avançados ─────────────────────────────────────────────────
+    public static string Filter_Title => Get("Filter_Title");
+    public static string Filter_Category => Get("Filter_Category");
+    public static string Filter_SelectCategory => Get("Filter_SelectCategory");
+    public static string Filter_Status => Get("Filter_Status");
+    public static string Filter_SelectStatus => Get("Filter_SelectStatus");
+    public static string Filter_Period => Get("Filter_Period");
+    public static string Filter_From => Get("Filter_From");
+    public static string Filter_Until => Get("Filter_Until");
+    public static string Filter_UntilLabel => Get("Filter_UntilLabel");
+    public static string Filter_CreatedBy => Get("Filter_CreatedBy");
+    public static string Filter_CreatedByPlaceholder => Get("Filter_CreatedByPlaceholder");
+    public static string Filter_ScriptType => Get("Filter_ScriptType");
+    public static string Filter_OnlySequential => Get("Filter_OnlySequential");
+    public static string Filter_Score => Get("Filter_Score");
+    public static string Filter_ScoreMin => Get("Filter_ScoreMin");
+    public static string Filter_ScoreMax => Get("Filter_ScoreMax");
+    public static string Filter_OrderBy => Get("Filter_OrderBy");
+    public static string Filter_OrderByTitle => Get("Filter_OrderByTitle");
+    public static string Filter_OrderAscending => Get("Filter_OrderAscending");
+    public static string Filter_ClearAll => Get("Filter_ClearAll");
+    public static string Filter_Apply => Get("Filter_Apply");
 
     // ── Geral ──────────────────────────────────────────────────────────────
     public static string Common_Loading => Get("Common_Loading");

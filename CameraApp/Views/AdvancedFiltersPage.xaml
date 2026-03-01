@@ -3,8 +3,9 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
+             xmlns:services="clr-namespace:CameraApp.Services"
              x:DataType="viewmodels:FormListViewModel"
-             Title="Filtros Avançados"
+             Title="{Binding [Filter_Title], Source={x:Static services:LocalizationResourceManager.Instance}}"
              BackgroundColor="{StaticResource Gray100}">
 
     <ScrollView>
@@ -15,12 +16,12 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="15">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Categoria"
+                    <Label Text="{Binding [Filter_Category], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}" />
                     
-                    <Picker Title="Selecione uma categoria"
+                    <Picker Title="{Binding [Filter_SelectCategory], Source={x:Static services:LocalizationResourceManager.Instance}}"
                             ItemsSource="{Binding Categories}"
                             ItemDisplayBinding="{Binding Name}"                           
                             SelectedItem="{Binding SelectedCategoryItem}"
@@ -33,12 +34,12 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="15">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Status"
+                    <Label Text="{Binding [Filter_Status], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}" />
                     
-                    <Picker Title="Selecione um status"
+                    <Picker Title="{Binding [Filter_SelectStatus], Source={x:Static services:LocalizationResourceManager.Instance}}"
                             ItemsSource="{Binding StatusItems}"
                             ItemDisplayBinding="{Binding Name}"
                             SelectedItem="{Binding SelectedStatusItem}"
@@ -51,7 +52,7 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="15">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Período de Criação"
+                    <Label Text="{Binding [Filter_Period], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}" />
@@ -64,7 +65,7 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="5">
-                            <Label Text="De:"
+                            <Label Text="{Binding [Filter_From], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                    FontSize="12"
                                    TextColor="{StaticResource Gray600}" />
                             <DatePicker Date="{Binding StartDate}"
@@ -73,13 +74,13 @@
                         </VerticalStackLayout>
 
                         <Label Grid.Column="1"
-                               Text="até"
+                               Text="{Binding [Filter_Until], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                VerticalOptions="End"
                                Margin="0,0,0,10"
                                TextColor="{StaticResource Gray600}" />
 
                         <VerticalStackLayout Grid.Column="2" Spacing="5">
-                            <Label Text="Até:"
+                            <Label Text="{Binding [Filter_UntilLabel], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                    FontSize="12"
                                    TextColor="{StaticResource Gray600}" />
                             <DatePicker Date="{Binding EndDate}"
@@ -95,12 +96,12 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="15">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Criado Por"
+                    <Label Text="{Binding [Filter_CreatedBy], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}" />
                     
-                    <Entry Placeholder="Nome do usuário..."
+                    <Entry Placeholder="{Binding [Filter_CreatedByPlaceholder], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            Text="{Binding CreatedBy}"
                            PlaceholderColor="{StaticResource Gray600}"
                            TextColor="{StaticResource Gray900}" />
@@ -112,7 +113,7 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="15">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Tipo de Script"
+                    <Label Text="{Binding [Filter_ScriptType], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}" />
@@ -120,7 +121,7 @@
                     <HorizontalStackLayout Spacing="20">
                         <CheckBox IsChecked="{Binding FilterSequentialScript}"
                                   Color="{StaticResource Primary}" />
-                        <Label Text="Apenas scripts sequenciais"
+                        <Label Text="{Binding [Filter_OnlySequential], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                VerticalOptions="Center"
                                TextColor="{StaticResource Gray900}" />
                     </HorizontalStackLayout>
@@ -132,7 +133,7 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="15">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Pontuação"
+                    <Label Text="{Binding [Filter_Score], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}" />
@@ -145,7 +146,7 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="5">
-                            <Label Text="Mínimo:"
+                            <Label Text="{Binding [Filter_ScoreMin], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                    FontSize="12"
                                    TextColor="{StaticResource Gray600}" />
                             <Entry Placeholder="0"
@@ -162,7 +163,7 @@
                                TextColor="{StaticResource Gray600}" />
 
                         <VerticalStackLayout Grid.Column="2" Spacing="5">
-                            <Label Text="Máximo:"
+                            <Label Text="{Binding [Filter_ScoreMax], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                    FontSize="12"
                                    TextColor="{StaticResource Gray600}" />
                             <Entry Placeholder="100"
@@ -180,12 +181,12 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="15">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Ordenação"
+                    <Label Text="{Binding [Filter_OrderBy], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}" />
                     
-                    <Picker Title="Ordenar por"
+                    <Picker Title="{Binding [Filter_OrderByTitle], Source={x:Static services:LocalizationResourceManager.Instance}}"
                             SelectedIndex="{Binding OrderByIndex}"
                             TextColor="{StaticResource Gray900}">
                         <Picker.Items>
@@ -200,7 +201,7 @@
                     <HorizontalStackLayout Spacing="20">
                         <CheckBox IsChecked="{Binding OrderAscending}"
                                   Color="{StaticResource Primary}" />
-                        <Label Text="Ordem crescente"
+                        <Label Text="{Binding [Filter_OrderAscending], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                VerticalOptions="Center"
                                TextColor="{StaticResource Gray900}" />
                     </HorizontalStackLayout>
@@ -215,7 +216,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0"
-                        Text="🗑️ Limpar Tudo"
+                        Text="{Binding [Filter_ClearAll], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding ClearAdvancedFiltersCommand}"
                         BackgroundColor="{StaticResource Secondary}"
                         TextColor="White"
@@ -223,7 +224,7 @@
                         Padding="0,15" />
 
                 <Button Grid.Column="1"
-                        Text="✓ Aplicar Filtros"
+                        Text="{Binding [Filter_Apply], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding ApplyAdvancedFiltersCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
