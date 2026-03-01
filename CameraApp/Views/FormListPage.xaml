@@ -4,8 +4,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
              xmlns:models="clr-namespace:CameraApp.Models"
+             xmlns:services="clr-namespace:CameraApp.Services"
              x:DataType="viewmodels:FormListViewModel"
-             Title="Formulários">
+             Title="{Binding [FormList_Title], Source={x:Static services:LocalizationResourceManager.Instance}}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -46,7 +47,7 @@
                                Margin="0,0,5,0" />
 
                         <Entry Grid.Column="1"
-                               Placeholder="Buscar por título..."
+                               Placeholder="{Binding [FormList_SearchPlaceholder], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                Text="{Binding SearchTitle}"
                                TextColor="{StaticResource Gray900}"
                                PlaceholderColor="{StaticResource Gray600}"
@@ -94,7 +95,7 @@
 
             <!-- Botão Filtros Avançados -->
             <Button Grid.Column="1"
-                    Text="⚙️ Filtros"
+                    Text="{Binding [FormList_AdvancedFilters], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     Command="{Binding OpenAdvancedFiltersCommand}"
                     BackgroundColor="White"
                     TextColor="{StaticResource Primary}"
@@ -105,7 +106,7 @@
 
             <!-- Botão Novo -->
             <Button Grid.Column="2"
-                    Text="+ Novo"
+                    Text="{Binding [FormList_New], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     Command="{Binding CreateNewFormCommand}"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="White"
@@ -114,7 +115,7 @@
 
             <!-- Botão Limpar Filtros -->
             <Button Grid.Column="3"
-                    Text="🗑️ Limpar"
+                    Text="{Binding [FormList_ClearFilters], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     Command="{Binding ClearFiltersCommand}"
                     BackgroundColor="{StaticResource Secondary}"
                     TextColor="White"
@@ -172,7 +173,7 @@
                                     <StackLayout Grid.Row="1" Grid.ColumnSpan="2"
                                                  Orientation="Horizontal"
                                                  Margin="0,5">
-                                        <Label Text="Categoria:"
+                                        <Label Text="{Binding [FormList_Category], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                                FontSize="12"
                                                TextColor="{StaticResource Gray600}" />
                                         <Label Text="{Binding CategoryId}"
@@ -180,7 +181,7 @@
                                                FontAttributes="Bold"
                                                TextColor="{StaticResource Gray900}" />
                                         
-                                        <Label Text="Status:"
+                                        <Label Text="{Binding [FormList_Status], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                                FontSize="12"
                                                TextColor="{StaticResource Gray600}"
                                                Margin="15,0,0,0" />
@@ -194,7 +195,7 @@
                                     <StackLayout Grid.Row="2" Grid.ColumnSpan="2"
                                                  Orientation="Horizontal"
                                                  Margin="0,5">
-                                        <Label Text="Pontuação:"
+                                        <Label Text="{Binding [FormList_Score], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                                FontSize="12"
                                                TextColor="{StaticResource Gray600}" />
                                         <Label Text="{Binding TotalScore}"
@@ -202,7 +203,7 @@
                                                FontAttributes="Bold"
                                                TextColor="{StaticResource Primary}" />
                                         
-                                        <Label Text="Sequencial:"
+                                        <Label Text="{Binding [FormList_Sequential], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                                FontSize="12"
                                                TextColor="{StaticResource Gray600}"
                                                Margin="15,0,0,0" />
@@ -216,14 +217,14 @@
                                     <StackLayout Grid.Row="3" Grid.ColumnSpan="2"
                                                  Orientation="Horizontal"
                                                  Margin="0,5">
-                                        <Label Text="Criado em:"
+                                        <Label Text="{Binding [FormList_CreatedAt], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                                FontSize="11"
                                                TextColor="{StaticResource Gray500}" />
                                         <Label Text="{Binding RecCreatedOn, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
                                                FontSize="11"
                                                TextColor="{StaticResource Gray700}" />
                                         
-                                        <Label Text="por"
+                                        <Label Text="{Binding [FormList_By], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                                FontSize="11"
                                                TextColor="{StaticResource Gray500}"
                                                Margin="5,0" />
@@ -252,7 +253,7 @@
                     <StackLayout HorizontalOptions="Center"
                                  VerticalOptions="Center"
                                  Padding="20">
-                        <Label Text="Nenhum formulário encontrado"
+                        <Label Text="{Binding [FormList_Empty], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                FontSize="16"
                                TextColor="{StaticResource Gray500}"
                                HorizontalOptions="Center" />                        

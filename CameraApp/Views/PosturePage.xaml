@@ -3,6 +3,7 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
+             xmlns:services="clr-namespace:CameraApp.Services"
              x:DataType="viewmodels:PosturePageViewModel"
              Title="Monitor de Postura">
 
@@ -15,7 +16,7 @@
                     <RoundRectangle CornerRadius="10"/>
                 </Border.StrokeShape>
                 <StackLayout Spacing="10">
-                    <Label Text="Status do Monitoramento" 
+                    <Label Text="{Binding [Posture_MonitoringStatus], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                            FontSize="18" 
                            FontAttributes="Bold" 
                            HorizontalOptions="Center"/>
@@ -35,14 +36,14 @@
             <!-- Controles -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                 <Button Grid.Column="0"
-                        Text="Iniciar"
+                        Text="{Binding [Posture_Start], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding StartMonitoringCommand}"
                         IsEnabled="{Binding IsMonitoring, Converter={StaticResource InvertedBoolConverter}}"
                         BackgroundColor="Green"
                         TextColor="White"/>
                 
                 <Button Grid.Column="1"
-                        Text="Parar"
+                        Text="{Binding [Posture_Stop], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding StopMonitoringCommand}"
                         IsEnabled="{Binding IsMonitoring}"
                         BackgroundColor="Red"
@@ -55,7 +56,7 @@
                     <RoundRectangle CornerRadius="10"/>
                 </Border.StrokeShape>
                 <StackLayout Spacing="10">
-                    <Label Text="Dados do Acelerômetro" 
+                    <Label Text="{Binding [Posture_AccelerometerData], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                            FontSize="16" 
                            FontAttributes="Bold" 
                            HorizontalOptions="Center"/>
@@ -70,7 +71,7 @@
                         <Label Grid.Row="2" Grid.Column="0" Text="Z:" FontAttributes="Bold"/>
                         <Label Grid.Row="2" Grid.Column="1" Text="{Binding AccelerometerZ, StringFormat='{0:F3}'}"/>
                         
-                        <Label Grid.Row="3" Grid.Column="0" Text="Inclinação:" FontAttributes="Bold"/>
+                        <Label Grid.Row="3" Grid.Column="0" Text="{Binding [Posture_Inclination], Source={x:Static services:LocalizationResourceManager.Instance}}" FontAttributes="Bold"/>
                         <Label Grid.Row="3" Grid.Column="1" Text="{Binding Inclination, StringFormat='{0:F1}°'}"/>
                     </Grid>
                 </StackLayout>
@@ -82,7 +83,7 @@
                     <RoundRectangle CornerRadius="10"/>
                 </Border.StrokeShape>
                 <StackLayout Spacing="15">
-                    <Label Text="Configurações" 
+                    <Label Text="{Binding [Posture_Settings], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                            FontSize="16" 
                            FontAttributes="Bold" 
                            HorizontalOptions="Center"/>
@@ -94,7 +95,7 @@
                                 Maximum="1.0" 
                                 Value="{Binding Sensitivity}"
                                 ThumbColor="Blue"/>
-                        <Label Text="Menor valor = mais sensível" 
+                        <Label Text="{Binding [Posture_SensitivityHint], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                                FontSize="12" 
                                TextColor="Gray" 
                                HorizontalOptions="Center"/>
@@ -107,7 +108,7 @@
                                 Maximum="15" 
                                 Value="{Binding AlertDelay}"
                                 ThumbColor="Orange"/>
-                        <Label Text="Tempo antes de disparar alerta" 
+                        <Label Text="{Binding [Posture_AlertTimeHint], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                                FontSize="12" 
                                TextColor="Gray" 
                                HorizontalOptions="Center"/>
@@ -123,13 +124,13 @@
                 <StackLayout Spacing="10">
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                         <Label Grid.Column="0"
-                               Text="Estatísticas de Alertas" 
+                               Text="{Binding [Posture_AlertStats], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                                FontSize="16" 
                                FontAttributes="Bold" 
                                VerticalOptions="Center"/>
                         
                         <Button Grid.Column="1"
-                                Text="Reset"
+                                Text="{Binding [Posture_Reset], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                 Command="{Binding ResetStatsCommand}"
                                 BackgroundColor="Gray"
                                 TextColor="White"
@@ -138,13 +139,13 @@
                     </Grid>
                     
                     <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="5">
-                        <Label Grid.Row="0" Grid.Column="0" Text="Total de alertas:" FontAttributes="Bold"/>
+                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding [Posture_TotalAlerts], Source={x:Static services:LocalizationResourceManager.Instance}}" FontAttributes="Bold"/>
                         <Label Grid.Row="0" Grid.Column="1" Text="{Binding AlertCount}"/>
                         
-                        <Label Grid.Row="1" Grid.Column="0" Text="Último alerta:" FontAttributes="Bold"/>
+                        <Label Grid.Row="1" Grid.Column="0" Text="{Binding [Posture_LastAlert], Source={x:Static services:LocalizationResourceManager.Instance}}" FontAttributes="Bold"/>
                         <Label Grid.Row="1" Grid.Column="1" Text="{Binding LastAlertTime, StringFormat='{0:HH:mm:ss}'}"/>
                         
-                        <Label Grid.Row="2" Grid.Column="0" Text="Mensagem:" FontAttributes="Bold"/>
+                        <Label Grid.Row="2" Grid.Column="0" Text="{Binding [Posture_Message], Source={x:Static services:LocalizationResourceManager.Instance}}" FontAttributes="Bold"/>
                         <Label Grid.Row="2" Grid.Column="1" 
                                Text="{Binding LastAlertMessage}" 
                                FontSize="12"
@@ -159,7 +160,7 @@
                     <RoundRectangle CornerRadius="10"/>
                 </Border.StrokeShape>
                 <StackLayout Spacing="10">
-                    <Label Text="Como usar:" 
+                    <Label Text="{Binding [Posture_HowToUse], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                            FontSize="16" 
                            FontAttributes="Bold" 
                            HorizontalOptions="Center"/>
@@ -168,13 +169,13 @@
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span Text="1. "/>
-                                <Span Text="Coloque o celular no bolso da camisa com a tela voltada para o peito" FontAttributes="Bold"/>
+                                <Span Text="{Binding [Posture_InstructionStep1], Source={x:Static services:LocalizationResourceManager.Instance}}" FontAttributes="Bold"/>
                                 <Span Text="&#x0a;&#x0a;2. "/>
-                                <Span Text="Toque em 'Iniciar' para começar o monitoramento" FontAttributes="Bold"/>
+                                <Span Text="{Binding [Posture_InstructionStep2], Source={x:Static services:LocalizationResourceManager.Instance}}" FontAttributes="Bold"/>
                                 <Span Text="&#x0a;&#x0a;3. "/>
-                                <Span Text="O aplicativo vibrará quando detectar postura incorreta" FontAttributes="Bold"/>
+                                <Span Text="{Binding [Posture_InstructionStep3], Source={x:Static services:LocalizationResourceManager.Instance}}" FontAttributes="Bold"/>
                                 <Span Text="&#x0a;&#x0a;4. "/>
-                                <Span Text="Ajuste a sensibilidade conforme necessário" FontAttributes="Bold"/>
+                                <Span Text="{Binding [Posture_InstructionStep4], Source={x:Static services:LocalizationResourceManager.Instance}}" FontAttributes="Bold"/>
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>

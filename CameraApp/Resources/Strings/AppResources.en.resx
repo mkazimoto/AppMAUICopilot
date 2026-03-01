@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- App general -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>TOTVS Camera App</value>
+  </data>
+  <data name="AppSubtitle" xml:space="preserve">
+    <value>Camera System with RM Authentication</value>
+  </data>
+
+  <!-- Login -->
+  <data name="Login_AccessData" xml:space="preserve">
+    <value>Access Data</value>
+  </data>
+  <data name="Login_User" xml:space="preserve">
+    <value>User *</value>
+  </data>
+  <data name="Login_UserPlaceholder" xml:space="preserve">
+    <value>Enter your username</value>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Password *</value>
+  </data>
+  <data name="Login_PasswordPlaceholder" xml:space="preserve">
+    <value>Enter your password</value>
+  </data>
+  <data name="Login_ServiceAlias" xml:space="preserve">
+    <value>Service Alias (Optional)</value>
+  </data>
+  <data name="Login_ServiceAliasHint" xml:space="preserve">
+    <value>Configure only if necessary for your environment</value>
+  </data>
+  <data name="Login_Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Login_SignIn" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="Login_Authenticated" xml:space="preserve">
+    <value>✅ Successfully Authenticated!</value>
+  </data>
+  <data name="Login_AuthenticatedMessage" xml:space="preserve">
+    <value>You are connected to the TOTVS RM APIs</value>
+  </data>
+  <data name="Login_SignOut" xml:space="preserve">
+    <value>Sign Out</value>
+  </data>
+  <data name="Login_Authenticating" xml:space="preserve">
+    <value>Authenticating...</value>
+  </data>
+
+  <!-- Forms List -->
+  <data name="FormList_Title" xml:space="preserve">
+    <value>Forms</value>
+  </data>
+  <data name="FormList_SearchPlaceholder" xml:space="preserve">
+    <value>Search by title...</value>
+  </data>
+  <data name="FormList_ActiveFilters" xml:space="preserve">
+    <value>active filters</value>
+  </data>
+  <data name="FormList_AdvancedFilters" xml:space="preserve">
+    <value>⚙️ Filters</value>
+  </data>
+  <data name="FormList_New" xml:space="preserve">
+    <value>+ New</value>
+  </data>
+  <data name="FormList_ClearFilters" xml:space="preserve">
+    <value>🗑️ Clear</value>
+  </data>
+  <data name="FormList_Category" xml:space="preserve">
+    <value>Category:</value>
+  </data>
+  <data name="FormList_Status" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="FormList_Score" xml:space="preserve">
+    <value>Score:</value>
+  </data>
+  <data name="FormList_Sequential" xml:space="preserve">
+    <value>Sequential:</value>
+  </data>
+  <data name="FormList_CreatedAt" xml:space="preserve">
+    <value>Created at:</value>
+  </data>
+  <data name="FormList_By" xml:space="preserve">
+    <value>by</value>
+  </data>
+  <data name="FormList_Empty" xml:space="preserve">
+    <value>No forms found</value>
+  </data>
+
+  <!-- Form Edit -->
+  <data name="FormEdit_Subtitle" xml:space="preserve">
+    <value>Fill in the form information</value>
+  </data>
+  <data name="FormEdit_TitleField" xml:space="preserve">
+    <value>Form Title *</value>
+  </data>
+  <data name="FormEdit_TitlePlaceholder" xml:space="preserve">
+    <value>Enter the form title</value>
+  </data>
+  <data name="FormEdit_Category" xml:space="preserve">
+    <value>Category *</value>
+  </data>
+  <data name="FormEdit_Status" xml:space="preserve">
+    <value>Status *</value>
+  </data>
+  <data name="FormEdit_Score" xml:space="preserve">
+    <value>Total Score</value>
+  </data>
+  <data name="FormEdit_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="FormEdit_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+
+  <!-- Map -->
+  <data name="Map_CurrentLocation" xml:space="preserve">
+    <value>Your Current Location</value>
+  </data>
+  <data name="Map_LocationUnavailable" xml:space="preserve">
+    <value>Location not available</value>
+  </data>
+  <data name="Map_UpdateLocation" xml:space="preserve">
+    <value>🗺️ Update Location</value>
+  </data>
+  <data name="Map_ResetZoom" xml:space="preserve">
+    <value>🌍 Reset Zoom</value>
+  </data>
+
+  <!-- Posture -->
+  <data name="Posture_MonitoringStatus" xml:space="preserve">
+    <value>Monitoring Status</value>
+  </data>
+  <data name="Posture_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Posture_Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Posture_AccelerometerData" xml:space="preserve">
+    <value>Accelerometer Data</value>
+  </data>
+  <data name="Posture_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Posture_SensitivityHint" xml:space="preserve">
+    <value>Lower value = more sensitive</value>
+  </data>
+  <data name="Posture_AlertTimeHint" xml:space="preserve">
+    <value>Time before triggering alert</value>
+  </data>
+  <data name="Posture_AlertStats" xml:space="preserve">
+    <value>Alert Statistics</value>
+  </data>
+  <data name="Posture_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Posture_TotalAlerts" xml:space="preserve">
+    <value>Total alerts:</value>
+  </data>
+  <data name="Posture_LastAlert" xml:space="preserve">
+    <value>Last alert:</value>
+  </data>
+  <data name="Posture_Message" xml:space="preserve">
+    <value>Message:</value>
+  </data>
+  <data name="Posture_HowToUse" xml:space="preserve">
+    <value>How to use:</value>
+  </data>
+
+  <!-- Camera -->
+  <data name="Camera_TakePhoto" xml:space="preserve">
+    <value>Take Photo</value>
+  </data>
+  <data name="Camera_SelectPhoto" xml:space="preserve">
+    <value>Select from Gallery</value>
+  </data>
+  <data name="Camera_Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+
+  <!-- Common -->
+  <data name="Common_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Common_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Common_Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Common_No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Common_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Common_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Common_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Common_Processing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+
+  <!-- Form Edit (additional) -->
+  <data name="FormEdit_ScoreHint" xml:space="preserve">
+    <value>Maximum score that can be obtained in this form</value>
+  </data>
+  <data name="FormEdit_SequentialScript" xml:space="preserve">
+    <value>Sequential Script</value>
+  </data>
+  <data name="FormEdit_SequentialScriptHint" xml:space="preserve">
+    <value>Questions must be answered in order</value>
+  </data>
+  <data name="FormEdit_SystemInfo" xml:space="preserve">
+    <value>System Information</value>
+  </data>
+  <data name="FormEdit_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+
+  <!-- Posture (additional) -->
+  <data name="Posture_Inclination" xml:space="preserve">
+    <value>Inclination:</value>
+  </data>
+  <data name="Posture_InstructionStep1" xml:space="preserve">
+    <value>Place the phone in your shirt pocket with the screen facing your chest</value>
+  </data>
+  <data name="Posture_InstructionStep2" xml:space="preserve">
+    <value>Tap 'Start' to begin monitoring</value>
+  </data>
+  <data name="Posture_InstructionStep3" xml:space="preserve">
+    <value>The app will vibrate when it detects incorrect posture</value>
+  </data>
+  <data name="Posture_InstructionStep4" xml:space="preserve">
+    <value>Adjust the sensitivity as needed</value>
+  </data>
+</root>
