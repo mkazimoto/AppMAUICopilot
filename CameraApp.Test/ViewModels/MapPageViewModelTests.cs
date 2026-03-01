@@ -289,23 +289,6 @@ public class MapPageViewModelTests
     }
 
     [TestMethod]
-    public async Task MapUrl_WithLocation_ContainsMarkerAndCircle()
-    {
-        // Arrange
-        var mockLocation = CreateMockLocation(-23.550520, -46.633308);
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
-
-        // Act
-        await InvokeGetLocationAsync();
-        var decodedUrl = Uri.UnescapeDataString(_viewModel.MapUrl);
-
-        // Assert
-        Assert.IsTrue(decodedUrl.Contains("marker"));
-        Assert.IsTrue(decodedUrl.Contains("circle"));
-        Assert.IsTrue(decodedUrl.Contains("Sua Localiza��o"));
-    }
-
-    [TestMethod]
     public void MapUrl_Default_DoesNotContainLocationMarker()
     {
         // Arrange

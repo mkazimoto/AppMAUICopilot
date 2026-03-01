@@ -77,22 +77,6 @@ dotnet build -t:Run -f net9.0-android
 - Nunca armazene segredos ou chaves diretamente no código.
 - Use armazenamento seguro (Secure Storage) para dados sensíveis.
 
-## Skills
-
-As seguintes skills estão disponíveis para auxiliar no desenvolvimento:
-
-### criar-app-maui
-Cria um novo projeto MAUI com configuração básica, incluindo setup de target frameworks e instalação de pacotes essenciais.
-
-**Arquivo:** `.github/skills/criar-app-maui/SKILL.md`
-
-### criar-teste-unitario
-Cria testes unitários para projetos MAUI usando MSTest, incluindo testes para ViewModels, Services, Converters e outros componentes.
-
-**Arquivo:** `.github/skills/criar-teste-unitario/SKILL.md`
-
-Para mais informações sobre as skills disponíveis, consulte `.github/skills/SKILLS.md`
-
 ---
 
 Siga estas práticas para garantir aplicativos MAUI robustos, escaláveis e fáceis de manter.
