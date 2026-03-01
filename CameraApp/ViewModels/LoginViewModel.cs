@@ -1,5 +1,4 @@
 using CameraApp.Services;
-using CameraApp.Resources.Strings;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -31,7 +30,7 @@ namespace CameraApp.ViewModels
         private bool isAuthenticated = false;
 
         [ObservableProperty]
-        private string loginButtonText = AppResources.ResourceManager.GetString("VM_LoginButton_Enter", AppResources.Culture) ?? "Entrar";
+        private string loginButtonText = "Entrar";
 
         public LoginViewModel(IAuthService authService, ILogger<LoginViewModel> logger)
         {
@@ -62,13 +61,13 @@ namespace CameraApp.ViewModels
                 // Validações básicas
                 if (string.IsNullOrWhiteSpace(Username))
                 {
-                    ErrorMessage = AppResources.ResourceManager.GetString("VM_Error_UsernameRequired", AppResources.Culture) ?? "Por favor, informe o nome de usuário.";
+                    ErrorMessage = "Por favor, informe o nome de usuário.";
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(Password))
                 {
-                    ErrorMessage = AppResources.ResourceManager.GetString("VM_Error_PasswordRequired", AppResources.Culture) ?? "Por favor, informe a senha.";
+                    ErrorMessage = "Por favor, informe a senha.";
                     return;
                 }
 
@@ -84,12 +83,12 @@ namespace CameraApp.ViewModels
                 }
                 else
                 {
-                    ErrorMessage = AppResources.ResourceManager.GetString("VM_Error_InvalidCredentials", AppResources.Culture) ?? "Credenciais inválidas. Verifique o usuário e senha.";
+                    ErrorMessage = "Credenciais inválidas. Verifique o usuário e senha.";
                 }
             }
             catch (Exception ex)
             {
-                ErrorMessage = AppResources.ResourceManager.GetString("VM_Error_LoginFailed", AppResources.Culture) ?? "Erro ao fazer login. Tente novamente.";
+                ErrorMessage = "Erro ao fazer login. Tente novamente.";
                 _logger.LogError(ex, "Erro durante o login");
             }
             finally
@@ -105,11 +104,7 @@ namespace CameraApp.ViewModels
 
             // Exibir confirmação antes de prosseguir
             bool confirm = await MainThread.InvokeOnMainThreadAsync(async () =>
-                await (Shell.Current?.DisplayAlert(
-                    AppResources.ResourceManager.GetString("VM_Confirm_Title", AppResources.Culture) ?? "Confirmação",
-                    AppResources.ResourceManager.GetString("VM_Confirm_Logout", AppResources.Culture) ?? "Deseja realmente sair?",
-                    AppResources.ResourceManager.GetString("VM_Confirm_Yes", AppResources.Culture) ?? "Sair",
-                    AppResources.ResourceManager.GetString("VM_Confirm_No", AppResources.Culture) ?? "Cancelar") ?? Task.FromResult(false)));
+                await (Shell.Current?.DisplayAlert("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
             if (!confirm)
             {
                 return; // Usuário cancelou
@@ -130,7 +125,7 @@ namespace CameraApp.ViewModels
             }
             catch (Exception ex)
             {
-                ErrorMessage = AppResources.ResourceManager.GetString("VM_Error_LogoutFailed", AppResources.Culture) ?? "Erro ao fazer logout.";
+                ErrorMessage = "Erro ao fazer logout.";
                 _logger.LogError(ex, "Erro durante o logout");
             }
             finally
@@ -155,15 +150,13 @@ namespace CameraApp.ViewModels
             
             if (isAuthenticated)
             {
-                ErrorMessage = AppResources.ResourceManager.GetString("VM_Message_LoginSuccess", AppResources.Culture) ?? "Login realizado com sucesso!";
+                ErrorMessage = "Login realizado com sucesso!";
             }
         }
 
         private void UpdateButtonText()
         {
-            LoginButtonText = IsAuthenticated
-                ? (AppResources.ResourceManager.GetString("VM_LoginButton_Logout", AppResources.Culture) ?? "Sair")
-                : (AppResources.ResourceManager.GetString("VM_LoginButton_Enter", AppResources.Culture) ?? "Entrar");
+            LoginButtonText = IsAuthenticated ? "Sair" : "Entrar";
         }
 
         private async Task TryRestoreSessionAsync()
