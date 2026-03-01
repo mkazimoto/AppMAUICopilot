@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="AppShell_Title" xml:space="preserve"><value>TOTVS RM Login</value></data>
+  <data name="LoginPage_Title" xml:space="preserve"><value>TOTVS RM - Login</value></data>
+  <data name="Login_Header_Title" xml:space="preserve"><value>TOTVS Camera App</value></data>
+  <data name="Login_Header_Subtitle" xml:space="preserve"><value>Sistema de Câmera com Autenticação RM</value></data>
+  <data name="Login_AccessData" xml:space="preserve"><value>Dados de Acesso</value></data>
+  <data name="Login_Username" xml:space="preserve"><value>Usuário *</value></data>
+  <data name="Login_UsernamePlaceholder" xml:space="preserve"><value>Digite seu usuário</value></data>
+  <data name="Login_Password" xml:space="preserve"><value>Senha *</value></data>
+  <data name="Login_PasswordPlaceholder" xml:space="preserve"><value>Digite sua senha</value></data>
+  <data name="Login_ServiceAlias" xml:space="preserve"><value>Alias do Serviço (Opcional)</value></data>
+  <data name="Login_ServiceAliasPlaceholder" xml:space="preserve"><value>Ex: CorporeRM</value></data>
+  <data name="Login_ServiceAliasHint" xml:space="preserve"><value>Configure apenas se necessário para seu ambiente</value></data>
+  <data name="Login_Clear" xml:space="preserve"><value>Limpar</value></data>
+  <data name="Login_Enter" xml:space="preserve"><value>Entrar</value></data>
+  <data name="Login_Logout" xml:space="preserve"><value>Sair</value></data>
+  <data name="Login_AuthenticatedTitle" xml:space="preserve"><value>✅ Autenticado com Sucesso!</value></data>
+  <data name="Login_AuthenticatedSubtitle" xml:space="preserve"><value>Você está conectado às APIs do TOTVS RM</value></data>
+  <data name="Login_Authenticating" xml:space="preserve"><value>Autenticando...</value></data>
+
+  <data name="VM_LoginButton_Enter" xml:space="preserve"><value>Entrar</value></data>
+  <data name="VM_LoginButton_Logout" xml:space="preserve"><value>Sair</value></data>
+  <data name="VM_Error_UsernameRequired" xml:space="preserve"><value>Por favor, informe o nome de usuário.</value></data>
+  <data name="VM_Error_PasswordRequired" xml:space="preserve"><value>Por favor, informe a senha.</value></data>
+  <data name="VM_Error_InvalidCredentials" xml:space="preserve"><value>Credenciais inválidas. Verifique o usuário e senha.</value></data>
+  <data name="VM_Error_LoginFailed" xml:space="preserve"><value>Erro ao fazer login. Tente novamente.</value></data>
+  <data name="VM_Error_LogoutFailed" xml:space="preserve"><value>Erro ao fazer logout.</value></data>
+  <data name="VM_Message_LoginSuccess" xml:space="preserve"><value>Login realizado com sucesso!</value></data>
+  <data name="VM_Confirm_Title" xml:space="preserve"><value>Confirmação</value></data>
+  <data name="VM_Confirm_Logout" xml:space="preserve"><value>Deseja realmente sair?</value></data>
+  <data name="VM_Confirm_Yes" xml:space="preserve"><value>Sair</value></data>
+  <data name="VM_Confirm_No" xml:space="preserve"><value>Cancelar</value></data>
+</root>
