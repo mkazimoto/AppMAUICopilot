@@ -1,13 +1,6 @@
 ---
 name: maui-theming
-description: >
-  Guide for theming .NET MAUI apps—light/dark mode support, AppThemeBinding,
-  dynamic resources, ResourceDictionary theme switching, and system theme detection.
-  USE FOR: "dark mode", "light mode", "theming", "AppThemeBinding", "theme switching",
-  "ResourceDictionary theme", "dynamic resources", "system theme detection",
-  "color scheme", "app theme".
-  DO NOT USE FOR: localization or language switching (use maui-localization),
-  accessibility visual adjustments (use maui-accessibility), or app icons (use maui-app-icons-splash).
+description: Guide for theming .NET MAUI apps — light/dark mode support, AppThemeBinding, dynamic resources, ResourceDictionary theme switching, and system theme detection.
 ---
 
 # .NET MAUI Theming

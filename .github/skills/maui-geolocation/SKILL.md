@@ -1,14 +1,6 @@
 ---
 name: maui-geolocation
-description: >
-  Add geolocation capabilities to .NET MAUI apps using Microsoft.Maui.Devices.Sensors.
-  Covers one-shot and continuous location, platform permissions (Android, iOS, macOS, Windows),
-  accuracy levels, CancellationToken usage, mock-location detection, and a DI-friendly service wrapper.
-  USE FOR: "geolocation", "GPS location", "get current location", "location permission",
-  "continuous location", "location tracking", "GeolocationRequest", "mock location",
-  "latitude longitude MAUI".
-  DO NOT USE FOR: displaying locations on a map (use maui-maps),
-  general permission handling (use maui-permissions), or geocoding addresses (use maui-maps).
+description: Add geolocation capabilities to .NET MAUI apps using Microsoft.Maui.Devices.Sensors. Covers one-shot and continuous location, platform permissions, accuracy levels, mock-location detection, and a DI-friendly service wrapper.
 ---
 
 # .NET MAUI Geolocation

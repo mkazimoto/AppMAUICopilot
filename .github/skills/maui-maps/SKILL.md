@@ -1,14 +1,6 @@
 ---
 name: maui-maps
-description: >
-  Guidance for adding map controls, pins, polygons, polylines, geocoding,
-  Google Maps API key configuration, and platform setup in .NET MAUI apps
-  using Microsoft.Maui.Controls.Maps.
-  USE FOR: "add map", "map control", "map pins", "polygons on map", "polylines",
-  "geocoding", "Google Maps API key", "Microsoft.Maui.Controls.Maps", "map setup",
-  "reverse geocoding", "map region".
-  DO NOT USE FOR: getting device GPS coordinates (use maui-geolocation),
-  custom drawing overlays (use maui-graphics-drawing), or location permissions only (use maui-permissions).
+description: Guidance for adding map controls, pins, polygons, polylines, geocoding, Google Maps API key configuration, and platform setup in .NET MAUI apps using Microsoft.Maui.Controls.Maps.
 ---
 
 # .NET MAUI Maps Skill

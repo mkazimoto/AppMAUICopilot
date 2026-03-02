@@ -173,7 +173,7 @@ public partial class FormEditViewModel : ObservableObject
         var currentPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
         if (currentPage == null) return;
 
-        var confirm = await currentPage.DisplayAlert("Confirmar", 
+        var confirm = await currentPage.DisplayAlertAsync("Confirmar", 
             "Tem certeza que deseja excluir este formulário?", "Sim", "Não");
 
         if (!confirm) return;
@@ -221,7 +221,7 @@ public partial class FormEditViewModel : ObservableObject
     {
         if (Application.Current?.Windows?.FirstOrDefault()?.Page is Page currentPage)
         {
-            await currentPage.DisplayAlert(title, message, "OK");
+            await currentPage.DisplayAlertAsync(title, message, "OK");
         }
     }
 

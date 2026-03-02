@@ -1,13 +1,6 @@
 ---
 name: maui-unit-testing
-description: >
-  xUnit testing guidance for .NET MAUI apps — ViewModel testing, mocking MAUI
-  services, test project setup, code coverage, and on-device test runners.
-  USE FOR: "unit test MAUI", "xUnit test", "ViewModel testing", "mock MAUI services",
-  "test project setup", "code coverage", "on-device test runner", "test MAUI app",
-  "IServiceProvider mock", "Moq MAUI".
-  DO NOT USE FOR: UI automation testing (use appium-automation),
-  performance profiling (use maui-performance), or dependency injection setup (use maui-dependency-injection).
+description: xUnit testing guidance for .NET MAUI apps — ViewModel testing, mocking MAUI services, test project setup, code coverage, and on-device test runners.
 ---
 
 # .NET MAUI Unit Testing with xUnit
@@ -19,7 +12,7 @@ Create a class library targeting the same TFM as your MAUI app:
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net$(NetVersion)</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -39,7 +32,7 @@ Create a class library targeting the same TFM as your MAUI app:
 </Project>
 ```
 
-Use `net9.0` or `net10.0` (not a platform-specific TFM like `net9.0-ios`) so xUnit can run on the desktop test host.
+Use `net10.0` (not a platform-specific TFM like `net10.0-ios`) so xUnit can run on the desktop test host.
 
 ### Conditional OutputType for App Projects
 
@@ -47,10 +40,10 @@ If your test project references an app project directly, prevent the app from bu
 
 ```xml
 <!-- In the MAUI app .csproj -->
-<PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
+<PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
   <OutputType>Library</OutputType>
 </PropertyGroup>
-<PropertyGroup Condition="'$(TargetFramework)' != 'net9.0'">
+<PropertyGroup Condition="'$(TargetFramework)' != 'net10.0'">
   <OutputType>Exe</OutputType>
 </PropertyGroup>
 ```

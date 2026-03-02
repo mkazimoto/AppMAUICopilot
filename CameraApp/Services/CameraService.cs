@@ -29,14 +29,14 @@ public class CameraService : ICameraService
             {
                 var mainPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
                 if (mainPage != null)
-                    await mainPage.DisplayAlert("Erro", "Câmera não suportada neste dispositivo", "OK");
+                    await mainPage.DisplayAlertAsync("Erro", "Câmera não suportada neste dispositivo", "OK");
             }
         }
         catch (Exception ex)
         {
             var mainPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
             if (mainPage != null)
-                await mainPage.DisplayAlert("Erro", $"Erro ao tirar foto: {ex.Message}", "OK");
+                await mainPage.DisplayAlertAsync("Erro", $"Erro ao tirar foto: {ex.Message}", "OK");
         }
         
         return null;
@@ -46,7 +46,8 @@ public class CameraService : ICameraService
     {
         try
         {
-            var photo = await MediaPicker.Default.PickPhotoAsync();
+            var photos = await MediaPicker.Default.PickPhotosAsync();
+            var photo = photos?.FirstOrDefault();
             
             if (photo != null)
             {
@@ -64,7 +65,7 @@ public class CameraService : ICameraService
         {
             var mainPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
             if (mainPage != null)
-                await mainPage.DisplayAlert("Erro", $"Erro ao selecionar foto: {ex.Message}", "OK");
+                await mainPage.DisplayAlertAsync("Erro", $"Erro ao selecionar foto: {ex.Message}", "OK");
         }
         
         return null;

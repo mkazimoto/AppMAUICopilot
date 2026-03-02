@@ -1,15 +1,7 @@
 ---
 name: maui-secure-storage
-description: >
-  Add secure storage to .NET MAUI apps using SecureStorage.Default.
-  Covers SetAsync, GetAsync, Remove, RemoveAll, platform setup
-  (Android backup rules, iOS Keychain entitlements, Windows limits),
-  common pitfalls, and a DI wrapper service for testability.
-  USE FOR: "secure storage", "SecureStorage", "store token securely", "Keychain",
-  "Android Keystore", "save secret", "encrypted storage", "store credentials",
-  "sensitive data storage".
-  DO NOT USE FOR: general file storage (use maui-file-handling), SQLite databases
-  (use maui-sqlite-database), or authentication flows (use maui-authentication).
+description: Add secure storage to .NET MAUI apps using SecureStorage.Default. Covers SetAsync, GetAsync, Remove, RemoveAll, platform setup (Android, iOS, Windows), common pitfalls, and a DI wrapper service for testability.
+---
 ---
 
 # Secure Storage in .NET MAUI

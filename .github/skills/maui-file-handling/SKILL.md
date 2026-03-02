@@ -1,14 +1,6 @@
 ---
 name: maui-file-handling
-description: >
-  Guidance for file picker, file system helpers, bundled assets, and app data storage
-  in .NET MAUI applications. Covers FilePicker APIs, FileResult handling, platform
-  permissions, and common pitfalls across Android, iOS, macOS, and Windows.
-  USE FOR: "file picker", "FilePicker", "pick file", "open file", "save file",
-  "bundled assets", "FileSystem helpers", "AppDataDirectory", "CacheDirectory",
-  "FileResult", "read file MAUI".
-  DO NOT USE FOR: media capture or photo picking (use maui-media-picker),
-  secure credential storage (use maui-secure-storage), or SQLite database files (use maui-sqlite-database).
+description: Guidance for file picker, file system helpers, bundled assets, and app data storage in .NET MAUI apps. Covers FilePicker APIs, FileResult handling, platform permissions, and common pitfalls across Android, iOS, macOS, and Windows.
 ---
 
 # .NET MAUI File Handling

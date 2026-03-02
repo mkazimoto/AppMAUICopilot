@@ -1,15 +1,7 @@
 ---
 name: maui-rest-api
-description: >
-  Guidance for consuming REST APIs in .NET MAUI apps. Covers HttpClient setup
-  with System.Text.Json, DI registration, service interface/implementation
-  pattern, full CRUD operations (GET, POST, PUT, DELETE), error handling,
-  platform-specific clear-text traffic configuration, and async/await best practices.
-  USE FOR: "REST API", "HttpClient", "call API", "GET request", "POST request",
-  "API service", "JSON deserialization", "CRUD operations", "clear-text traffic",
-  "consume API MAUI".
-  DO NOT USE FOR: Aspire service discovery (use maui-aspire), authentication token handling
-  (use maui-authentication), or local database storage (use maui-sqlite-database).
+description: Guidance for consuming REST APIs in .NET MAUI apps. Covers HttpClient setup with System.Text.Json, DI registration, full CRUD operations, error handling, and platform-specific clear-text traffic configuration.
+---
 ---
 
 # Consuming REST APIs in .NET MAUI

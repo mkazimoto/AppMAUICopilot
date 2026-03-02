@@ -1,15 +1,7 @@
 ---
 name: maui-custom-handlers
-description: >
-  Guide for creating custom .NET MAUI handlers, customizing existing handlers
-  with property mappers, and implementing platform-specific native views.
-  Covers PrependToMapping/ModifyMapping/AppendToMapping, PropertyMapper,
-  CommandMapper, partial handler classes, and handler registration.
-  USE FOR: "custom handler", "PropertyMapper", "AppendToMapping", "PrependToMapping",
-  "ModifyMapping", "CommandMapper", "platform-specific rendering", "native view",
-  "handler registration", "custom control renderer".
-  DO NOT USE FOR: platform API calls without custom controls (use maui-platform-invoke),
-  data binding (use maui-data-binding), or gesture handling (use maui-gestures).
+description: Guide for creating custom .NET MAUI handlers, customizing existing handlers with property mappers (PrependToMapping/ModifyMapping/AppendToMapping), CommandMapper, and implementing platform-specific native views.
+---
 ---
 
 # .NET MAUI Custom Handlers

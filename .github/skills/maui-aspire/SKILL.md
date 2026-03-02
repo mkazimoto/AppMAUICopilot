@@ -1,15 +1,7 @@
 ---
 name: maui-aspire
-description: >
-  Guide for .NET MAUI apps consuming .NET Aspire-hosted backend services.
-  Covers AppHost configuration, service discovery for mobile clients,
-  HttpClient DI setup, Entra ID authentication with MSAL.NET for calling
-  protected APIs, development workflow (Aspire dashboard + MAUI debugging),
-  Blazor Hybrid considerations, and platform-specific networking for
-  Android emulators and iOS simulators.
-  USE FOR: "MAUI with Aspire", "Aspire service discovery", "AppHost MAUI",
-  "Aspire backend", "MAUI Aspire networking", "mobile Aspire", "Aspire dashboard MAUI".
-  DO NOT USE FOR: standalone REST API calls without Aspire (use maui-rest-api),
+description: Guide for .NET MAUI apps consuming .NET Aspire-hosted backend services. Covers AppHost configuration, service discovery, HttpClient DI setup, Entra ID authentication, and platform-specific networking for Android emulators and iOS simulators.
+---
   authentication without Aspire (use maui-authentication), or Aspire-only projects without MAUI.
 ---
 

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "maui-project-setup": {
+      "source": "rimblehelm/.net-maui-skills",
+      "sourceType": "github",
+      "computedHash": "3444b289ec0fb4952d7d4c3a7c83f7daca4ce4798d7424df38da131ad91920e7"
+    }
+  }
+}

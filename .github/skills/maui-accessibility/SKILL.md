@@ -1,14 +1,6 @@
 ---
 name: maui-accessibility
-description: >
-  Guide for making .NET MAUI apps accessible — screen reader support via SemanticProperties,
-  heading levels, AutomationProperties visibility control, programmatic focus and announcements,
-  and platform-specific gotchas for TalkBack, VoiceOver, and Narrator.
-  USE FOR: "add accessibility", "screen reader support", "SemanticProperties", "AutomationProperties",
-  "TalkBack", "VoiceOver", "Narrator", "accessible MAUI", "heading levels", "semantic description",
-  "announce to screen reader", "accessibility audit".
-  DO NOT USE FOR: general UI layout (use maui-collectionview or maui-shell-navigation),
-  animations (use maui-animations), or gestures (use maui-gestures).
+description: Guide for making .NET MAUI apps accessible — screen reader support via SemanticProperties, heading levels, AutomationProperties, programmatic focus and announcements, and platform-specific gotchas for TalkBack, VoiceOver, and Narrator.
 ---
 
 # .NET MAUI Accessibility Skill

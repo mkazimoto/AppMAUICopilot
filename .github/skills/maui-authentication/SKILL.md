@@ -1,15 +1,7 @@
 ---
 name: maui-authentication
-description: >
-  Add authentication to .NET MAUI apps. Covers WebAuthenticator for generic
-  OAuth 2.0 / social login, and MSAL.NET for Microsoft Entra ID (Azure AD)
-  with broker support (Microsoft Authenticator), token caching, Conditional
-  Access, platform-specific setup (Android, iOS, Windows), DelegatingHandler
-  for bearer token API calls, and Blazor Hybrid integration.
-  USE FOR: "add authentication", "OAuth login", "MSAL.NET", "social login",
-  "WebAuthenticator", "Entra ID MAUI", "Azure AD login", "Google login MAUI",
-  "Apple login MAUI", "token caching", "bearer token", "sign in".
-  DO NOT USE FOR: secure local storage of tokens (use maui-secure-storage),
+description: Add authentication to .NET MAUI apps. Covers WebAuthenticator for OAuth 2.0, MSAL.NET for Microsoft Entra ID (Azure AD) with broker support, token caching, platform-specific setup, DelegatingHandler for bearer tokens, and Blazor Hybrid integration.
+---
   Aspire-specific auth setup (use maui-aspire), or server-side Entra ID provisioning
   (use entra-id-aspire-provisioning).
 ---

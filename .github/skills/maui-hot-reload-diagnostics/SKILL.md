@@ -1,14 +1,6 @@
 ---
 name: maui-hot-reload-diagnostics
-description: >
-  Diagnose and troubleshoot .NET MAUI Hot Reload issues (C# Hot Reload, XAML Hot Reload,
-  Blazor Hybrid). Covers all UI approaches (XAML, MauiReactor, C# Markup, Blazor Hybrid),
-  Visual Studio, VS Code, environment variables, encoding requirements, and MetadataUpdateHandler.
-  USE FOR: "hot reload not working", "XAML hot reload", "C# hot reload", "UI not updating",
-  "hot reload troubleshooting", "MetadataUpdateHandler", "hot reload Blazor Hybrid",
-  "hot reload VS Code", "DOTNET_WATCH".
-  DO NOT USE FOR: general build errors (not hot reload related), app lifecycle events
-  (use maui-app-lifecycle), or performance profiling (use maui-performance).
+description: Diagnose and troubleshoot .NET MAUI Hot Reload issues (C# Hot Reload, XAML Hot Reload, Blazor Hybrid). Covers all UI approaches, Visual Studio, VS Code, environment variables, and MetadataUpdateHandler.
 ---
 
 # .NET MAUI Hot Reload Diagnostics

@@ -1,15 +1,7 @@
 ---
 name: maui-safe-area
-description: >
-  .NET MAUI safe area and edge-to-edge layout guidance for .NET 10+. Covers
-  SafeAreaEdges property, SafeAreaRegions enum, per-edge control, keyboard
-  avoidance, Blazor Hybrid CSS safe areas, migration from legacy APIs, and
-  platform-specific behavior for Android, iOS, and Mac Catalyst.
-  USE FOR: "safe area", "edge-to-edge", "SafeAreaEdges", "SafeAreaRegions",
-  "keyboard avoidance", "notch insets", "status bar overlap", "iOS safe area",
-  "Android edge-to-edge", "content behind status bar".
-  DO NOT USE FOR: general layout or grid design (use maui-collectionview),
-  app lifecycle handling (use maui-app-lifecycle), or theming (use maui-theming).
+description: .NET MAUI safe area and edge-to-edge layout guidance for .NET 10+. Covers SafeAreaEdges, SafeAreaRegions, per-edge control, keyboard avoidance, Blazor Hybrid CSS safe areas, and platform-specific behavior for Android, iOS, and Mac Catalyst.
+---
 ---
 
 # Safe Area & Edge-to-Edge Layout in .NET MAUI (.NET 10+)

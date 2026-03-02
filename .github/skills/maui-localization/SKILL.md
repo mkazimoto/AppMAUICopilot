@@ -1,14 +1,6 @@
 ---
 name: maui-localization
-description: >-
-  Guidance for localizing .NET MAUI apps: multi-language support via .resx resource files,
-  culture resolution and runtime switching, RTL layout, platform language declarations
-  (iOS/Mac Catalyst Info.plist, Windows Package.appxmanifest), and image localization strategies.
-  USE FOR: "localization", "multi-language", "resx resource", "translate app", "RTL layout",
-  "culture switching", "localize strings", "right-to-left", "language support MAUI",
-  "Info.plist languages".
-  DO NOT USE FOR: theming or visual styles (use maui-theming), accessibility labels
-  (use maui-accessibility), or content from REST APIs (use maui-rest-api).
+description: Guidance for localizing .NET MAUI apps — multi-language support via .resx resource files, culture resolution and runtime switching, RTL layout, platform language declarations, and image localization strategies.
 ---
 
 # .NET MAUI Localization

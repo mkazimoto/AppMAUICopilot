@@ -88,7 +88,7 @@ namespace CameraApp.ViewModels
                     var mainPage = Application.Current.Windows[0].Page;
                     if (mainPage != null)
                     {
-                        await mainPage.DisplayAlert(
+                        await mainPage.DisplayAlertAsync(
                             "Erro", 
                             $"Não foi possível iniciar o monitoramento:\n{ex.Message}", 
                             "OK");

@@ -1,13 +1,6 @@
 ---
 name: maui-app-icons-splash
-description: >
-  .NET MAUI app icon configuration, splash screen setup, SVG to PNG conversion
-  at build time, composed/adaptive icons, and platform-specific icon and splash
-  screen requirements for Android, iOS, Mac Catalyst, and Windows.
-  USE FOR: "app icon", "splash screen", "MauiIcon", "MauiSplashScreen", "adaptive icon",
-  "change app icon", "launch screen", "SVG icon", "foreground tint", "icon resize".
-  DO NOT USE FOR: in-app images or image loading (use maui-performance),
-  theming or colors (use maui-theming), or custom drawing (use maui-graphics-drawing).
+description: .NET MAUI app icon configuration, splash screen setup, SVG to PNG conversion at build time, composed/adaptive icons, and platform-specific requirements for Android, iOS, Mac Catalyst, and Windows.
 ---
 
 # .NET MAUI App Icons & Splash Screens

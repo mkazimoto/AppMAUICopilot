@@ -378,7 +378,7 @@ public partial class FormListViewModel : ObservableObject
         if (ex is UnauthorizedAccessException)
         {
             // Erro de autenticação - redirecionar para login
-            await currentPage.DisplayAlert("Sessão Expirada", 
+            await currentPage.DisplayAlertAsync("Sessão Expirada", 
                 "Sua sessão expirou. Você será redirecionado para fazer login novamente.", "OK");
             
             // Trocar a página raiz para AppShell (que contém LoginPage)
@@ -399,11 +399,11 @@ public partial class FormListViewModel : ObservableObject
                 message += "\n\nDica: Verifique se os filtros estão corretos ou tente limpar os filtros.";
             }
             
-            await currentPage.DisplayAlert(title, message, "OK");
+            await currentPage.DisplayAlertAsync(title, message, "OK");
         }
         else
         {
-            await currentPage.DisplayAlert("Erro", 
+            await currentPage.DisplayAlertAsync("Erro", 
                 $"Erro inesperado ao {operation}: {ex.Message}", "OK");
         }
     }

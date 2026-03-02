@@ -104,7 +104,7 @@ namespace CameraApp.ViewModels
 
             // Exibir confirmação antes de prosseguir
             bool confirm = await MainThread.InvokeOnMainThreadAsync(async () =>
-                await (Shell.Current?.DisplayAlert("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
+                await (Shell.Current?.DisplayAlertAsync("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
             if (!confirm)
             {
                 return; // Usuário cancelou

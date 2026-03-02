@@ -1,15 +1,6 @@
 ---
 name: maui-current-apis
-description: >
-  Always-on guardrail for .NET MAUI API currency. Prevents AI coding agents from
-  using deprecated, obsolete, or removed APIs across XAML/C#, Blazor Hybrid, and
-  MauiReactor. Includes a reasoning framework for detecting project target framework
-  and library versions, plus a curated table of the most common deprecated API traps
-  in .NET MAUI 10.
-  USE FOR: "deprecated API", "obsolete API", "API migration", "MAUI breaking changes",
-  "check API currency", "review MAUI code", "generate MAUI code", "edit MAUI code".
-  DO NOT USE FOR: learning new MAUI features (use feature-specific skills),
-  performance optimization (use maui-performance), or testing guidance (use maui-unit-testing).
+description: Always-on guardrail for .NET MAUI API currency. Prevents AI coding agents from using deprecated, obsolete, or removed APIs across XAML/C#, Blazor Hybrid, and MauiReactor. Includes a reasoning framework for detecting project target framework and library versions, plus a curated table of the most common deprecated API traps in .NET MAUI 10. USE FOR: "deprecated API", "obsolete API", "API migration", "MAUI breaking changes", "check API currency", "review MAUI code", "generate MAUI code", "edit MAUI code". DO NOT USE FOR: learning new MAUI features (use feature-specific skills), performance optimization (use maui-performance), or testing guidance (use maui-unit-testing).
 ---
 
 # .NET MAUI Current APIs — Guardrail Skill
