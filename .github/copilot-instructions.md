@@ -6,12 +6,22 @@ Estas instruções orientam o uso do GitHub Copilot em projetos .NET MAUI, promo
 
 - Crie a estrutura base do projeto com: 
 ```
-dotnet new maui -n MeuAppMaui
+dotnet new maui -n [ProjectName]
 ```
 
-- Altere o target framework para Net 9 (testes unitários), Android e iOS:
+- Centralize as versões do .NET e do MAUI em `Directory.Build.props` para fácil manutenção:
 ```
-<TargetFrameworks>net9.0;net9.0-android;net9.0-ios</TargetFrameworks>
+<Project>
+  <PropertyGroup>
+    <NetVersion>10.0</NetVersion>
+    <MauiVersion>10.0.41</MauiVersion>
+  </PropertyGroup>
+</Project>
+```
+
+- Altere o target framework para Net (testes unitários), Android e iOS:
+```
+<TargetFrameworks>net$(NetVersion);net$(NetVersion)-android;net$(NetVersion)-ios</TargetFrameworks>
 ```		
 
 - Mantenha apenas as pastas Android e IOS:
@@ -26,7 +36,7 @@ dotnet new maui -n MeuAppMaui
 - Sempre confira a existencia de todos os StaticResource antes do build
 - Faça o build apenas para o android:
 ```
-dotnet build -t:Run -f net9.0-android
+dotnet build -t:Run -f net$(NetVersion)-android
 ```
 
 ## Estrutura do Projeto
