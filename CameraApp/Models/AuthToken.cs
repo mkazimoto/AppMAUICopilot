@@ -19,7 +19,7 @@ namespace CameraApp.Models
         public DateTime ExpiresAt { get; set; }
 
         public bool IsExpired => DateTime.Now >= ExpiresAt;
-                
+
         public TimeSpan TimeUntilExpiration => ExpiresAt - DateTime.Now;
     }
 

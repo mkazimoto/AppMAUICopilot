@@ -4,13 +4,13 @@ namespace CameraApp;
 
 public partial class AppShell : Shell
 {
-	public AppShell()
-	{
-		InitializeComponent();
+    public AppShell()
+    {
+        InitializeComponent();
 
-    // Registrar rotas para navegação
-    Routing.RegisterRoute("LoginPage", typeof(LoginPage));
-    Routing.RegisterRoute("FormEditPage", typeof(FormEditPage));
-		Routing.RegisterRoute(nameof(AdvancedFiltersPage), typeof(AdvancedFiltersPage));
-  }
+        // Registrar rotas para navegação
+        Routing.RegisterRoute("LoginPage", typeof(LoginPage));
+        Routing.RegisterRoute("FormEditPage", typeof(FormEditPage));
+        Routing.RegisterRoute(nameof(AdvancedFiltersPage), typeof(AdvancedFiltersPage));
+    }
 }

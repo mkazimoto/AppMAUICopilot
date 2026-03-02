@@ -16,7 +16,7 @@ namespace CameraApp.ViewModels
             _postureService = postureService;
             _postureService.PostureAlert += OnPostureAlert;
             _postureService.AccelerometerDataUpdated += OnAccelerometerDataUpdated;
-            
+
             // Valores iniciais
             Sensitivity = _postureService.Sensitivity;
             AlertDelay = _postureService.AlertDelaySeconds;
@@ -81,7 +81,7 @@ namespace CameraApp.ViewModels
             {
                 StatusMessage = $"Erro: {ex.Message}";
                 StatusColor = Colors.Red;
-                
+
                 // Mostrar alerta ao usuário
                 if (Application.Current?.Windows?.Count > 0)
                 {
@@ -89,8 +89,8 @@ namespace CameraApp.ViewModels
                     if (mainPage != null)
                     {
                         await mainPage.DisplayAlertAsync(
-                            "Erro", 
-                            $"Não foi possível iniciar o monitoramento:\n{ex.Message}", 
+                            "Erro",
+                            $"Não foi possível iniciar o monitoramento:\n{ex.Message}",
                             "OK");
                     }
                 }
@@ -105,7 +105,7 @@ namespace CameraApp.ViewModels
             StatusMessage = "Monitoramento parado";
             PostureStatus = "Desconhecido";
             StatusColor = Colors.Gray;
-            
+
             // Resetar valores
             AccelerometerX = 0;
             AccelerometerY = 0;
@@ -130,7 +130,7 @@ namespace CameraApp.ViewModels
                 AccelerometerY = e.Y;
                 AccelerometerZ = e.Z;
                 Inclination = e.Inclination;
-                
+
                 // Atualizar status da postura
                 PostureStatus = e.Status switch
                 {

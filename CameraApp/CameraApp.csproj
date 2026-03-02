@@ -46,6 +46,8 @@
 
 		<!-- Garante que o .Designer.cs seja regenerado no VS Code -->
 		<CoreCompileDependsOn>PrepareResources;$(CoreCompileDependsOn)</CoreCompileDependsOn>
+
+		<NoWarn>$(NoWarn);CA1416</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

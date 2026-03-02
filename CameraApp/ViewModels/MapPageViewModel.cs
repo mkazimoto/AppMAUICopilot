@@ -8,22 +8,22 @@ namespace CameraApp.ViewModels;
 public partial class MapPageViewModel : ObservableObject
 {
     private readonly ILocationService _locationService;
-    
+
     [ObservableProperty]
     private bool isLoading;
-    
+
     [ObservableProperty]
     private bool hasLocation;
-    
+
     [ObservableProperty]
     private string locationText = string.Empty;
-    
+
     [ObservableProperty]
     private string lastUpdateText = string.Empty;
-    
+
     [ObservableProperty]
     private string mapUrl = "about:blank";
-    
+
     private double _currentLatitude;
     private double _currentLongitude;
 
@@ -39,18 +39,18 @@ public partial class MapPageViewModel : ObservableObject
         try
         {
             IsLoading = true;
-            
+
             var location = await _locationService.GetCurrentLocationAsync();
-            
+
             if (location != null)
             {
                 _currentLatitude = location.Latitude;
                 _currentLongitude = location.Longitude;
-                
+
                 HasLocation = true;
                 LocationText = $"Lat: {location.Latitude:F6}, Lng: {location.Longitude:F6}";
                 LastUpdateText = $"Atualizado em: {DateTime.Now:HH:mm:ss}";
-                
+
                 UpdateMapWithLocation(location.Latitude, location.Longitude);
             }
             else
@@ -58,10 +58,10 @@ public partial class MapPageViewModel : ObservableObject
                 HasLocation = false;
                 LocationText = string.Empty;
                 LastUpdateText = string.Empty;
-                
+
                 await Shell.Current.DisplayAlertAsync(
-                    "Erro", 
-                    "Não foi possível obter sua localização. Verifique se as permissões estão habilitadas e se o GPS está ativo.", 
+                    "Erro",
+                    "Não foi possível obter sua localização. Verifique se as permissões estão habilitadas e se o GPS está ativo.",
                     "OK");
             }
         }
@@ -69,8 +69,8 @@ public partial class MapPageViewModel : ObservableObject
         {
             HasLocation = false;
             await Shell.Current.DisplayAlertAsync(
-                "Erro", 
-                $"Erro ao obter localização: {ex.Message}", 
+                "Erro",
+                $"Erro ao obter localização: {ex.Message}",
                 "OK");
         }
         finally
@@ -96,7 +96,7 @@ public partial class MapPageViewModel : ObservableObject
     {
         var lat = latitude.ToString("F6", CultureInfo.InvariantCulture);
         var lng = longitude.ToString("F6", CultureInfo.InvariantCulture);
-        
+
         var html = GenerateMapHtml(lat, lng);
         MapUrl = $"data:text/html;charset=utf-8,{Uri.EscapeDataString(html)}";
     }

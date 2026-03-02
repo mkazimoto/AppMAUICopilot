@@ -23,20 +23,20 @@ public class ApiError
     {
         if (!string.IsNullOrEmpty(DetailedMessage))
             return $"{Message}\n\nDetalhes: {DetailedMessage}";
-        
+
         return Message;
     }
 
     public string GetFullErrorInfo()
     {
         var info = $"Código: {Code}\nMensagem: {Message}";
-        
+
         // if (!string.IsNullOrEmpty(DetailedMessage))
         //     info += $"\nDetalhes: {DetailedMessage}";
-        
+
         // if (!string.IsNullOrEmpty(HelpUrl))
         //     info += $"\nAjuda: {HelpUrl}";
-        
+
         return info;
     }
 }

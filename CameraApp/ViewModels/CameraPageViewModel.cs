@@ -23,7 +23,7 @@ public partial class CameraPageViewModel : ObservableObject
     private async Task TakePhotoAsync()
     {
         var photoPath = await _cameraService.TakePhotoAsync();
-        
+
         if (!string.IsNullOrEmpty(photoPath))
         {
             PhotoPath = photoPath;
@@ -35,7 +35,7 @@ public partial class CameraPageViewModel : ObservableObject
     private async Task PickPhotoAsync()
     {
         var photoPath = await _cameraService.PickPhotoAsync();
-        
+
         if (!string.IsNullOrEmpty(photoPath))
         {
             PhotoPath = photoPath;

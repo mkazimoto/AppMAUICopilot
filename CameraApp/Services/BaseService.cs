@@ -31,14 +31,14 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         try
         {
-            
+
             var url = $"{ApiConfig.BaseUrl}{EndpointPath}?page={page}&pagesize={pageSize}";
             var response = await _httpClient.GetAsync(url);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                
+
                 // Tenta deserializar como resposta paginada do TOTVS (ApiResponse<T>)
                 try
                 {
@@ -66,10 +66,10 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
                         TotalCount = items?.Count ?? 0
                     };
                 }
-                
+
                 return new PaginatedResponse<T>();
             }
-            
+
             await HandleErrorResponseAsync(response);
             return new PaginatedResponse<T>();
         }
@@ -91,16 +91,16 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         try
         {
-            
+
             var url = $"{ApiConfig.BaseUrl}{EndpointPath}/{id}";
             var response = await _httpClient.GetAsync(url);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<T>(jsonResponse, ApiConfig.GetJsonOptions());
             }
-            
+
             await HandleErrorResponseAsync(response);
             return null;
         }
@@ -125,7 +125,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
 
             var json = JsonSerializer.Serialize(entity, ApiConfig.GetJsonOptions());
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            
+
             var response = await _httpClient.PostAsync($"{ApiConfig.BaseUrl}{EndpointPath}", content);
 
             if (response.IsSuccessStatusCode)
@@ -133,7 +133,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<T>(jsonResponse, ApiConfig.GetJsonOptions());
             }
-            
+
             await HandleErrorResponseAsync(response);
             return null;
         }
@@ -158,16 +158,16 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
 
             var json = JsonSerializer.Serialize(entity, ApiConfig.GetJsonOptions());
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            
+
             var url = $"{ApiConfig.BaseUrl}{EndpointPath}/{id}";
             var response = await _httpClient.PutAsync(url, content);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<T>(jsonResponse, ApiConfig.GetJsonOptions());
             }
-            
+
             await HandleErrorResponseAsync(response);
             return null;
         }
@@ -189,7 +189,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         try
         {
-            
+
             var url = $"{ApiConfig.BaseUrl}{EndpointPath}/{id}";
             var response = await _httpClient.DeleteAsync(url);
 
@@ -227,10 +227,10 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
         try
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            
+
             System.Diagnostics.Debug.WriteLine($"[BaseService<{typeof(T).Name}>] Error - Status: {response.StatusCode}");
             System.Diagnostics.Debug.WriteLine($"[BaseService<{typeof(T).Name}>] Error Content: {errorContent}");
-            
+
             // Tenta deserializar como ApiError (formato TOTVS)
             if (!string.IsNullOrEmpty(errorContent))
             {
@@ -238,7 +238,7 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
                 {
                     var apiError = JsonSerializer.Deserialize<ApiError>(errorContent, ApiConfig.GetJsonOptions());
                     if (apiError != null && !string.IsNullOrEmpty(apiError.Code))
-                    {                     
+                    {
                         throw new ApiException(apiError, (int)response.StatusCode);
                     }
                 }
@@ -247,15 +247,15 @@ public abstract class BaseService<T> : IBaseService<T> where T : BaseEntity
                     System.Diagnostics.Debug.WriteLine($"[BaseService<{typeof(T).Name}>] Erro ao deserializar ApiError: {ex.Message}");
                 }
             }
-            
+
             // Se não conseguiu deserializar como ApiError, cria erro genérico
             var errorMessage = $"Erro na API: {(int)response.StatusCode} - {response.ReasonPhrase}";
-            
+
             if (!string.IsNullOrEmpty(errorContent))
             {
                 errorMessage += $"\nDetalhes: {errorContent}";
             }
-            
+
             throw new ApiException(errorMessage, (int)response.StatusCode);
         }
         catch (ApiException)

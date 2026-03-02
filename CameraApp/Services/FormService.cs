@@ -22,21 +22,21 @@ public class FormService : IFormService
     {
         try
         {
-                       
+
             var queryString = filter.BuildQueryString();
             var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}?{queryString}";
-            
+
             System.Diagnostics.Debug.WriteLine($"[FormService] GetFormsAsync URL: {url}");
             System.Diagnostics.Debug.WriteLine($"[FormService] CategoryId: {filter.CategoryId}, StatusFormId: {filter.StatusFormId}");
-            
+
             var response = await _httpClient.GetAsync(url);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<FormResponse>(jsonResponse, GetJsonOptions()) ?? new FormResponse();
             }
-            
+
             await HandleErrorResponseAsync(response);
             return new FormResponse();
         }
@@ -57,16 +57,16 @@ public class FormService : IFormService
     {
         try
         {
-            
+
             var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}/{id}";
             var response = await _httpClient.GetAsync(url);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<Form>(jsonResponse, GetJsonOptions());
             }
-            
+
             await HandleErrorResponseAsync(response);
             return null;
         }
@@ -85,10 +85,10 @@ public class FormService : IFormService
     {
         try
         {
-            
+
             var json = JsonSerializer.Serialize(form, GetJsonOptions());
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            
+
             var response = await _httpClient.PostAsync($"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}", content);
 
             if (response.IsSuccessStatusCode)
@@ -96,7 +96,7 @@ public class FormService : IFormService
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<Form>(jsonResponse, GetJsonOptions());
             }
-            
+
             await HandleErrorResponseAsync(response);
             return null;
         }
@@ -115,19 +115,19 @@ public class FormService : IFormService
     {
         try
         {
-            
+
             var json = JsonSerializer.Serialize(form, GetJsonOptions());
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            
+
             var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}/{id}";
             var response = await _httpClient.PutAsync(url, content);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 return JsonSerializer.Deserialize<Form>(jsonResponse, GetJsonOptions());
             }
-            
+
             await HandleErrorResponseAsync(response);
             return null;
         }
@@ -146,7 +146,7 @@ public class FormService : IFormService
     {
         try
         {
-             
+
             var url = $"{ApiConfig.BaseUrl}{ApiConfig.Endpoints.Forms}/{id}";
             var response = await _httpClient.DeleteAsync(url);
 
@@ -190,10 +190,10 @@ public class FormService : IFormService
         try
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            
+
             System.Diagnostics.Debug.WriteLine($"[FormService] HandleErrorResponseAsync - Status: {response.StatusCode}");
             System.Diagnostics.Debug.WriteLine($"[FormService] Error Content: {errorContent}");
-            
+
             // Tenta deserializar como ApiError (formato TOTVS)
             if (!string.IsNullOrEmpty(errorContent))
             {
@@ -201,7 +201,7 @@ public class FormService : IFormService
                 {
                     var apiError = JsonSerializer.Deserialize<ApiError>(errorContent, GetJsonOptions());
                     if (apiError != null && !string.IsNullOrEmpty(apiError.Code))
-                    {                        
+                    {
                         // Para outros erros, lança a ApiException com os detalhes
                         throw new ApiException(apiError, (int)response.StatusCode);
                     }
@@ -212,15 +212,15 @@ public class FormService : IFormService
                     // Continua para o tratamento genérico abaixo
                 }
             }
-            
+
             // Se não conseguiu deserializar como ApiError, cria erro genérico
             var errorMessage = $"Erro na API: {(int)response.StatusCode} - {response.ReasonPhrase}";
-            
+
             if (!string.IsNullOrEmpty(errorContent))
             {
                 errorMessage += $"\nDetalhes: {errorContent}";
             }
-            
+
             System.Diagnostics.Debug.WriteLine($"[FormService] Lançando ApiException genérica: {errorMessage}");
             throw new ApiException(errorMessage, (int)response.StatusCode);
         }

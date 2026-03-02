@@ -74,11 +74,11 @@ public class FormFilter
     /// <summary>
     /// Verifica se há algum filtro ativo (além de paginação)
     /// </summary>
-    public bool HasFilters => 
-        CategoryId.HasValue || 
-        StatusFormId.HasValue || 
-        StartDate.HasValue || 
-        EndDate.HasValue || 
+    public bool HasFilters =>
+        CategoryId.HasValue ||
+        StatusFormId.HasValue ||
+        StartDate.HasValue ||
+        EndDate.HasValue ||
         !string.IsNullOrEmpty(Title) ||
         !string.IsNullOrEmpty(CreatedBy) ||
         SequentialScript.HasValue ||

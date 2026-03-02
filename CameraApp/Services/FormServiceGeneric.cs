@@ -13,14 +13,14 @@ public class FormServiceGeneric : BaseService<Models.Form>
     /// </summary>
     protected override string EndpointPath => "/api/forms";
 
-    public FormServiceGeneric(HttpClient httpClient, IAuthService authService) 
+    public FormServiceGeneric(HttpClient httpClient, IAuthService authService)
         : base(httpClient, authService)
     {
     }
 
     // Métodos específicos de formulário podem ser adicionados aqui
     // Por exemplo:
-    
+
     /// <summary>
     /// Obtém formulários por categoria
     /// </summary>
@@ -30,12 +30,12 @@ public class FormServiceGeneric : BaseService<Models.Form>
         {
             var url = $"{Config.ApiConfig.BaseUrl}{EndpointPath}?$filter=categoryId eq {categoryId}&page={page}&pagesize={pageSize}";
             var response = await _httpClient.GetAsync(url);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 var apiResponse = System.Text.Json.JsonSerializer.Deserialize<Models.ApiResponse<Models.Form>>(jsonResponse, ApiConfig.GetJsonOptions());
-                
+
                 return new PaginatedResponse<Models.Form>
                 {
                     Items = apiResponse?.Items ?? new List<Models.Form>(),
@@ -44,7 +44,7 @@ public class FormServiceGeneric : BaseService<Models.Form>
                     TotalCount = apiResponse?.Items?.Count ?? 0
                 };
             }
-            
+
             await HandleErrorResponseAsync(response);
             return new PaginatedResponse<Models.Form>();
         }
@@ -67,12 +67,12 @@ public class FormServiceGeneric : BaseService<Models.Form>
         {
             var url = $"{Config.ApiConfig.BaseUrl}{EndpointPath}?$filter=statusFormId eq {statusId}&page={page}&pagesize={pageSize}";
             var response = await _httpClient.GetAsync(url);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 var apiResponse = System.Text.Json.JsonSerializer.Deserialize<Models.ApiResponse<Models.Form>>(jsonResponse, ApiConfig.GetJsonOptions());
-                
+
                 return new PaginatedResponse<Models.Form>
                 {
                     Items = apiResponse?.Items ?? new List<Models.Form>(),
@@ -81,7 +81,7 @@ public class FormServiceGeneric : BaseService<Models.Form>
                     TotalCount = apiResponse?.Items?.Count ?? 0
                 };
             }
-            
+
             await HandleErrorResponseAsync(response);
             return new PaginatedResponse<Models.Form>();
         }

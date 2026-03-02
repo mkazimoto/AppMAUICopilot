@@ -83,7 +83,7 @@ public partial class FormListViewModel : ObservableObject
         _formService = formService;
         _authService = authService;
 
-          // Categorias de exemplo - em produção, viria da API
+        // Categorias de exemplo - em produção, viria da API
         Categories.Add(new CategoryItem { Id = 0, Name = "Todas as Categorias" });
         Categories.Add(new CategoryItem { Id = 1, Name = "Tarefa" });
         Categories.Add(new CategoryItem { Id = 2, Name = "Medição" });
@@ -132,16 +132,16 @@ public partial class FormListViewModel : ObservableObject
         try
         {
             CurrentPage = 1;
-            
-         
+
+
             var response = await _formService.GetFormsAsync(CurrentFilter);
-            
+
             Forms.Clear();
             foreach (var form in response.Items)
             {
                 Forms.Add(form);
             }
-            
+
             HasNextPage = response.HasNext;
         }
         catch (Exception ex)
@@ -158,18 +158,18 @@ public partial class FormListViewModel : ObservableObject
         try
         {
             IsLoading = true;
-            CurrentPage++;            
-         
+            CurrentPage++;
+
             // Usa o filtro atual mas com a nova página
             var filter = CurrentFilter.Clone();
             filter.Page = CurrentPage;
             var response = await _formService.GetFormsAsync(filter);
-            
+
             foreach (var form in response.Items)
             {
                 Forms.Add(form);
             }
-            
+
             HasNextPage = response.HasNext;
         }
         catch (Exception ex)
@@ -183,7 +183,7 @@ public partial class FormListViewModel : ObservableObject
         }
     }
 
-    
+
     [RelayCommand]
     public async Task ClearFiltersAsync()
     {
@@ -199,10 +199,10 @@ public partial class FormListViewModel : ObservableObject
         MaxScore = null;
         OrderByIndex = 0;
         OrderAscending = true;
-        
+
         CurrentFilter = FormFilter.Default();
         UpdateFilterIndicators();
-        
+
         await LoadFormsAsync();
     }
 
@@ -217,7 +217,7 @@ public partial class FormListViewModel : ObservableObject
     {
         System.Diagnostics.Debug.WriteLine($"[FormListViewModel] EditFormAsync chamado");
         System.Diagnostics.Debug.WriteLine($"[FormListViewModel] Form: {form?.Title}, ID: {form?.Id}");
-        
+
         if (form?.Id != null)
         {
             System.Diagnostics.Debug.WriteLine($"[FormListViewModel] Navegando para FormEditPage com formId={form.Id}");
@@ -359,7 +359,7 @@ public partial class FormListViewModel : ObservableObject
     private void UpdateFilterIndicators()
     {
         HasActiveFilters = CurrentFilter.HasFilters || !string.IsNullOrEmpty(SearchTitle);
-        
+
         ActiveFiltersCount = 0;
         if (!string.IsNullOrEmpty(SearchTitle)) ActiveFiltersCount++;
         if (CurrentFilter.CategoryId.HasValue) ActiveFiltersCount++;
@@ -378,9 +378,9 @@ public partial class FormListViewModel : ObservableObject
         if (ex is UnauthorizedAccessException)
         {
             // Erro de autenticação - redirecionar para login
-            await currentPage.DisplayAlertAsync("Sessão Expirada", 
+            await currentPage.DisplayAlertAsync("Sessão Expirada",
                 "Sua sessão expirou. Você será redirecionado para fazer login novamente.", "OK");
-            
+
             // Trocar a página raiz para AppShell (que contém LoginPage)
             var window = Application.Current?.Windows?.FirstOrDefault();
             if (window != null)
@@ -392,18 +392,18 @@ public partial class FormListViewModel : ObservableObject
         {
             var title = $"Erro da API ({apiEx.ApiError.Code})";
             var message = apiEx.ApiError.GetDisplayMessage();
-            
+
             // Para o erro FE018 específico, adiciona uma dica
             if (apiEx.ApiError.Code == "FE018")
             {
                 message += "\n\nDica: Verifique se os filtros estão corretos ou tente limpar os filtros.";
             }
-            
+
             await currentPage.DisplayAlertAsync(title, message, "OK");
         }
         else
         {
-            await currentPage.DisplayAlertAsync("Erro", 
+            await currentPage.DisplayAlertAsync("Erro",
                 $"Erro inesperado ao {operation}: {ex.Message}", "OK");
         }
     }

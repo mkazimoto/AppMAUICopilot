@@ -84,13 +84,13 @@ namespace CameraApp.Services
                 return;
 
             var reading = _lastReading;
-            
+
             // Calcular a inclinação baseada nos valores do acelerômetro
             // Para um celular no bolso da camisa, quando a pessoa está ereta:
             // - X deve estar próximo de 0 (sem inclinação lateral)
             // - Y deve ser negativo (apontando para baixo devido à gravidade)
             // - Z deve estar próximo de 0 (sem inclinação frontal/traseira)
-            
+
             var inclination = CalculateInclination(reading.X, reading.Y, reading.Z);
             var status = DeterminePostureStatus(inclination);
 
@@ -114,13 +114,13 @@ namespace CameraApp.Services
             // Usando a fórmula: atan2(sqrt(x² + z²), |y|) * (180/π)
             var horizontalComponent = Math.Sqrt(x * x + z * z);
             var verticalComponent = Math.Abs(y);
-            
+
             if (verticalComponent == 0)
                 return 90; // Completamente horizontal
-            
+
             var angleRadians = Math.Atan2(horizontalComponent, verticalComponent);
             var angleDegrees = angleRadians * (180.0 / Math.PI);
-            
+
             return angleDegrees;
         }
 
@@ -169,10 +169,10 @@ namespace CameraApp.Services
                 // Vibrar o dispositivo
                 if (Vibration.Default.IsSupported)
                 {
-                    var vibrationPattern = status == PostureStatus.Poor ? 
-                        TimeSpan.FromMilliseconds(500) : 
+                    var vibrationPattern = status == PostureStatus.Poor ?
+                        TimeSpan.FromMilliseconds(500) :
                         TimeSpan.FromMilliseconds(200);
-                    
+
                     Vibration.Default.Vibrate(vibrationPattern);
                 }
 

@@ -46,13 +46,13 @@ public partial class FormEditPage : ContentPage
         try
         {
             _viewModel.IsLoading = true;
-            
+
             System.Diagnostics.Debug.WriteLine($"[FormEditPage] LoadFormForEdit - Iniciando carregamento do formulário ID: {FormId}");
 
             var form = await _formService.GetFormByIdAsync(FormId);
-            
+
             System.Diagnostics.Debug.WriteLine($"[FormEditPage] Formulário carregado: {form != null}");
-            
+
             if (form != null)
             {
                 System.Diagnostics.Debug.WriteLine($"[FormEditPage] Configurando modo de edição para: {form.Title}");
