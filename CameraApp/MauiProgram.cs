@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Media;
+using Microsoft.Maui.Storage;
 using CommunityToolkit.Maui;
 using CameraApp.ViewModels;
 using CameraApp.Views;
@@ -54,6 +56,9 @@ public static class MauiProgram
 			return client;
 		});
 		
+		builder.Services.AddSingleton<IMediaPicker>(_ => MediaPicker.Default);
+		builder.Services.AddSingleton<IFileSystem>(_ => FileSystem.Current);
+		builder.Services.AddSingleton<IPhotoCopier, PhotoCopier>();
 		builder.Services.AddSingleton<ICameraService, CameraService>();
 		builder.Services.AddSingleton<ILocationService, LocationService>();
 		builder.Services.AddSingleton<IPostureService, PostureService>();

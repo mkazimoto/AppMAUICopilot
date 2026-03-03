@@ -1,12 +1,51 @@
 using Microsoft.Maui.Media;
+using Microsoft.Maui.Storage;
 
 namespace CameraApp.Services;
 
 /// <summary>
-/// Provides camera and photo picker operations backed by the MAUI <see cref="MediaPicker" />.
+/// Abstraction for copying a <see cref="FileResult" /> to a local path.
+/// Exists solely to make <see cref="CameraService" /> unit-testable without real platform I/O.
+/// </summary>
+public interface IPhotoCopier
+{
+    /// <summary>Reads the source photo and writes it to <paramref name="destPath" />.</summary>
+    Task CopyAsync(FileResult photo, string destPath);
+}
+
+/// <summary>Production implementation that uses the MAUI <see cref="FileResult" /> stream API.</summary>
+public sealed class PhotoCopier : IPhotoCopier
+{
+    public async Task CopyAsync(FileResult photo, string destPath)
+    {
+        using var sourceStream = await photo.OpenReadAsync();
+        using var localFileStream = File.OpenWrite(destPath);
+        await sourceStream.CopyToAsync(localFileStream);
+    }
+}
+
+/// <summary>
+/// Provides camera and photo picker operations backed by the MAUI <see cref="IMediaPicker" />.
 /// </summary>
 public class CameraService : ICameraService
 {
+    private readonly IMediaPicker _mediaPicker;
+    private readonly IFileSystem _fileSystem;
+    private readonly IPhotoCopier _photoCopier;
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="CameraService" />.
+    /// </summary>
+    /// <param name="mediaPicker">The media picker implementation (use <see cref="MediaPicker.Default" /> in production).</param>
+    /// <param name="fileSystem">The file-system abstraction (use <see cref="FileSystem.Current" /> in production).</param>
+    /// <param name="photoCopier">Strategy for copying a <see cref="FileResult" /> to a local path.</param>
+    public CameraService(IMediaPicker mediaPicker, IFileSystem fileSystem, IPhotoCopier photoCopier)
+    {
+        _mediaPicker = mediaPicker;
+        _fileSystem = fileSystem;
+        _photoCopier = photoCopier;
+    }
+
     /// <summary>
     /// Launches the device camera to capture a new photo and saves it to the local cache directory.
     /// </summary>
@@ -15,28 +54,19 @@ public class CameraService : ICameraService
     {
         try
         {
-            if (MediaPicker.Default.IsCaptureSupported)
+            if (_mediaPicker.IsCaptureSupported)
             {
-                var photo = await MediaPicker.Default.CapturePhotoAsync();
+                var photo = await _mediaPicker.CapturePhotoAsync();
 
                 if (photo != null)
                 {
                     // Salvar em local storage
-                    var localFilePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
+                    var localFilePath = Path.Combine(_fileSystem.CacheDirectory, photo.FileName);
 
-                    using var sourceStream = await photo.OpenReadAsync();
-                    using var localFileStream = File.OpenWrite(localFilePath);
-
-                    await sourceStream.CopyToAsync(localFileStream);
+                    await _photoCopier.CopyAsync(photo, localFilePath);
 
                     return localFilePath;
                 }
-            }
-            else
-            {
-                var mainPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
-                if (mainPage != null)
-                    await mainPage.DisplayAlertAsync("Erro", "Câmera não suportada neste dispositivo", "OK");
             }
         }
         catch (Exception ex)
@@ -57,17 +87,14 @@ public class CameraService : ICameraService
     {
         try
         {
-            var photos = await MediaPicker.Default.PickPhotosAsync();
+            var photos = await _mediaPicker.PickPhotosAsync();
             var photo = photos?.FirstOrDefault();
 
             if (photo != null)
             {
-                var localFilePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
+                var localFilePath = Path.Combine(_fileSystem.CacheDirectory, photo.FileName);
 
-                using var sourceStream = await photo.OpenReadAsync();
-                using var localFileStream = File.OpenWrite(localFilePath);
-
-                await sourceStream.CopyToAsync(localFileStream);
+                await _photoCopier.CopyAsync(photo, localFilePath);
 
                 return localFilePath;
             }
