@@ -1,7 +1,14 @@
 namespace CameraApp.Services;
 
+/// <summary>
+/// Provides geolocation operations using the MAUI <see cref="Geolocation" /> API.
+/// </summary>
 public class LocationService : ILocationService
 {
+    /// <summary>
+    /// Requests location permission if needed, then retrieves the device's current geographic location.
+    /// </summary>
+    /// <returns>The current <see cref="Location" />; <see langword="null" /> if permission was denied or the location could not be determined.</returns>
     public async Task<Location?> GetCurrentLocationAsync()
     {
         try
@@ -29,6 +36,10 @@ public class LocationService : ILocationService
         }
     }
 
+    /// <summary>
+    /// Checks the current location permission status and requests it from the user if not already granted.
+    /// </summary>
+    /// <returns><see langword="true" /> if the <see cref="Permissions.LocationWhenInUse" /> permission is granted; otherwise, <see langword="false" />.</returns>
     public async Task<bool> RequestLocationPermissionAsync()
     {
         try

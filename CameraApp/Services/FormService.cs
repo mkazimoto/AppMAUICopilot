@@ -7,17 +7,27 @@ using CameraApp.Exceptions;
 
 namespace CameraApp.Services;
 
+/// <summary>
+/// Provides CRUD operations for <see cref="Form" /> entities against the forms API endpoint.
+/// </summary>
 public class FormService : IFormService
 {
     private readonly HttpClient _httpClient;
     private readonly IAuthService _authService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FormService" /> class.
+    /// </summary>
+    /// <param name="httpClient">The HTTP client used to communicate with the API.</param>
+    /// <param name="authService">The authentication service for token management.</param>
     public FormService(HttpClient httpClient, IAuthService authService)
     {
         _httpClient = httpClient;
         _authService = authService;
     }
 
+    /// <inheritdoc/>
+    /// <exception cref="ApiException">An error occurred while communicating with the API.</exception>
     public async Task<FormResponse> GetFormsAsync(FormFilter filter)
     {
         try
@@ -53,6 +63,8 @@ public class FormService : IFormService
         }
     }
 
+    /// <inheritdoc/>
+    /// <exception cref="ApiException">An error occurred while communicating with the API.</exception>
     public async Task<Form?> GetFormByIdAsync(string id)
     {
         try
@@ -81,6 +93,8 @@ public class FormService : IFormService
         }
     }
 
+    /// <inheritdoc/>
+    /// <exception cref="ApiException">An error occurred while communicating with the API.</exception>
     public async Task<Form?> CreateFormAsync(Form form)
     {
         try
@@ -111,6 +125,8 @@ public class FormService : IFormService
         }
     }
 
+    /// <inheritdoc/>
+    /// <exception cref="ApiException">An error occurred while communicating with the API.</exception>
     public async Task<Form?> UpdateFormAsync(string id, Form form)
     {
         try
@@ -142,6 +158,8 @@ public class FormService : IFormService
         }
     }
 
+    /// <inheritdoc/>
+    /// <exception cref="ApiException">An error occurred while communicating with the API.</exception>
     public async Task<bool> DeleteFormAsync(string id)
     {
         try

@@ -5,6 +5,9 @@ using System.Globalization;
 
 namespace CameraApp.ViewModels;
 
+/// <summary>
+/// Provides properties and commands for displaying the device's current location on a map.
+/// </summary>
 public partial class MapPageViewModel : ObservableObject
 {
     private readonly ILocationService _locationService;
@@ -27,6 +30,10 @@ public partial class MapPageViewModel : ObservableObject
     private double _currentLatitude;
     private double _currentLongitude;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MapPageViewModel" /> class and loads the default map view.
+    /// </summary>
+    /// <param name="locationService">The location service used to retrieve the device's geographic position.</param>
     public MapPageViewModel(ILocationService locationService)
     {
         _locationService = locationService;

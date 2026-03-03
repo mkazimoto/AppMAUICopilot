@@ -7,10 +7,17 @@ using Microsoft.Maui.Controls;
 
 namespace CameraApp.ViewModels
 {
+    /// <summary>
+    /// Provides properties and commands for monitoring and displaying posture data from the device accelerometer.
+    /// </summary>
     public partial class PosturePageViewModel : ObservableObject
     {
         private readonly IPostureService _postureService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PosturePageViewModel" /> class and subscribes to posture events.
+        /// </summary>
+        /// <param name="postureService">The posture service used to start and stop accelerometer-based monitoring.</param>
         public PosturePageViewModel(IPostureService postureService)
         {
             _postureService = postureService;

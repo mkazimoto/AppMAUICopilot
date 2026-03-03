@@ -5,24 +5,23 @@ using CameraApp.Resources.Strings;
 namespace CameraApp.Services;
 
 /// <summary>
-/// Gerenciador de localização que permite troca de idioma em tempo de execução.
-/// Expõe as strings de recursos via indexador para uso em bindings XAML.
+/// Manages runtime localization by exposing resource strings as bindable properties via an indexer.
 /// </summary>
 /// <remarks>
-/// Uso em XAML (binding dinâmico):
-/// <code>
+/// Usage in XAML (dynamic binding):
+/// <code language="xaml">
 /// xmlns:services="clr-namespace:CameraApp.Services"
 /// Text="{Binding [Login_SignIn], Source={x:Static services:LocalizationResourceManager.Instance}}"
 /// </code>
 ///
-/// Uso em XAML (estático, não atualiza ao mudar idioma):
-/// <code>
+/// Usage in XAML (static, does not update on language change):
+/// <code language="xaml">
 /// xmlns:resx="clr-namespace:CameraApp.Resources.Strings"
 /// Text="{x:Static resx:AppResources.Login_SignIn}"
 /// </code>
 ///
-/// Uso em C#:
-/// <code>
+/// Usage in C#:
+/// <code language="csharp">
 /// string text = LocalizationResourceManager.Instance["Login_SignIn"];
 /// </code>
 /// </remarks>
@@ -32,7 +31,7 @@ public class LocalizationResourceManager : INotifyPropertyChanged
         new(() => new LocalizationResourceManager());
 
     /// <summary>
-    /// Instância singleton do gerenciador de localização.
+    /// Gets the shared singleton instance of <see cref="LocalizationResourceManager" />.
     /// </summary>
     public static LocalizationResourceManager Instance => _instance.Value;
 
@@ -43,22 +42,23 @@ public class LocalizationResourceManager : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Obtém a string localizada pela chave.
-    /// Retorna a chave entre colchetes se não encontrada.
+    /// Gets the localized string for the specified resource key.
     /// </summary>
+    /// <value>The localized string; or the key surrounded by brackets if the key is not found.</value>
     public string this[string key] =>
         AppResources.ResourceManager.GetString(key, AppResources.Culture) ?? $"[{key}]";
 
     /// <summary>
-    /// Cultura atualmente ativa.
+    /// Gets the currently active culture.
     /// </summary>
+    /// <value>The <see cref="CultureInfo" /> that is currently applied to resource lookups and the UI.</value>
     public CultureInfo CurrentCulture => AppResources.Culture ?? CultureInfo.CurrentUICulture;
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
-    /// Idiomas suportados pelo aplicativo.
+    /// Gets the list of cultures supported by the application.
     /// </summary>
     public static IReadOnlyList<CultureInfo> SupportedCultures { get; } =
     [
@@ -68,10 +68,9 @@ public class LocalizationResourceManager : INotifyPropertyChanged
     ];
 
     /// <summary>
-    /// Altera o idioma da interface em tempo de execução.
-    /// Todos os bindings que referenciam esta instância serão atualizados automaticamente.
+    /// Changes the active UI culture at runtime, triggering all XAML bindings referencing this instance to refresh.
     /// </summary>
-    /// <param name="culture">A nova cultura a ser aplicada.</param>
+    /// <param name="culture">The new culture to apply.</param>
     public void SetCulture(CultureInfo culture)
     {
         AppResources.Culture = culture;
@@ -83,9 +82,9 @@ public class LocalizationResourceManager : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Altera o idioma usando o código de cultura (ex: "pt", "en", "es").
+    /// Changes the active UI culture using a culture code string.
     /// </summary>
-    /// <param name="cultureCode">Código da cultura.</param>
+    /// <param name="cultureCode">The culture code to apply (for example, <c>"pt"</c>, <c>"en"</c>, or <c>"es"</c>).</param>
     public void SetCulture(string cultureCode) =>
         SetCulture(new CultureInfo(cultureCode));
 }

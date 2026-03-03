@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CameraApp.Services
 {
+    /// <summary>
+    /// Monitors device posture in real time using the device accelerometer and raises alerts when poor posture is detected.
+    /// </summary>
     public class PostureService : IPostureService
     {
         private Timer? _monitoringTimer;
@@ -13,13 +16,20 @@ namespace CameraApp.Services
         private bool _isInPoorPosture;
         private const int MonitoringIntervalMs = 500; // Monitora a cada 500ms
 
+        /// <inheritdoc/>
         public event EventHandler<PostureAlertEventArgs>? PostureAlert;
+        /// <inheritdoc/>
         public event EventHandler<AccelerometerDataEventArgs>? AccelerometerDataUpdated;
 
+        /// <inheritdoc/>
         public bool IsMonitoring { get; private set; }
+        /// <inheritdoc/>
         public double Sensitivity { get; set; } = 0.3; // 30% de tolerância
+        /// <inheritdoc/>
         public int AlertDelaySeconds { get; set; } = 5; // Alerta após 5 segundos
 
+        /// <inheritdoc/>
+        /// <exception cref="NotSupportedException">The device accelerometer is not available.</exception>
         public async Task StartMonitoringAsync()
         {
             if (IsMonitoring)

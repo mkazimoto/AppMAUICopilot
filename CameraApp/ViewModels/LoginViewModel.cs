@@ -6,6 +6,9 @@ using Microsoft.Maui.ApplicationModel; // Para MainThread
 
 namespace CameraApp.ViewModels
 {
+    /// <summary>
+    /// Provides properties and commands for the login page, including credential entry and session restoration.
+    /// </summary>
     public partial class LoginViewModel : ObservableObject
     {
         private readonly IAuthService _authService;
@@ -32,6 +35,11 @@ namespace CameraApp.ViewModels
         [ObservableProperty]
         private string loginButtonText = "Entrar";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginViewModel" /> class and attempts to restore any saved session.
+        /// </summary>
+        /// <param name="authService">The authentication service used to log in and monitor session state.</param>
+        /// <param name="logger">The logger used to record authentication events.</param>
         public LoginViewModel(IAuthService authService, ILogger<LoginViewModel> logger)
         {
             _authService = authService;

@@ -9,6 +9,9 @@ using CameraApp.Views;
 
 namespace CameraApp.ViewModels;
 
+/// <summary>
+/// Provides properties and commands for displaying, filtering, and paginating the form list.
+/// </summary>
 public partial class FormListViewModel : ObservableObject
 {
     private readonly IFormService _formService;
@@ -78,6 +81,11 @@ public partial class FormListViewModel : ObservableObject
     [ObservableProperty]
     private StatusItem? selectedStatusItem;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FormListViewModel" /> class and populates the category and status picker lists.
+    /// </summary>
+    /// <param name="formService">The form service used to retrieve and manipulate form data.</param>
+    /// <param name="authService">The authentication service used to check session state.</param>
     public FormListViewModel(IFormService formService, IAuthService authService)
     {
         _formService = formService;

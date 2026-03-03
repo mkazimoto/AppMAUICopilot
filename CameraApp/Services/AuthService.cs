@@ -6,17 +6,29 @@ using System.Text.Json;
 
 namespace CameraApp.Services
 {
+    /// <summary>
+    /// Provides OAuth 2.0 authentication operations including login, token refresh, and session restoration.
+    /// </summary>
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<AuthService> _logger;
         private AuthToken? _currentToken;
 
+        /// <inheritdoc/>
         public event EventHandler<bool>? AuthenticationChanged;
 
+        /// <inheritdoc/>
         public bool IsAuthenticated => _currentToken != null && !_currentToken.IsExpired;
+
+        /// <inheritdoc/>
         public string? CurrentToken => _currentToken?.AccessToken;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthService" /> class.
+        /// </summary>
+        /// <param name="httpClient">The HTTP client used to communicate with the authentication endpoint.</param>
+        /// <param name="logger">The logger used to record authentication events.</param>
         public AuthService(HttpClient httpClient, ILogger<AuthService> logger)
         {
             _httpClient = httpClient;

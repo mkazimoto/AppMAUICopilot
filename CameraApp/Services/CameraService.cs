@@ -2,8 +2,15 @@ using Microsoft.Maui.Media;
 
 namespace CameraApp.Services;
 
+/// <summary>
+/// Provides camera and photo picker operations backed by the MAUI <see cref="MediaPicker" />.
+/// </summary>
 public class CameraService : ICameraService
 {
+    /// <summary>
+    /// Launches the device camera to capture a new photo and saves it to the local cache directory.
+    /// </summary>
+    /// <returns>The local file path of the captured photo; <see langword="null" /> if the capture was cancelled, the device does not support capture, or an error occurred.</returns>
     public async Task<string?> TakePhotoAsync()
     {
         try
@@ -42,6 +49,10 @@ public class CameraService : ICameraService
         return null;
     }
 
+    /// <summary>
+    /// Opens the device photo picker and saves the selected photo to the local cache directory.
+    /// </summary>
+    /// <returns>The local file path of the selected photo; <see langword="null" /> if the selection was cancelled or an error occurred.</returns>
     public async Task<string?> PickPhotoAsync()
     {
         try

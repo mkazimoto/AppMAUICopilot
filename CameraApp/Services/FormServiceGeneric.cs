@@ -3,16 +3,20 @@ using CameraApp.Config;
 namespace CameraApp.Services;
 
 /// <summary>
-/// Serviço genérico para operações com formulários.
-/// Herda todas as operações CRUD da classe BaseService.
+/// Provides generic CRUD operations for <see cref="Models.Form" /> entities, inheriting all base REST behavior.
 /// </summary>
 public class FormServiceGeneric : BaseService<Models.Form>
 {
     /// <summary>
-    /// Define o endpoint da API para formulários
+    /// Gets the relative API endpoint path for forms.
     /// </summary>
     protected override string EndpointPath => "/api/forms";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FormServiceGeneric" /> class.
+    /// </summary>
+    /// <param name="httpClient">The HTTP client used to communicate with the API.</param>
+    /// <param name="authService">The authentication service for token management.</param>
     public FormServiceGeneric(HttpClient httpClient, IAuthService authService)
         : base(httpClient, authService)
     {
@@ -22,8 +26,13 @@ public class FormServiceGeneric : BaseService<Models.Form>
     // Por exemplo:
 
     /// <summary>
-    /// Obtém formulários por categoria
+    /// Retrieves a paginated list of forms belonging to a specific category.
     /// </summary>
+    /// <param name="categoryId">The category identifier to filter by.</param>
+    /// <param name="page">The one-based page number to retrieve.</param>
+    /// <param name="pageSize">The number of items per page.</param>
+    /// <returns>A paginated response containing forms in the specified category.</returns>
+    /// <exception cref="Exceptions.ApiException">An error occurred while calling the API.</exception>
     public async Task<PaginatedResponse<Models.Form>> GetByCategoryAsync(int categoryId, int page = 1, int pageSize = 10)
     {
         try
