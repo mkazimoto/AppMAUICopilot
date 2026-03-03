@@ -37,7 +37,7 @@ public static class MauiProgram
 				Timeout = ApiConfig.RequestTimeout
 			};
 			var logger = provider.GetRequiredService<ILogger<AuthService>>();
-			return new AuthService(httpClient, logger);
+			return new AuthService(httpClient, logger, SecureStorage.Default);
 		});
 		
 		// Registrar HttpClient com AuthHttpHandler para outros serviços
