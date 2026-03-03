@@ -66,19 +66,19 @@ public partial class MapPageViewModel : ObservableObject
                 LocationText = string.Empty;
                 LastUpdateText = string.Empty;
 
-                await Shell.Current.DisplayAlertAsync(
+                await (Shell.Current?.DisplayAlertAsync(
                     "Erro",
                     "Não foi possível obter sua localização. Verifique se as permissões estão habilitadas e se o GPS está ativo.",
-                    "OK");
+                    "OK") ?? Task.CompletedTask);
             }
         }
         catch (Exception ex)
         {
             HasLocation = false;
-            await Shell.Current.DisplayAlertAsync(
+            await (Shell.Current?.DisplayAlertAsync(
                 "Erro",
                 $"Erro ao obter localização: {ex.Message}",
-                "OK");
+                "OK") ?? Task.CompletedTask);
         }
         finally
         {

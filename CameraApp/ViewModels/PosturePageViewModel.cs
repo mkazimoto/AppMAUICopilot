@@ -4,6 +4,7 @@ using CameraApp.Services;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Dispatching;
 
 namespace CameraApp.ViewModels
 {
@@ -13,14 +14,17 @@ namespace CameraApp.ViewModels
     public partial class PosturePageViewModel : ObservableObject
     {
         private readonly IPostureService _postureService;
+        private readonly IDispatcher _dispatcher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PosturePageViewModel" /> class and subscribes to posture events.
         /// </summary>
         /// <param name="postureService">The posture service used to start and stop accelerometer-based monitoring.</param>
-        public PosturePageViewModel(IPostureService postureService)
+        /// <param name="dispatcher">The dispatcher used to marshal UI updates to the main thread.</param>
+        public PosturePageViewModel(IPostureService postureService, IDispatcher dispatcher)
         {
             _postureService = postureService;
+            _dispatcher = dispatcher;
             _postureService.PostureAlert += OnPostureAlert;
             _postureService.AccelerometerDataUpdated += OnAccelerometerDataUpdated;
 
@@ -131,7 +135,7 @@ namespace CameraApp.ViewModels
         private void OnAccelerometerDataUpdated(object? sender, AccelerometerDataEventArgs e)
         {
             // Atualizar na thread principal
-            MainThread.BeginInvokeOnMainThread(() =>
+            _dispatcher.Dispatch(() =>
             {
                 AccelerometerX = e.X;
                 AccelerometerY = e.Y;
@@ -161,7 +165,7 @@ namespace CameraApp.ViewModels
         private void OnPostureAlert(object? sender, PostureAlertEventArgs e)
         {
             // Atualizar na thread principal
-            MainThread.BeginInvokeOnMainThread(() =>
+            _dispatcher.Dispatch(() =>
             {
                 LastAlertMessage = e.Message;
                 LastAlertTime = e.Timestamp;
