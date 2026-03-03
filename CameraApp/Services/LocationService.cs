@@ -1,10 +1,34 @@
+using Microsoft.Maui.Devices.Sensors;
+
 namespace CameraApp.Services;
 
 /// <summary>
-/// Provides geolocation operations using the MAUI <see cref="Geolocation" /> API.
+/// Provides geolocation operations using the MAUI <see cref="IGeolocation" /> API.
 /// </summary>
 public class LocationService : ILocationService
 {
+    private readonly IGeolocation _geolocation;
+    private readonly ILocationPermissions _permissions;
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="LocationService" /> using the default MAUI implementations.
+    /// </summary>
+    public LocationService()
+        : this(Geolocation.Default, new DefaultLocationPermissions())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="LocationService" /> with injectable dependencies.
+    /// </summary>
+    /// <param name="geolocation">The geolocation provider.</param>
+    /// <param name="permissions">The location permissions provider.</param>
+    public LocationService(IGeolocation geolocation, ILocationPermissions permissions)
+    {
+        _geolocation = geolocation;
+        _permissions = permissions;
+    }
+
     /// <summary>
     /// Requests location permission if needed, then retrieves the device's current geographic location.
     /// </summary>
@@ -25,12 +49,10 @@ public class LocationService : ILocationService
                 Timeout = TimeSpan.FromSeconds(10)
             };
 
-            var location = await Geolocation.GetLocationAsync(request);
-            return location;
+            return await _geolocation.GetLocationAsync(request);
         }
         catch (Exception ex)
         {
-            // Log the error
             System.Diagnostics.Debug.WriteLine($"Erro ao obter localização: {ex.Message}");
             return null;
         }
@@ -44,11 +66,11 @@ public class LocationService : ILocationService
     {
         try
         {
-            var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+            var status = await _permissions.CheckStatusAsync();
 
             if (status != PermissionStatus.Granted)
             {
-                status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                status = await _permissions.RequestAsync();
             }
 
             return status == PermissionStatus.Granted;
