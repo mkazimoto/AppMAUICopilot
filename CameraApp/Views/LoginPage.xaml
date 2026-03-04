@@ -4,6 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
              xmlns:converters="clr-namespace:CameraApp.Converters"
+             xmlns:services="clr-namespace:CameraApp.Services"
              x:DataType="viewmodels:LoginViewModel"
              Title="TOTVS RM - Login"
              Shell.NavBarIsVisible="False">
@@ -29,12 +30,12 @@
                 <Label Text="�" 
                        FontSize="64" 
                        HorizontalOptions="Center" />
-                <Label Text="TOTVS Camera App" 
+                <Label Text="{Binding [AppTitle], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                        FontSize="28" 
                        FontAttributes="Bold"
                        HorizontalOptions="Center" 
                        TextColor="{DynamicResource Primary}" />
-                <Label Text="Sistema de Câmera com Autenticação RM"
+                <Label Text="{Binding [AppSubtitle], Source={x:Static services:LocalizationResourceManager.Instance}}"
                        FontSize="16"
                        HorizontalOptions="Center"
                        TextColor="{DynamicResource Gray600}" />
@@ -54,29 +55,29 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="20">
                 <StackLayout Spacing="15">
-                    <Label Text="Dados de Acesso" 
+                    <Label Text="{Binding [Login_AccessData], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                            FontSize="18" 
                            FontAttributes="Bold"
                            TextColor="{DynamicResource Primary}" />
 
                     <!-- Username -->
                     <StackLayout>
-                        <Label Text="Usuário *" 
+                        <Label Text="{Binding [Login_User], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                                FontSize="14" 
                                TextColor="{DynamicResource Gray900}" />
                         <Entry Text="{Binding Username}"
-                               Placeholder="Digite seu usuário"
+                               Placeholder="{Binding [Login_UserPlaceholder], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
                                ReturnType="Next" />
                     </StackLayout>
 
                     <!-- Password -->
                     <StackLayout>
-                        <Label Text="Senha *" 
+                        <Label Text="{Binding [Login_Password], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                                FontSize="14" 
                                TextColor="{DynamicResource Gray900}" />
                         <Entry Text="{Binding Password}"
-                               Placeholder="Digite sua senha"
+                               Placeholder="{Binding [Login_PasswordPlaceholder], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                IsPassword="True"
                                IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
                                ReturnType="Next" />
@@ -84,14 +85,14 @@
 
                     <!-- Service Alias (Opcional) -->
                     <StackLayout>
-                        <Label Text="Alias do Serviço (Opcional)" 
+                        <Label Text="{Binding [Login_ServiceAlias], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                                FontSize="14" 
                                TextColor="{DynamicResource Gray900}" />
                         <Entry Text="{Binding ServiceAlias}"
                                Placeholder="Ex: CorporeRM"
                                IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
                                ReturnType="Done" />
-                        <Label Text="Configure apenas se necessário para seu ambiente"
+                        <Label Text="{Binding [Login_ServiceAliasHint], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                FontSize="12"
                                TextColor="{DynamicResource Gray600}" />
                     </StackLayout>
@@ -99,14 +100,14 @@
                     <!-- Botões -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
                         <Button Grid.Column="0"
-                                Text="Limpar"
+                                Text="{Binding [Login_Clear], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                 Command="{Binding ClearCredentialsCommand}"
                                 BackgroundColor="{DynamicResource Gray300}"
                                 TextColor="{DynamicResource Gray900}"
                                 IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}" />
                         
                         <Button Grid.Column="1"
-                                Text="Entrar"
+                                Text="{Binding [Login_SignIn], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                 Command="{Binding LoginCommand}"
                                 BackgroundColor="{DynamicResource Primary}"
                                 TextColor="White"
@@ -122,18 +123,18 @@
                     StrokeShape="RoundRectangle 10"
                     Padding="20">
                 <StackLayout Spacing="15">
-                    <Label Text="✅ Autenticado com Sucesso!" 
+                    <Label Text="{Binding [Login_Authenticated], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                            FontSize="18" 
                            FontAttributes="Bold"
                            TextColor="White"
                            HorizontalOptions="Center" />
                     
-                    <Label Text="Você está conectado às APIs do TOTVS RM"
+                    <Label Text="{Binding [Login_AuthenticatedMessage], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            FontSize="14"
                            TextColor="White"
                            HorizontalOptions="Center" />
 
-                    <Button Text="Sair"
+                    <Button Text="{Binding [Login_SignOut], Source={x:Static services:LocalizationResourceManager.Instance}}"
                             Command="{Binding LogoutCommand}"
                             BackgroundColor="{DynamicResource Danger}"
                             TextColor="White"
@@ -152,7 +153,7 @@
                                    VerticalOptions="Center" />
 
                 <Label IsVisible="{Binding IsLoading}"
-                       Text="Autenticando..."
+                       Text="{Binding [Login_Authenticating], Source={x:Static services:LocalizationResourceManager.Instance}}"
                        FontSize="14"
                        HorizontalOptions="Center"
                        TextColor="{DynamicResource Primary}" />

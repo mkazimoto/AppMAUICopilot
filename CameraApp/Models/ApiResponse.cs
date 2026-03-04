@@ -3,41 +3,45 @@ using System.Text.Json.Serialization;
 namespace CameraApp.Models;
 
 /// <summary>
-/// Classe base genérica para respostas de API que retornam listas de itens.
-/// Compatível com o formato de resposta da API TOTVS.
+/// Represents a generic paginated API response containing a list of items.
 /// </summary>
-/// <typeparam name="T">Tipo da entidade retornada na lista</typeparam>
+/// <remarks>Compatible with the TOTVS API response format.</remarks>
+/// <typeparam name="T">The type of entity returned in the list.</typeparam>
 public class ApiResponse<T> where T : BaseEntity
 {
     /// <summary>
-    /// Indica se há mais itens disponíveis (próxima página)
+    /// Gets or sets a value that indicates whether more items are available on the next page.
     /// </summary>
+    /// <value><see langword="true" /> if a subsequent page exists; otherwise, <see langword="false" />. The default is <see langword="false" />.</value>
     [JsonPropertyName("hasNext")]
     public bool HasNext { get; set; }
 
     /// <summary>
-    /// Lista de itens retornados pela API
+    /// Gets or sets the list of items returned by the API.
     /// </summary>
+    /// <value>The collection of items for the current page.</value>
     [JsonPropertyName("items")]
     public List<T> Items { get; set; } = new();
 
     /// <summary>
-    /// Quantidade total de itens retornados
+    /// Gets the number of items in the current page.
     /// </summary>
+    /// <value>The count of items in <see cref="Items" />.</value>
     [JsonIgnore]
     public int Count => Items?.Count ?? 0;
 
     /// <summary>
-    /// Indica se a resposta está vazia (sem itens)
+    /// Gets a value that indicates whether the response contains no items.
     /// </summary>
+    /// <value><see langword="true" /> if <see cref="Count" /> is zero; otherwise, <see langword="false" />.</value>
     [JsonIgnore]
     public bool IsEmpty => Count == 0;
 }
 
 /// <summary>
-/// Classe específica para respostas de formulários.
-/// Mantida para compatibilidade com código existente.
+/// Represents a paginated API response for <see cref="Form" /> entities.
 /// </summary>
+/// <remarks>Maintained for backward compatibility with existing code.</remarks>
 public class FormResponse : ApiResponse<Form>
 {
 }

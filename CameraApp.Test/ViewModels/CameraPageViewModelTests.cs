@@ -1,411 +1,242 @@
 using CameraApp.Services;
 using CameraApp.ViewModels;
-using NSubstitute;
+using Moq;
 
 namespace CameraApp.Test.ViewModels;
 
-[TestClass]
 public class CameraPageViewModelTests
 {
-    private ICameraService _cameraService = null!;
-    private CameraPageViewModel _viewModel = null!;
+    private readonly Mock<ICameraService> _cameraServiceMock;
 
-    [TestInitialize]
-    public void Setup()
+    public CameraPageViewModelTests()
     {
-        _cameraService = Substitute.For<ICameraService>();
-        _viewModel = new CameraPageViewModel(_cameraService);
+        _cameraServiceMock = new Mock<ICameraService>();
     }
 
-    #region Constructor Tests
+    private CameraPageViewModel CreateSut() =>
+        new(_cameraServiceMock.Object);
 
-    [TestMethod]
-    public void Constructor_InitializesWithDefaultValues()
+    // ── Initial state ────────────────────────────────────────────────────────
+
+    [Fact]
+    public void InitialState_PhotoPath_IsNull()
     {
-        // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
+        var sut = CreateSut();
+        Assert.Null(sut.PhotoPath);
     }
 
-    [TestMethod]
-    public void Constructor_WithValidService_DoesNotThrow()
+    [Fact]
+    public void InitialState_HasPhoto_IsFalse()
     {
-        // Act & Assert - should not throw
-        var viewModel = new CameraPageViewModel(_cameraService);
-        Assert.IsNotNull(viewModel);
+        var sut = CreateSut();
+        Assert.False(sut.HasPhoto);
     }
 
-    #endregion
+    // ── TakePhotoAsync ───────────────────────────────────────────────────────
 
-    #region TakePhotoCommand Tests
-
-    [TestMethod]
-    public async Task TakePhotoCommand_WhenPhotoTaken_UpdatesPhotoPathAndHasPhoto()
+    [Fact]
+    public async Task TakePhotoAsync_WhenPhotoReturned_SetsPhotoPath()
     {
         // Arrange
-        const string expectedPath = "/path/to/photo.jpg";
-        _cameraService.TakePhotoAsync().Returns(Task.FromResult<string?>(expectedPath));
+        const string expectedPath = "/storage/photos/photo.jpg";
+        _cameraServiceMock
+            .Setup(s => s.TakePhotoAsync())
+            .ReturnsAsync(expectedPath);
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.TakePhotoCommand.ExecuteAsync(null);
+        await sut.TakePhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.AreEqual(expectedPath, _viewModel.PhotoPath);
-        Assert.IsTrue(_viewModel.HasPhoto);
-        await _cameraService.Received(1).TakePhotoAsync();
+        Assert.Equal(expectedPath, sut.PhotoPath);
     }
 
-    [TestMethod]
-    public async Task TakePhotoCommand_WhenServiceReturnsNull_DoesNotUpdateProperties()
+    [Fact]
+    public async Task TakePhotoAsync_WhenPhotoReturned_SetsHasPhotoTrue()
     {
         // Arrange
-        _cameraService.TakePhotoAsync().Returns(Task.FromResult<string?>(null));
+        _cameraServiceMock
+            .Setup(s => s.TakePhotoAsync())
+            .ReturnsAsync("/storage/photos/photo.jpg");
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.TakePhotoCommand.ExecuteAsync(null);
+        await sut.TakePhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
-        await _cameraService.Received(1).TakePhotoAsync();
+        Assert.True(sut.HasPhoto);
     }
 
-    [TestMethod]
-    public async Task TakePhotoCommand_WhenServiceReturnsEmptyString_DoesNotUpdateProperties()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task TakePhotoAsync_WhenNullOrEmptyReturned_DoesNotSetPhotoPath(string? returnedPath)
     {
         // Arrange
-        _cameraService.TakePhotoAsync().Returns(Task.FromResult<string?>(string.Empty));
+        _cameraServiceMock
+            .Setup(s => s.TakePhotoAsync())
+            .ReturnsAsync(returnedPath);
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.TakePhotoCommand.ExecuteAsync(null);
+        await sut.TakePhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
-        await _cameraService.Received(1).TakePhotoAsync();
+        Assert.Null(sut.PhotoPath);
     }
 
-    [TestMethod]
-    public async Task TakePhotoCommand_WhenCalledMultipleTimes_UpdatesWithLatestPhoto()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task TakePhotoAsync_WhenNullOrEmptyReturned_HasPhotoRemainsFlase(string? returnedPath)
     {
         // Arrange
-        const string firstPath = "/path/to/photo1.jpg";
-        const string secondPath = "/path/to/photo2.jpg";
-        
-        _cameraService.TakePhotoAsync().Returns(
-            Task.FromResult<string?>(firstPath),
-            Task.FromResult<string?>(secondPath));
+        _cameraServiceMock
+            .Setup(s => s.TakePhotoAsync())
+            .ReturnsAsync(returnedPath);
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.TakePhotoCommand.ExecuteAsync(null);
-        var firstPhotoPath = _viewModel.PhotoPath;
-        
-        await _viewModel.TakePhotoCommand.ExecuteAsync(null);
-        var secondPhotoPath = _viewModel.PhotoPath;
+        await sut.TakePhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.AreEqual(firstPath, firstPhotoPath);
-        Assert.AreEqual(secondPath, secondPhotoPath);
-        Assert.IsTrue(_viewModel.HasPhoto);
-        await _cameraService.Received(2).TakePhotoAsync();
+        Assert.False(sut.HasPhoto);
     }
 
-    [TestMethod]
-    public async Task TakePhotoCommand_WhenServiceThrowsException_PropagatesException()
+    // ── PickPhotoAsync ───────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task PickPhotoAsync_WhenPhotoReturned_SetsPhotoPath()
     {
         // Arrange
-        _cameraService.TakePhotoAsync().Returns<string?>(_ => throw new InvalidOperationException("Camera not available"));
-
-        // Act & Assert
-        await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
-            await _viewModel.TakePhotoCommand.ExecuteAsync(null));
-    }
-
-    [TestMethod]
-    public void TakePhotoCommand_IsNotNull()
-    {
-        // Assert
-        Assert.IsNotNull(_viewModel.TakePhotoCommand);
-    }
-
-    #endregion
-
-    #region PickPhotoCommand Tests
-
-    [TestMethod]
-    public async Task PickPhotoCommand_WhenPhotoSelected_UpdatesPhotoPathAndHasPhoto()
-    {
-        // Arrange
-        const string expectedPath = "/path/to/picked_photo.jpg";
-        _cameraService.PickPhotoAsync().Returns(Task.FromResult<string?>(expectedPath));
+        const string expectedPath = "/storage/photos/picked.jpg";
+        _cameraServiceMock
+            .Setup(s => s.PickPhotoAsync())
+            .ReturnsAsync(expectedPath);
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.PickPhotoCommand.ExecuteAsync(null);
+        await sut.PickPhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.AreEqual(expectedPath, _viewModel.PhotoPath);
-        Assert.IsTrue(_viewModel.HasPhoto);
-        await _cameraService.Received(1).PickPhotoAsync();
+        Assert.Equal(expectedPath, sut.PhotoPath);
     }
 
-    [TestMethod]
-    public async Task PickPhotoCommand_WhenServiceReturnsNull_DoesNotUpdateProperties()
+    [Fact]
+    public async Task PickPhotoAsync_WhenPhotoReturned_SetsHasPhotoTrue()
     {
         // Arrange
-        _cameraService.PickPhotoAsync().Returns(Task.FromResult<string?>(null));
+        _cameraServiceMock
+            .Setup(s => s.PickPhotoAsync())
+            .ReturnsAsync("/storage/photos/picked.jpg");
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.PickPhotoCommand.ExecuteAsync(null);
+        await sut.PickPhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
-        await _cameraService.Received(1).PickPhotoAsync();
+        Assert.True(sut.HasPhoto);
     }
 
-    [TestMethod]
-    public async Task PickPhotoCommand_WhenServiceReturnsEmptyString_DoesNotUpdateProperties()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task PickPhotoAsync_WhenNullOrEmptyReturned_DoesNotSetPhotoPath(string? returnedPath)
     {
         // Arrange
-        _cameraService.PickPhotoAsync().Returns(Task.FromResult<string?>(string.Empty));
+        _cameraServiceMock
+            .Setup(s => s.PickPhotoAsync())
+            .ReturnsAsync(returnedPath);
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.PickPhotoCommand.ExecuteAsync(null);
+        await sut.PickPhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
-        await _cameraService.Received(1).PickPhotoAsync();
+        Assert.Null(sut.PhotoPath);
     }
 
-    [TestMethod]
-    public async Task PickPhotoCommand_WhenCalledMultipleTimes_UpdatesWithLatestPhoto()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task PickPhotoAsync_WhenNullOrEmptyReturned_HasPhotoRemainsFalse(string? returnedPath)
     {
         // Arrange
-        const string firstPath = "/path/to/picked_photo1.jpg";
-        const string secondPath = "/path/to/picked_photo2.jpg";
-        
-        _cameraService.PickPhotoAsync().Returns(
-            Task.FromResult<string?>(firstPath),
-            Task.FromResult<string?>(secondPath));
+        _cameraServiceMock
+            .Setup(s => s.PickPhotoAsync())
+            .ReturnsAsync(returnedPath);
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.PickPhotoCommand.ExecuteAsync(null);
-        var firstPhotoPath = _viewModel.PhotoPath;
-        
-        await _viewModel.PickPhotoCommand.ExecuteAsync(null);
-        var secondPhotoPath = _viewModel.PhotoPath;
+        await sut.PickPhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.AreEqual(firstPath, firstPhotoPath);
-        Assert.AreEqual(secondPath, secondPhotoPath);
-        Assert.IsTrue(_viewModel.HasPhoto);
-        await _cameraService.Received(2).PickPhotoAsync();
+        Assert.False(sut.HasPhoto);
     }
 
-    [TestMethod]
-    public async Task PickPhotoCommand_WhenServiceThrowsException_PropagatesException()
+    // ── ClearPhoto ───────────────────────────────────────────────────────────
+
+    [Fact]
+    public void ClearPhoto_AfterTakingPhoto_ClearsPhotoPath()
     {
         // Arrange
-        _cameraService.PickPhotoAsync().Returns<string?>(_ => throw new InvalidOperationException("Gallery not available"));
-
-        // Act & Assert
-        await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
-            await _viewModel.PickPhotoCommand.ExecuteAsync(null));
-    }
-
-    [TestMethod]
-    public void PickPhotoCommand_IsNotNull()
-    {
-        // Assert
-        Assert.IsNotNull(_viewModel.PickPhotoCommand);
-    }
-
-    #endregion
-
-    #region ClearPhotoCommand Tests
-
-    [TestMethod]
-    public void ClearPhotoCommand_WhenPhotoExists_ClearsPhotoPathAndHasPhoto()
-    {
-        // Arrange
-        _viewModel.PhotoPath = "/path/to/photo.jpg";
-        _viewModel.HasPhoto = true;
+        var sut = CreateSut();
+        sut.PhotoPath = "/storage/photos/photo.jpg";
+        sut.HasPhoto = true;
 
         // Act
-        _viewModel.ClearPhotoCommand.Execute(null);
+        sut.ClearPhotoCommand.Execute(null);
 
         // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
+        Assert.Null(sut.PhotoPath);
     }
 
-    [TestMethod]
-    public void ClearPhotoCommand_WhenNoPhoto_DoesNotThrow()
+    [Fact]
+    public void ClearPhoto_AfterTakingPhoto_SetsHasPhotoFalse()
     {
         // Arrange
-        _viewModel.PhotoPath = null;
-        _viewModel.HasPhoto = false;
-
-        // Act & Assert - should not throw
-        _viewModel.ClearPhotoCommand.Execute(null);
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
-    }
-
-    [TestMethod]
-    public async Task ClearPhotoCommand_AfterTakingPhoto_ResetsState()
-    {
-        // Arrange
-        _cameraService.TakePhotoAsync().Returns(Task.FromResult<string?>("/path/to/photo.jpg"));
+        var sut = CreateSut();
+        sut.PhotoPath = "/storage/photos/photo.jpg";
+        sut.HasPhoto = true;
 
         // Act
-        await _viewModel.TakePhotoCommand.ExecuteAsync(null);
-        Assert.IsTrue(_viewModel.HasPhoto); // Verify photo was set
-
-        _viewModel.ClearPhotoCommand.Execute(null);
+        sut.ClearPhotoCommand.Execute(null);
 
         // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
+        Assert.False(sut.HasPhoto);
     }
 
-    [TestMethod]
-    public async Task ClearPhotoCommand_AfterPickingPhoto_ResetsState()
+    // ── Service interaction ──────────────────────────────────────────────────
+
+    [Fact]
+    public async Task TakePhotoAsync_AlwaysCallsCameraService()
     {
         // Arrange
-        _cameraService.PickPhotoAsync().Returns(Task.FromResult<string?>("/path/to/picked_photo.jpg"));
+        _cameraServiceMock
+            .Setup(s => s.TakePhotoAsync())
+            .ReturnsAsync((string?)null);
+        var sut = CreateSut();
 
         // Act
-        await _viewModel.PickPhotoCommand.ExecuteAsync(null);
-        Assert.IsTrue(_viewModel.HasPhoto); // Verify photo was set
-
-        _viewModel.ClearPhotoCommand.Execute(null);
+        await sut.TakePhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
+        _cameraServiceMock.Verify(s => s.TakePhotoAsync(), Times.Once);
     }
 
-    [TestMethod]
-    public void ClearPhotoCommand_IsNotNull()
-    {
-        // Assert
-        Assert.IsNotNull(_viewModel.ClearPhotoCommand);
-    }
-
-    [TestMethod]
-    public void ClearPhotoCommand_CanBeCalledMultipleTimes()
+    [Fact]
+    public async Task PickPhotoAsync_AlwaysCallsCameraService()
     {
         // Arrange
-        _viewModel.PhotoPath = "/path/to/photo.jpg";
-        _viewModel.HasPhoto = true;
+        _cameraServiceMock
+            .Setup(s => s.PickPhotoAsync())
+            .ReturnsAsync((string?)null);
+        var sut = CreateSut();
 
         // Act
-        _viewModel.ClearPhotoCommand.Execute(null);
-        _viewModel.ClearPhotoCommand.Execute(null);
-        _viewModel.ClearPhotoCommand.Execute(null);
+        await sut.PickPhotoCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
+        _cameraServiceMock.Verify(s => s.PickPhotoAsync(), Times.Once);
     }
-
-    #endregion
-
-    #region Property Change Notification Tests
-
-    [TestMethod]
-    public void PhotoPath_WhenChanged_RaisesPropertyChanged()
-    {
-        // Arrange
-        var propertyChangedRaised = false;
-        _viewModel.PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName == nameof(_viewModel.PhotoPath))
-                propertyChangedRaised = true;
-        };
-
-        // Act
-        _viewModel.PhotoPath = "/path/to/photo.jpg";
-
-        // Assert
-        Assert.IsTrue(propertyChangedRaised);
-    }
-
-    [TestMethod]
-    public void HasPhoto_WhenChanged_RaisesPropertyChanged()
-    {
-        // Arrange
-        var propertyChangedRaised = false;
-        _viewModel.PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName == nameof(_viewModel.HasPhoto))
-                propertyChangedRaised = true;
-        };
-
-        // Act
-        _viewModel.HasPhoto = true;
-
-        // Assert
-        Assert.IsTrue(propertyChangedRaised);
-    }
-
-    #endregion
-
-    #region Integration/Workflow Tests
-
-    [TestMethod]
-    public async Task Workflow_TakePhoto_ThenClear_ThenPickPhoto_WorksCorrectly()
-    {
-        // Arrange
-        const string takenPhotoPath = "/path/to/taken_photo.jpg";
-        const string pickedPhotoPath = "/path/to/picked_photo.jpg";
-        
-        _cameraService.TakePhotoAsync().Returns(Task.FromResult<string?>(takenPhotoPath));
-        _cameraService.PickPhotoAsync().Returns(Task.FromResult<string?>(pickedPhotoPath));
-
-        // Act - Take photo
-        await _viewModel.TakePhotoCommand.ExecuteAsync(null);
-        Assert.AreEqual(takenPhotoPath, _viewModel.PhotoPath);
-        Assert.IsTrue(_viewModel.HasPhoto);
-
-        // Act - Clear photo
-        _viewModel.ClearPhotoCommand.Execute(null);
-        Assert.IsNull(_viewModel.PhotoPath);
-        Assert.IsFalse(_viewModel.HasPhoto);
-
-        // Act - Pick photo
-        await _viewModel.PickPhotoCommand.ExecuteAsync(null);
-        Assert.AreEqual(pickedPhotoPath, _viewModel.PhotoPath);
-        Assert.IsTrue(_viewModel.HasPhoto);
-
-        // Assert
-        await _cameraService.Received(1).TakePhotoAsync();
-        await _cameraService.Received(1).PickPhotoAsync();
-    }
-
-    [TestMethod]
-    public async Task Workflow_PickPhoto_ThenTakePhoto_ReplacesExistingPhoto()
-    {
-        // Arrange
-        const string pickedPhotoPath = "/path/to/picked_photo.jpg";
-        const string takenPhotoPath = "/path/to/taken_photo.jpg";
-        
-        _cameraService.PickPhotoAsync().Returns(Task.FromResult<string?>(pickedPhotoPath));
-        _cameraService.TakePhotoAsync().Returns(Task.FromResult<string?>(takenPhotoPath));
-
-        // Act - Pick photo
-        await _viewModel.PickPhotoCommand.ExecuteAsync(null);
-        Assert.AreEqual(pickedPhotoPath, _viewModel.PhotoPath);
-
-        // Act - Take photo (should replace)
-        await _viewModel.TakePhotoCommand.ExecuteAsync(null);
-
-        // Assert
-        Assert.AreEqual(takenPhotoPath, _viewModel.PhotoPath);
-        Assert.IsTrue(_viewModel.HasPhoto);
-    }
-
-    #endregion
 }

@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <NetVersion>10.0</NetVersion>
+    <MauiVersion>10.0.41</MauiVersion>
+  </PropertyGroup>
+</Project>

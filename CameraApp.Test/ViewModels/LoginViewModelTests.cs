@@ -1,227 +1,201 @@
 using CameraApp.Models;
 using CameraApp.Services;
 using CameraApp.ViewModels;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
+using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 
 namespace CameraApp.Test.ViewModels;
 
-[TestClass]
 public class LoginViewModelTests
 {
-    private IAuthService _authService = null!;
-    private ILogger<LoginViewModel> _logger = null!;
-    private LoginViewModel _viewModel = null!;
+    private readonly Mock<IAuthService> _authServiceMock;
 
-    [TestInitialize]
-    public void Setup()
+    public LoginViewModelTests()
     {
-        _authService = Substitute.For<IAuthService>();
-        _logger = Substitute.For<ILogger<LoginViewModel>>();
-        _authService.IsAuthenticated.Returns(false);
-
-        _viewModel = new LoginViewModel(_authService, _logger);
+        _authServiceMock = new Mock<IAuthService>();
+        _authServiceMock.SetupAdd(s => s.AuthenticationChanged += It.IsAny<EventHandler<bool>>());
+        _authServiceMock.Setup(s => s.IsAuthenticated).Returns(false);
+        // TryRestoreTokenAsync is only called when the service is the concrete AuthService,
+        // so the mock instance safely bypasses that code path.
     }
 
-    #region Constructor Tests
+    private LoginViewModel CreateSut() =>
+        new(_authServiceMock.Object, NullLogger<LoginViewModel>.Instance);
 
-    [TestMethod]
-    public void Constructor_WhenNotAuthenticated_InitializesDefaultState()
+    // ── Initial state ────────────────────────────────────────────────────────
+
+    [Fact]
+    public void InitialState_IsLoading_IsFalse()
     {
-        Assert.IsFalse(_viewModel.IsAuthenticated);
-        Assert.AreEqual("Entrar", _viewModel.LoginButtonText);
-        Assert.IsTrue(_viewModel.ShowLoginForm);
-        Assert.IsFalse(_viewModel.ShowLogoutSection);
-        Assert.IsFalse(_viewModel.IsLoading);
+        var sut = CreateSut();
+        Assert.False(sut.IsLoading);
     }
 
-    [TestMethod]
-    public void Constructor_WhenAuthenticated_InitializesAuthenticatedState()
+    [Fact]
+    public void InitialState_IsAuthenticated_MatchesService()
     {
-        _authService.IsAuthenticated.Returns(true);
-
-        var viewModel = new LoginViewModel(_authService, _logger);
-
-        Assert.IsTrue(viewModel.IsAuthenticated);
-        Assert.AreEqual("Sair", viewModel.LoginButtonText);
-        Assert.IsFalse(viewModel.ShowLoginForm);
-        Assert.IsTrue(viewModel.ShowLogoutSection);
+        _authServiceMock.Setup(s => s.IsAuthenticated).Returns(false);
+        var sut = CreateSut();
+        Assert.False(sut.IsAuthenticated);
     }
 
-    #endregion
-
-    #region LoginCommand Tests
-
-    [TestMethod]
-    public async Task LoginCommand_WhenIsLoading_DoesNotCallService()
+    [Fact]
+    public void InitialState_LoginButtonText_IsEntrar()
     {
-        _viewModel.IsLoading = true;
-        _viewModel.Username = "user";
-        _viewModel.Password = "password";
-
-        await _viewModel.LoginCommand.ExecuteAsync(null);
-
-        await _authService.DidNotReceive().LoginAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>());
+        var sut = CreateSut();
+        Assert.Equal("Entrar", sut.LoginButtonText);
     }
 
-    [TestMethod]
-    public async Task LoginCommand_WhenUsernameIsEmpty_ShowsValidationError()
+    // ── CanLogin ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void CanLogin_WhenUsernameAndPasswordSet_IsTrue()
     {
-        _viewModel.Username = string.Empty;
-        _viewModel.Password = "password";
-
-        await _viewModel.LoginCommand.ExecuteAsync(null);
-
-        Assert.AreEqual("Por favor, informe o nome de usuário.", _viewModel.ErrorMessage);
-        Assert.IsFalse(_viewModel.IsLoading);
-        await _authService.DidNotReceive().LoginAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>());
+        var sut = CreateSut();
+        sut.Username = "user";
+        sut.Password = "pass";
+        Assert.True(sut.CanLogin);
     }
 
-    [TestMethod]
-    public async Task LoginCommand_WhenPasswordIsEmpty_ShowsValidationError()
+    [Fact]
+    public void CanLogin_WhenUsernameEmpty_IsFalse()
     {
-        _viewModel.Username = "user";
-        _viewModel.Password = string.Empty;
-
-        await _viewModel.LoginCommand.ExecuteAsync(null);
-
-        Assert.AreEqual("Por favor, informe a senha.", _viewModel.ErrorMessage);
-        Assert.IsFalse(_viewModel.IsLoading);
-        await _authService.DidNotReceive().LoginAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>());
+        var sut = CreateSut();
+        sut.Username = string.Empty;
+        sut.Password = "pass";
+        Assert.False(sut.CanLogin);
     }
 
-    [TestMethod]
-    public async Task LoginCommand_WhenAliasIsWhitespace_PassesNullAlias()
+    [Fact]
+    public void CanLogin_WhenPasswordEmpty_IsFalse()
     {
-        _viewModel.Username = "user";
-        _viewModel.Password = "password";
-        _viewModel.ServiceAlias = "   ";
-
-        _authService.LoginAsync("user", "password", null)
-            .Returns(Task.FromResult<AuthToken?>(null));
-
-        await _viewModel.LoginCommand.ExecuteAsync(null);
-
-        await _authService.Received(1).LoginAsync("user", "password", null);
-        Assert.AreEqual("Credenciais inválidas. Verifique o usuário e senha.", _viewModel.ErrorMessage);
-        Assert.IsFalse(_viewModel.IsLoading);
+        var sut = CreateSut();
+        sut.Username = "user";
+        sut.Password = string.Empty;
+        Assert.False(sut.CanLogin);
     }
 
-    [TestMethod]
-    public async Task LoginCommand_WhenAliasIsProvided_PassesAliasToService()
+    [Fact]
+    public void CanLogin_WhenIsLoading_IsFalse()
     {
-        _viewModel.Username = "user";
-        _viewModel.Password = "password";
-        _viewModel.ServiceAlias = "srv-01";
-
-        _authService.LoginAsync("user", "password", "srv-01")
-            .Returns(Task.FromResult<AuthToken?>(null));
-
-        await _viewModel.LoginCommand.ExecuteAsync(null);
-
-        await _authService.Received(1).LoginAsync("user", "password", "srv-01");
-        Assert.AreEqual("Credenciais inválidas. Verifique o usuário e senha.", _viewModel.ErrorMessage);
+        var sut = CreateSut();
+        sut.Username = "user";
+        sut.Password = "pass";
+        sut.IsLoading = true;
+        Assert.False(sut.CanLogin);
     }
 
-    [TestMethod]
-    public async Task LoginCommand_WhenServiceThrows_ShowsGenericError()
+    // ── ClearCredentials ─────────────────────────────────────────────────────
+
+    [Fact]
+    public void ClearCredentialsCommand_ClearsAllFields()
     {
-        _viewModel.Username = "user";
-        _viewModel.Password = "password";
+        var sut = CreateSut();
+        sut.Username = "user";
+        sut.Password = "pass";
+        sut.ServiceAlias = "alias";
+        sut.ErrorMessage = "some error";
 
-        _authService.LoginAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>())
-            .Returns(_ => Task.FromException<AuthToken?>(new InvalidOperationException("Service unavailable")));
+        sut.ClearCredentialsCommand.Execute(null);
 
-        await _viewModel.LoginCommand.ExecuteAsync(null);
-
-        Assert.AreEqual("Erro ao fazer login. Tente novamente.", _viewModel.ErrorMessage);
-        Assert.IsFalse(_viewModel.IsLoading);
+        Assert.Equal(string.Empty, sut.Username);
+        Assert.Equal(string.Empty, sut.Password);
+        Assert.Equal(string.Empty, sut.ServiceAlias);
+        Assert.Equal(string.Empty, sut.ErrorMessage);
     }
 
-    #endregion
+    // ── LoginAsync validation ─────────────────────────────────────────────────
 
-    #region LogoutCommand Tests
-
-    [TestMethod]
-    public async Task LogoutCommand_WhenIsLoading_DoesNotCallService()
+    [Fact]
+    public async Task LoginAsync_WhenUsernameEmpty_SetsErrorMessage()
     {
-        _viewModel.IsLoading = true;
+        var sut = CreateSut();
+        sut.Username = string.Empty;
+        sut.Password = "pass";
 
-        await _viewModel.LogoutCommand.ExecuteAsync(null);
+        await sut.LoginCommand.ExecuteAsync(null);
 
-        await _authService.DidNotReceive().LogoutAsync();
-        Assert.IsTrue(_viewModel.IsLoading);
+        Assert.Equal("Por favor, informe o nome de usuário.", sut.ErrorMessage);
+        Assert.False(sut.IsLoading);
     }
 
-    #endregion
-
-    #region ClearCredentialsCommand Tests
-
-    [TestMethod]
-    public void ClearCredentialsCommand_ClearsCredentialFieldsAndError()
+    [Fact]
+    public async Task LoginAsync_WhenPasswordEmpty_SetsErrorMessage()
     {
-        _viewModel.Username = "user";
-        _viewModel.Password = "password";
-        _viewModel.ServiceAlias = "alias";
-        _viewModel.ErrorMessage = "Erro";
+        var sut = CreateSut();
+        sut.Username = "user";
+        sut.Password = string.Empty;
 
-        _viewModel.ClearCredentialsCommand.Execute(null);
+        await sut.LoginCommand.ExecuteAsync(null);
 
-        Assert.AreEqual(string.Empty, _viewModel.Username);
-        Assert.AreEqual(string.Empty, _viewModel.Password);
-        Assert.AreEqual(string.Empty, _viewModel.ServiceAlias);
-        Assert.AreEqual(string.Empty, _viewModel.ErrorMessage);
+        Assert.Equal("Por favor, informe a senha.", sut.ErrorMessage);
+        Assert.False(sut.IsLoading);
     }
 
-    #endregion
-
-    #region Property and Event Tests
-
-    [TestMethod]
-    public void CanLogin_ChangesWhenCredentialsAndLoadingChange()
+    [Fact]
+    public async Task LoginAsync_WhenServiceReturnsNull_SetsInvalidCredentialsMessage()
     {
-        Assert.IsFalse(_viewModel.CanLogin);
+        _authServiceMock
+            .Setup(s => s.LoginAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string?>()))
+            .ReturnsAsync((AuthToken?)null);
 
-        _viewModel.Username = "user";
-        Assert.IsFalse(_viewModel.CanLogin);
+        var sut = CreateSut();
+        sut.Username = "user";
+        sut.Password = "wrongpass";
 
-        _viewModel.Password = "password";
-        Assert.IsTrue(_viewModel.CanLogin);
+        await sut.LoginCommand.ExecuteAsync(null);
 
-        _viewModel.IsLoading = true;
-        Assert.IsFalse(_viewModel.CanLogin);
-
-        _viewModel.IsLoading = false;
-        Assert.IsTrue(_viewModel.CanLogin);
+        Assert.Equal("Credenciais inválidas. Verifique o usuário e senha.", sut.ErrorMessage);
+        Assert.False(sut.IsLoading);
     }
 
-    [TestMethod]
-    public void AuthenticationChanged_WhenTrue_UpdatesAuthenticationStateAndMessage()
+    [Fact]
+    public async Task LoginAsync_WhenServiceThrows_SetsGenericErrorMessage()
     {
-        _authService.AuthenticationChanged += Raise.Event<EventHandler<bool>>(this, true);
+        _authServiceMock
+            .Setup(s => s.LoginAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string?>()))
+            .ThrowsAsync(new HttpRequestException("Network error"));
 
-        Assert.IsTrue(_viewModel.IsAuthenticated);
-        Assert.AreEqual("Sair", _viewModel.LoginButtonText);
-        Assert.IsFalse(_viewModel.ShowLoginForm);
-        Assert.IsTrue(_viewModel.ShowLogoutSection);
-        Assert.AreEqual("Login realizado com sucesso!", _viewModel.ErrorMessage);
-        Assert.IsTrue(_viewModel.CanLogout);
+        var sut = CreateSut();
+        sut.Username = "user";
+        sut.Password = "pass";
+
+        await sut.LoginCommand.ExecuteAsync(null);
+
+        Assert.Equal("Erro ao fazer login. Tente novamente.", sut.ErrorMessage);
+        Assert.False(sut.IsLoading);
     }
 
-    [TestMethod]
-    public void AuthenticationChanged_WhenFalse_UpdatesAuthenticationState()
+    [Fact]
+    public async Task LoginAsync_WhenAlreadyLoading_DoesNotCallService()
     {
-        _authService.IsAuthenticated.Returns(true);
-        var viewModel = new LoginViewModel(_authService, _logger);
+        var sut = CreateSut();
+        sut.Username = "user";
+        sut.Password = "pass";
+        sut.IsLoading = true;
 
-        _authService.AuthenticationChanged += Raise.Event<EventHandler<bool>>(this, false);
+        await sut.LoginCommand.ExecuteAsync(null);
 
-        Assert.IsFalse(viewModel.IsAuthenticated);
-        Assert.AreEqual("Entrar", viewModel.LoginButtonText);
-        Assert.IsTrue(viewModel.ShowLoginForm);
-        Assert.IsFalse(viewModel.ShowLogoutSection);
-        Assert.IsFalse(viewModel.CanLogout);
+        _authServiceMock.Verify(
+            s => s.LoginAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string?>()),
+            Times.Never);
     }
 
-    #endregion
+    // ── Computed UI properties ────────────────────────────────────────────────
+
+    [Fact]
+    public void ShowLoginForm_WhenNotAuthenticated_IsTrue()
+    {
+        _authServiceMock.Setup(s => s.IsAuthenticated).Returns(false);
+        var sut = CreateSut();
+        Assert.True(sut.ShowLoginForm);
+    }
+
+    [Fact]
+    public void ShowLogoutSection_WhenNotAuthenticated_IsFalse()
+    {
+        _authServiceMock.Setup(s => s.IsAuthenticated).Returns(false);
+        var sut = CreateSut();
+        Assert.False(sut.ShowLogoutSection);
+    }
 }

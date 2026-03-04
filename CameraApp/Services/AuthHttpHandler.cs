@@ -5,19 +5,29 @@ using CameraApp.Services;
 
 namespace CameraApp.Services
 {
+    /// <summary>
+    /// Intercepts outgoing HTTP requests to attach a bearer token and transparently refresh it on 401 responses.
+    /// </summary>
     public class AuthHttpHandler : DelegatingHandler
     {
         private readonly IAuthService _authService;
         private bool _isRefreshing = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthHttpHandler" /> class.
+        /// </summary>
+        /// <param name="authService">The authentication service used to retrieve and refresh access tokens.</param>
         public AuthHttpHandler(IAuthService authService)
         {
             _authService = authService;
         }
 
         /// <summary>
-        /// Intercepta requisições HTTP para adicionar o token de autenticação.
+        /// Sends an HTTP request, attaching the bearer token and retrying once after a transparent token refresh on 401.
         /// </summary>
+        /// <param name="request">The HTTP request message to send.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>The HTTP response message from the server.</returns>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // A URL não é de autenticação ?
@@ -84,8 +94,9 @@ namespace CameraApp.Services
         }
 
         /// <summary>
-        /// Seta a token de acesso na requisição HTTP
+        /// Attaches the current bearer access token to the Authorization header of the request.
         /// </summary>
+        /// <param name="request">The HTTP request message to attach the token to.</param>
         private async Task SetToken(HttpRequestMessage request)
         {
             // A URL não é de autenticação ?

@@ -1,489 +1,324 @@
+using System.Numerics;
 using CameraApp.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Maui.Devices.Sensors;
+using Moq;
 
 namespace CameraApp.Test.Services;
 
-[TestClass]
-public class PostureServiceTests
+/// <summary>
+/// Unit tests for <see cref="PostureService" />.
+/// </summary>
+public class PostureServiceTests : IDisposable
 {
-    private PostureService _service = null!;
+    // Default Sensitivity = 0.3  →  goodThreshold = 10.5°,  warningThreshold = 25.5°
+    private readonly Mock<IAccelerometer> _accelerometerMock = new();
+    private readonly Mock<IVibration> _vibrationMock = new();
+    private DateTime _fakeNow = new(2026, 1, 1, 12, 0, 0);
+    private readonly PostureService _sut;
 
-    [TestInitialize]
-    public void Setup()
+    public PostureServiceTests()
     {
-        _service = new PostureService();
+        _accelerometerMock.Setup(a => a.IsSupported).Returns(true);
+        _accelerometerMock.Setup(a => a.IsMonitoring).Returns(false);
+        _vibrationMock.Setup(v => v.IsSupported).Returns(true);
+
+        _sut = new PostureService(_accelerometerMock.Object, _vibrationMock.Object, () => _fakeNow);
     }
 
-    #region Constructor Tests
+    public void Dispose() => _sut.StopMonitoring();
 
-    [TestMethod]
-    public void Constructor_InitializesWithDefaultValues()
+    // ── CalculateInclination ──────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData(0.0, -1.0, 0.0, 0.0)]        // perfectly vertical → 0°
+    [InlineData(0.0, 0.0, 0.0, 90.0)]        // y = 0 special-case → 90°
+    [InlineData(1.0, 0.0, 0.0, 90.0)]        // fully horizontal → 90°
+    [InlineData(1.0, -1.0, 0.0, 45.0)]       // 45° tilt (atan2(1,1))
+    [InlineData(0.0, -0.866, 0.5, 30.0)]     // 30° tilt (atan2(0.5, 0.866))
+    public void CalculateInclination_WithKnownValues_ReturnsExpectedDegrees(
+        double x, double y, double z, double expectedDegrees)
     {
-        // Assert
-        Assert.IsFalse(_service.IsMonitoring);
-        Assert.AreEqual(0.3, _service.Sensitivity);
-        Assert.AreEqual(5, _service.AlertDelaySeconds);
+        var result = _sut.CalculateInclination(x, y, z);
+
+        Assert.Equal(expectedDegrees, result, precision: 0); // 0 decimal places
     }
 
-    #endregion
-
-    #region Property Tests
-
-    [TestMethod]
-    public void Sensitivity_CanBeSet()
+    [Fact]
+    public void CalculateInclination_WhenYIsNegativeOne_ReturnsZero()
     {
-        // Arrange
-        var newSensitivity = 0.5;
+        var result = _sut.CalculateInclination(0, -1, 0);
 
-        // Act
-        _service.Sensitivity = newSensitivity;
-
-        // Assert
-        Assert.AreEqual(newSensitivity, _service.Sensitivity);
+        Assert.Equal(0.0, result, precision: 5);
     }
 
-    [TestMethod]
-    public void Sensitivity_AcceptsDifferentValues()
+    // ── DeterminePostureStatus — default Sensitivity = 0.3 ───────────────────
+    // goodThreshold = 15 × (1 − 0.3) = 10.5°
+    // warningThreshold = 30 × (1 − 0.15) = 25.5°
+
+    [Theory]
+    [InlineData(0.0, PostureStatus.Good)]
+    [InlineData(10.0, PostureStatus.Good)]
+    [InlineData(10.5, PostureStatus.Good)]
+    [InlineData(11.0, PostureStatus.Warning)]
+    [InlineData(25.5, PostureStatus.Warning)]
+    [InlineData(26.0, PostureStatus.Poor)]
+    [InlineData(60.0, PostureStatus.Poor)]
+    public void DeterminePostureStatus_WithDefaultSensitivity_ReturnsExpectedStatus(
+        double inclination, PostureStatus expected)
     {
-        // Arrange & Act & Assert
-        _service.Sensitivity = 0.0;
-        Assert.AreEqual(0.0, _service.Sensitivity);
+        var result = _sut.DeterminePostureStatus(inclination);
 
-        _service.Sensitivity = 0.5;
-        Assert.AreEqual(0.5, _service.Sensitivity);
-
-        _service.Sensitivity = 1.0;
-        Assert.AreEqual(1.0, _service.Sensitivity);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
-    public void AlertDelaySeconds_CanBeSet()
+    // Sensitivity = 0.0  →  goodThreshold = 15.0°,  warningThreshold = 30.0°
+    [Theory]
+    [InlineData(14.9, PostureStatus.Good)]
+    [InlineData(15.0, PostureStatus.Good)]
+    [InlineData(15.1, PostureStatus.Warning)]
+    [InlineData(30.0, PostureStatus.Warning)]
+    [InlineData(30.1, PostureStatus.Poor)]
+    public void DeterminePostureStatus_WithZeroSensitivity_UsesWidestThresholds(
+        double inclination, PostureStatus expected)
     {
-        // Arrange
-        var newDelay = 10;
+        _sut.Sensitivity = 0.0;
 
-        // Act
-        _service.AlertDelaySeconds = newDelay;
+        var result = _sut.DeterminePostureStatus(inclination);
 
-        // Assert
-        Assert.AreEqual(newDelay, _service.AlertDelaySeconds);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
-    public void AlertDelaySeconds_AcceptsDifferentValues()
+    // Sensitivity = 1.0  →  goodThreshold = 0°,  warningThreshold = 15.0°
+    [Theory]
+    [InlineData(0.0, PostureStatus.Good)]
+    [InlineData(0.1, PostureStatus.Warning)]
+    [InlineData(15.0, PostureStatus.Warning)]
+    [InlineData(15.1, PostureStatus.Poor)]
+    public void DeterminePostureStatus_WithMaxSensitivity_UsesNarrowestThresholds(
+        double inclination, PostureStatus expected)
     {
-        // Arrange & Act & Assert
-        _service.AlertDelaySeconds = 1;
-        Assert.AreEqual(1, _service.AlertDelaySeconds);
+        _sut.Sensitivity = 1.0;
 
-        _service.AlertDelaySeconds = 5;
-        Assert.AreEqual(5, _service.AlertDelaySeconds);
+        var result = _sut.DeterminePostureStatus(inclination);
 
-        _service.AlertDelaySeconds = 15;
-        Assert.AreEqual(15, _service.AlertDelaySeconds);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
-    public void IsMonitoring_DefaultsToFalse()
+    // ── StartMonitoringAsync ──────────────────────────────────────────────────
+
+    [Fact]
+    public async Task StartMonitoringAsync_WhenAccelerometerNotSupported_ThrowsInvalidOperationException()
     {
-        // Assert
-        Assert.IsFalse(_service.IsMonitoring);
+        _accelerometerMock.Setup(a => a.IsSupported).Returns(false);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _sut.StartMonitoringAsync());
+
+        Assert.IsType<NotSupportedException>(ex.InnerException);
     }
 
-    #endregion
-
-    #region Event Tests
-
-    [TestMethod]
-    public void PostureAlert_EventCanBeSubscribed()
+    [Fact]
+    public async Task StartMonitoringAsync_WhenCalled_SetsIsMonitoringTrue()
     {
-        // Arrange
-        var eventRaised = false;
-        _service.PostureAlert += (sender, args) => eventRaised = true;
+        await _sut.StartMonitoringAsync();
 
-        // Act - we can't easily trigger the event without platform-specific code
-        // But we can verify subscription doesn't throw
-        
-        // Assert
-        Assert.IsFalse(eventRaised); // Event not triggered in test environment
+        Assert.True(_sut.IsMonitoring);
     }
 
-    [TestMethod]
-    public void AccelerometerDataUpdated_EventCanBeSubscribed()
+    [Fact]
+    public async Task StartMonitoringAsync_WhenCalled_StartsAccelerometerAndSubscribesToEvents()
     {
-        // Arrange
-        var eventRaised = false;
-        _service.AccelerometerDataUpdated += (sender, args) => eventRaised = true;
+        await _sut.StartMonitoringAsync();
 
-        // Act - we can't easily trigger the event without platform-specific code
-        // But we can verify subscription doesn't throw
-        
-        // Assert
-        Assert.IsFalse(eventRaised); // Event not triggered in test environment
+        _accelerometerMock.Verify(a => a.Start(SensorSpeed.Default), Times.Once);
+        _accelerometerMock.VerifyAdd(a => a.ReadingChanged += It.IsAny<EventHandler<AccelerometerChangedEventArgs>>(), Times.Once);
     }
 
-    [TestMethod]
-    public void PostureAlert_EventCanBeUnsubscribed()
+    [Fact]
+    public async Task StartMonitoringAsync_WhenCalledTwice_StartsAccelerometerOnlyOnce()
     {
-        // Arrange
-        var eventRaised = false;
-        EventHandler<PostureAlertEventArgs> handler = (sender, args) => eventRaised = true;
-        
-        _service.PostureAlert += handler;
-        _service.PostureAlert -= handler;
+        await _sut.StartMonitoringAsync();
+        await _sut.StartMonitoringAsync(); // second call should no-op
 
-        // Act & Assert - should not throw
-        Assert.IsFalse(eventRaised);
+        _accelerometerMock.Verify(a => a.Start(It.IsAny<SensorSpeed>()), Times.Once);
     }
 
-    [TestMethod]
-    public void AccelerometerDataUpdated_EventCanBeUnsubscribed()
-    {
-        // Arrange
-        var eventRaised = false;
-        EventHandler<AccelerometerDataEventArgs> handler = (sender, args) => eventRaised = true;
-        
-        _service.AccelerometerDataUpdated += handler;
-        _service.AccelerometerDataUpdated -= handler;
+    // ── StopMonitoring ────────────────────────────────────────────────────────
 
-        // Act & Assert - should not throw
-        Assert.IsFalse(eventRaised);
+    [Fact]
+    public void StopMonitoring_WhenNotMonitoring_DoesNotCallAccelerometer()
+    {
+        Assert.False(_sut.IsMonitoring);
+
+        _sut.StopMonitoring();
+
+        _accelerometerMock.Verify(a => a.Stop(), Times.Never);
     }
 
-    #endregion
-
-    #region StopMonitoring Tests
-
-    [TestMethod]
-    public void StopMonitoring_WhenNotMonitoring_DoesNotThrow()
+    [Fact]
+    public async Task StopMonitoring_AfterStarting_SetsIsMonitoringFalse()
     {
-        // Arrange
-        Assert.IsFalse(_service.IsMonitoring);
+        await _sut.StartMonitoringAsync();
 
-        // Act & Assert - should not throw
-        _service.StopMonitoring();
-        Assert.IsFalse(_service.IsMonitoring);
+        _sut.StopMonitoring();
+
+        Assert.False(_sut.IsMonitoring);
     }
 
-    [TestMethod]
-    public void StopMonitoring_CanBeCalledMultipleTimes()
+    [Fact]
+    public async Task StopMonitoring_WhenAccelerometerIsRunning_StopsAndUnsubscribes()
     {
-        // Arrange
-        Assert.IsFalse(_service.IsMonitoring);
+        _accelerometerMock.Setup(a => a.IsMonitoring).Returns(true);
+        await _sut.StartMonitoringAsync();
 
-        // Act & Assert - should not throw
-        _service.StopMonitoring();
-        _service.StopMonitoring();
-        _service.StopMonitoring();
-        Assert.IsFalse(_service.IsMonitoring);
+        _sut.StopMonitoring();
+
+        _accelerometerMock.Verify(a => a.Stop(), Times.Once);
+        _accelerometerMock.VerifyRemove(a => a.ReadingChanged -= It.IsAny<EventHandler<AccelerometerChangedEventArgs>>(), Times.Once);
     }
 
-    #endregion
+    // ── ProcessReading ────────────────────────────────────────────────────────
 
-    #region PostureAlertEventArgs Tests
+    // Upright reading: (0, -1, 0)  →  inclination 0°  →  Good
+    private static readonly Vector3 GoodPostureReading = new(0f, -1f, 0f);
 
-    [TestMethod]
-    public void PostureAlertEventArgs_CanBeCreated()
+    // Severe tilt: (0.8, -0.6, 0)  →  atan2(0.8, 0.6) ≈ 53°  →  Poor
+    private static readonly Vector3 PoorPostureReading = new(0.8f, -0.6f, 0f);
+
+    [Fact]
+    public void ProcessReading_RaisesAccelerometerDataUpdated_WithCorrectCoordinates()
     {
-        // Arrange & Act
-        var eventArgs = new PostureAlertEventArgs
-        {
-            Message = "Test message",
-            Status = PostureStatus.Poor,
-            Timestamp = DateTime.Now
-        };
+        AccelerometerDataEventArgs? received = null;
+        _sut.AccelerometerDataUpdated += (_, e) => received = e;
 
-        // Assert
-        Assert.AreEqual("Test message", eventArgs.Message);
-        Assert.AreEqual(PostureStatus.Poor, eventArgs.Status);
-        Assert.IsTrue(eventArgs.Timestamp <= DateTime.Now);
+        _sut.ProcessReading(GoodPostureReading);
+
+        Assert.NotNull(received);
+        Assert.Equal(GoodPostureReading.X, received.X);
+        Assert.Equal(GoodPostureReading.Y, received.Y);
+        Assert.Equal(GoodPostureReading.Z, received.Z);
     }
 
-    [TestMethod]
-    public void PostureAlertEventArgs_DefaultsMessageToEmpty()
+    [Fact]
+    public void ProcessReading_GoodPostureReading_RaisesEventWithGoodStatus()
     {
-        // Arrange & Act
-        var eventArgs = new PostureAlertEventArgs();
+        AccelerometerDataEventArgs? received = null;
+        _sut.AccelerometerDataUpdated += (_, e) => received = e;
 
-        // Assert
-        Assert.AreEqual(string.Empty, eventArgs.Message);
+        _sut.ProcessReading(GoodPostureReading);
+
+        Assert.NotNull(received);
+        Assert.Equal(PostureStatus.Good, received.Status);
     }
 
-    [TestMethod]
-    public void PostureAlertEventArgs_DefaultsTimestampToNow()
+    [Fact]
+    public void ProcessReading_PoorPostureReading_RaisesEventWithPoorStatus()
     {
-        // Arrange & Act
-        var before = DateTime.Now;
-        var eventArgs = new PostureAlertEventArgs();
-        var after = DateTime.Now;
+        AccelerometerDataEventArgs? received = null;
+        _sut.AccelerometerDataUpdated += (_, e) => received = e;
 
-        // Assert
-        Assert.IsTrue(eventArgs.Timestamp >= before);
-        Assert.IsTrue(eventArgs.Timestamp <= after);
+        _sut.ProcessReading(PoorPostureReading);
+
+        Assert.NotNull(received);
+        Assert.Equal(PostureStatus.Poor, received.Status);
     }
 
-    #endregion
-
-    #region AccelerometerDataEventArgs Tests
-
-    [TestMethod]
-    public void AccelerometerDataEventArgs_CanBeCreated()
+    [Fact]
+    public void ProcessReading_FirstPoorPostureReading_DoesNotImmediatelyRaiseAlert()
     {
-        // Arrange & Act
-        var eventArgs = new AccelerometerDataEventArgs
-        {
-            X = 0.5,
-            Y = -0.8,
-            Z = 0.3,
-            Inclination = 25.5,
-            Status = PostureStatus.Warning,
-            Timestamp = DateTime.Now
-        };
+        var alerts = new List<PostureAlertEventArgs>();
+        _sut.PostureAlert += (_, e) => alerts.Add(e);
 
-        // Assert
-        Assert.AreEqual(0.5, eventArgs.X);
-        Assert.AreEqual(-0.8, eventArgs.Y);
-        Assert.AreEqual(0.3, eventArgs.Z);
-        Assert.AreEqual(25.5, eventArgs.Inclination);
-        Assert.AreEqual(PostureStatus.Warning, eventArgs.Status);
-        Assert.IsTrue(eventArgs.Timestamp <= DateTime.Now);
+        _sut.ProcessReading(PoorPostureReading); // starts the poor-posture clock
+
+        Assert.Empty(alerts);
     }
 
-    [TestMethod]
-    public void AccelerometerDataEventArgs_DefaultsToZeroValues()
+    [Fact]
+    public void ProcessReading_PoorPostureBeforeDelayExpires_DoesNotRaiseAlert()
     {
-        // Arrange & Act
-        var eventArgs = new AccelerometerDataEventArgs();
+        _sut.AlertDelaySeconds = 5;
+        var alerts = new List<PostureAlertEventArgs>();
+        _sut.PostureAlert += (_, e) => alerts.Add(e);
 
-        // Assert
-        Assert.AreEqual(0.0, eventArgs.X);
-        Assert.AreEqual(0.0, eventArgs.Y);
-        Assert.AreEqual(0.0, eventArgs.Z);
-        Assert.AreEqual(0.0, eventArgs.Inclination);
+        _sut.ProcessReading(PoorPostureReading);       // sets poor-posture start time
+        _fakeNow = _fakeNow.AddSeconds(4);             // advance clock — still within delay
+        _sut.ProcessReading(PoorPostureReading);
+
+        Assert.Empty(alerts);
     }
 
-    [TestMethod]
-    public void AccelerometerDataEventArgs_DefaultsTimestampToNow()
+    [Fact]
+    public void ProcessReading_PoorPostureAfterDelayExpires_RaisesPostureAlert()
     {
-        // Arrange & Act
-        var before = DateTime.Now;
-        var eventArgs = new AccelerometerDataEventArgs();
-        var after = DateTime.Now;
+        _sut.AlertDelaySeconds = 5;
+        var alerts = new List<PostureAlertEventArgs>();
+        _sut.PostureAlert += (_, e) => alerts.Add(e);
 
-        // Assert
-        Assert.IsTrue(eventArgs.Timestamp >= before);
-        Assert.IsTrue(eventArgs.Timestamp <= after);
+        _sut.ProcessReading(PoorPostureReading);       // sets poor-posture start time
+        _fakeNow = _fakeNow.AddSeconds(6);             // advance clock past delay
+        _sut.ProcessReading(PoorPostureReading);
+
+        Assert.Single(alerts);
+        Assert.Equal(PostureStatus.Poor, alerts[0].Status);
+        Assert.Contains("Inclinação:", alerts[0].Message);
     }
 
-    #endregion
-
-    #region PostureStatus Enum Tests
-
-    [TestMethod]
-    public void PostureStatus_HasCorrectValues()
+    [Fact]
+    public void ProcessReading_AlertFired_VibratesDevice()
     {
-        // Assert
-        Assert.AreEqual(0, (int)PostureStatus.Good);
-        Assert.AreEqual(1, (int)PostureStatus.Warning);
-        Assert.AreEqual(2, (int)PostureStatus.Poor);
+        _sut.AlertDelaySeconds = 5;
+
+        _sut.ProcessReading(PoorPostureReading);
+        _fakeNow = _fakeNow.AddSeconds(6);
+        _sut.ProcessReading(PoorPostureReading);
+
+        _vibrationMock.Verify(v => v.Vibrate(TimeSpan.FromMilliseconds(500)), Times.Once);
     }
 
-    [TestMethod]
-    public void PostureStatus_CanBeCompared()
+    [Fact]
+    public void ProcessReading_AlertFired_DoesNotVibrate_WhenVibrationNotSupported()
     {
-        // Arrange
-        var good = PostureStatus.Good;
-        var warning = PostureStatus.Warning;
-        var poor = PostureStatus.Poor;
+        _vibrationMock.Setup(v => v.IsSupported).Returns(false);
+        _sut.AlertDelaySeconds = 5;
 
-        // Assert
-        Assert.IsTrue(good == PostureStatus.Good);
-        Assert.IsTrue(warning == PostureStatus.Warning);
-        Assert.IsTrue(poor == PostureStatus.Poor);
-        Assert.IsFalse(good == warning);
-        Assert.IsFalse(warning == poor);
+        _sut.ProcessReading(PoorPostureReading);
+        _fakeNow = _fakeNow.AddSeconds(6);
+        _sut.ProcessReading(PoorPostureReading);
+
+        _vibrationMock.Verify(v => v.Vibrate(It.IsAny<TimeSpan>()), Times.Never);
     }
 
-    [TestMethod]
-    public void PostureStatus_CanBeUsedInSwitchStatement()
+    [Fact]
+    public void ProcessReading_WhenPostureImproves_DoesNotRaiseAlert()
     {
-        // Arrange
-        var status = PostureStatus.Good;
-        var result = string.Empty;
+        _sut.AlertDelaySeconds = 5;
+        var alerts = new List<PostureAlertEventArgs>();
+        _sut.PostureAlert += (_, e) => alerts.Add(e);
 
-        // Act
-        switch (status)
-        {
-            case PostureStatus.Good:
-                result = "Good";
-                break;
-            case PostureStatus.Warning:
-                result = "Warning";
-                break;
-            case PostureStatus.Poor:
-                result = "Poor";
-                break;
-        }
+        _sut.ProcessReading(PoorPostureReading);       // starts poor-posture timer
+        _sut.ProcessReading(GoodPostureReading);       // resets poor-posture state
 
-        // Assert
-        Assert.AreEqual("Good", result);
+        _fakeNow = _fakeNow.AddSeconds(6);
+        _sut.ProcessReading(PoorPostureReading);       // poor-posture clock restarts here
+
+        Assert.Empty(alerts);
     }
 
-    #endregion
-
-    #region Property Change Tests
-
-    [TestMethod]
-    public void Sensitivity_ChangeMultipleTimes_WorksCorrectly()
+    [Fact]
+    public void ProcessReading_RepeatedAlerts_ResetsTimerAfterEachAlert()
     {
-        // Arrange & Act
-        _service.Sensitivity = 0.1;
-        Assert.AreEqual(0.1, _service.Sensitivity);
+        _sut.AlertDelaySeconds = 5;
+        var alerts = new List<PostureAlertEventArgs>();
+        _sut.PostureAlert += (_, e) => alerts.Add(e);
 
-        _service.Sensitivity = 0.5;
-        Assert.AreEqual(0.5, _service.Sensitivity);
+        _sut.ProcessReading(PoorPostureReading);
+        _fakeNow = _fakeNow.AddSeconds(6);
+        _sut.ProcessReading(PoorPostureReading); // first alert
 
-        _service.Sensitivity = 0.9;
-        Assert.AreEqual(0.9, _service.Sensitivity);
+        _fakeNow = _fakeNow.AddSeconds(6);
+        _sut.ProcessReading(PoorPostureReading); // second alert
+
+        Assert.Equal(2, alerts.Count);
     }
-
-    [TestMethod]
-    public void AlertDelaySeconds_ChangeMultipleTimes_WorksCorrectly()
-    {
-        // Arrange & Act
-        _service.AlertDelaySeconds = 1;
-        Assert.AreEqual(1, _service.AlertDelaySeconds);
-
-        _service.AlertDelaySeconds = 10;
-        Assert.AreEqual(10, _service.AlertDelaySeconds);
-
-        _service.AlertDelaySeconds = 15;
-        Assert.AreEqual(15, _service.AlertDelaySeconds);
-    }
-
-    #endregion
-
-    #region Edge Cases
-
-    [TestMethod]
-    public void Sensitivity_NegativeValue_IsAllowed()
-    {
-        // Note: The service doesn't validate the range, so negative values are technically possible
-        // In a production scenario, you might want to add validation
-        
-        // Arrange & Act
-        _service.Sensitivity = -0.5;
-
-        // Assert
-        Assert.AreEqual(-0.5, _service.Sensitivity);
-    }
-
-    [TestMethod]
-    public void Sensitivity_ValueGreaterThanOne_IsAllowed()
-    {
-        // Note: The service doesn't validate the range
-        // In a production scenario, you might want to add validation (0.0 to 1.0)
-        
-        // Arrange & Act
-        _service.Sensitivity = 1.5;
-
-        // Assert
-        Assert.AreEqual(1.5, _service.Sensitivity);
-    }
-
-    [TestMethod]
-    public void AlertDelaySeconds_ZeroValue_IsAllowed()
-    {
-        // Arrange & Act
-        _service.AlertDelaySeconds = 0;
-
-        // Assert
-        Assert.AreEqual(0, _service.AlertDelaySeconds);
-    }
-
-    [TestMethod]
-    public void AlertDelaySeconds_NegativeValue_IsAllowed()
-    {
-        // Note: The service doesn't validate the range
-        // In a production scenario, you might want to prevent negative values
-        
-        // Arrange & Act
-        _service.AlertDelaySeconds = -5;
-
-        // Assert
-        Assert.AreEqual(-5, _service.AlertDelaySeconds);
-    }
-
-    [TestMethod]
-    public void AlertDelaySeconds_LargeValue_IsAllowed()
-    {
-        // Arrange & Act
-        _service.AlertDelaySeconds = 1000;
-
-        // Assert
-        Assert.AreEqual(1000, _service.AlertDelaySeconds);
-    }
-
-    #endregion
-
-    #region Multiple Instance Tests
-
-    [TestMethod]
-    public void MultipleInstances_HaveIndependentState()
-    {
-        // Arrange
-        var service1 = new PostureService();
-        var service2 = new PostureService();
-
-        // Act
-        service1.Sensitivity = 0.2;
-        service1.AlertDelaySeconds = 3;
-
-        service2.Sensitivity = 0.8;
-        service2.AlertDelaySeconds = 10;
-
-        // Assert
-        Assert.AreEqual(0.2, service1.Sensitivity);
-        Assert.AreEqual(3, service1.AlertDelaySeconds);
-        Assert.AreEqual(0.8, service2.Sensitivity);
-        Assert.AreEqual(10, service2.AlertDelaySeconds);
-    }
-
-    [TestMethod]
-    public void MultipleInstances_CanSubscribeToEventsIndependently()
-    {
-        // Arrange
-        var service1 = new PostureService();
-        var service2 = new PostureService();
-        
-        var service1EventRaised = false;
-        var service2EventRaised = false;
-
-        service1.PostureAlert += (sender, args) => service1EventRaised = true;
-        service2.PostureAlert += (sender, args) => service2EventRaised = true;
-
-        // Assert - events can be subscribed independently
-        Assert.IsFalse(service1EventRaised);
-        Assert.IsFalse(service2EventRaised);
-    }
-
-    #endregion
-
-    #region Disposal Tests
-
-    [TestMethod]
-    public void StopMonitoring_CalledMultipleTimes_IsSafe()
-    {
-        // Arrange
-        var service = new PostureService();
-
-        // Act & Assert - should not throw
-        service.StopMonitoring();
-        service.StopMonitoring();
-        service.StopMonitoring();
-        
-        Assert.IsFalse(service.IsMonitoring);
-    }
-
-    #endregion
 }

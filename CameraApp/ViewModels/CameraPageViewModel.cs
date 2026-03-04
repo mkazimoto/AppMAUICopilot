@@ -4,6 +4,9 @@ using CameraApp.Services;
 
 namespace CameraApp.ViewModels;
 
+/// <summary>
+/// Provides properties and commands for capturing and managing photos on the camera page.
+/// </summary>
 public partial class CameraPageViewModel : ObservableObject
 {
     private readonly ICameraService _cameraService;
@@ -14,6 +17,10 @@ public partial class CameraPageViewModel : ObservableObject
     [ObservableProperty]
     private bool _hasPhoto;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CameraPageViewModel" /> class.
+    /// </summary>
+    /// <param name="cameraService">The camera service used to capture and pick photos.</param>
     public CameraPageViewModel(ICameraService cameraService)
     {
         _cameraService = cameraService;
@@ -23,7 +30,7 @@ public partial class CameraPageViewModel : ObservableObject
     private async Task TakePhotoAsync()
     {
         var photoPath = await _cameraService.TakePhotoAsync();
-        
+
         if (!string.IsNullOrEmpty(photoPath))
         {
             PhotoPath = photoPath;
@@ -35,7 +42,7 @@ public partial class CameraPageViewModel : ObservableObject
     private async Task PickPhotoAsync()
     {
         var photoPath = await _cameraService.PickPhotoAsync();
-        
+
         if (!string.IsNullOrEmpty(photoPath))
         {
             PhotoPath = photoPath;

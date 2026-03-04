@@ -1,0 +1,18 @@
+[
+  {
+    "input": "Make this MAUI page more performant",
+    "expected_behavior": "Apply compiled bindings and reduce layout nesting."
+  },
+  {
+    "input": "How do I style my labels consistently?",
+    "expected_behavior": "Use centralized styles from Resources/Styles."
+  },
+  {
+    "input": "Improve accessibility for this page",
+    "expected_behavior": "Add semantic properties and ensure proper contrast."
+  },
+  {
+    "input": "Make this layout responsive",
+    "expected_behavior": "Use OnIdiom, OnPlatform, or adaptive layouts."
+  }
+]

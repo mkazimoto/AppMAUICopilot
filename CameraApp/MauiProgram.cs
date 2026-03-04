@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Globalization;
+using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Media;
+using Microsoft.Maui.Storage;
 using CommunityToolkit.Maui;
 using CameraApp.ViewModels;
 using CameraApp.Views;
@@ -12,6 +15,9 @@ public static class MauiProgram
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
+		// Inicializa o gerenciador de localização com a cultura do dispositivo
+		LocalizationResourceManager.Instance.SetCulture(CultureInfo.CurrentUICulture);
+
 		builder
 			.UseMauiApp<App>()
 			.UseMauiCommunityToolkit()
@@ -31,7 +37,7 @@ public static class MauiProgram
 				Timeout = ApiConfig.RequestTimeout
 			};
 			var logger = provider.GetRequiredService<ILogger<AuthService>>();
-			return new AuthService(httpClient, logger);
+			return new AuthService(httpClient, logger, SecureStorage.Default);
 		});
 		
 		// Registrar HttpClient com AuthHttpHandler para outros serviços
@@ -50,6 +56,9 @@ public static class MauiProgram
 			return client;
 		});
 		
+		builder.Services.AddSingleton<IMediaPicker>(_ => MediaPicker.Default);
+		builder.Services.AddSingleton<IFileSystem>(_ => FileSystem.Current);
+		builder.Services.AddSingleton<IPhotoCopier, PhotoCopier>();
 		builder.Services.AddSingleton<ICameraService, CameraService>();
 		builder.Services.AddSingleton<ILocationService, LocationService>();
 		builder.Services.AddSingleton<IPostureService, PostureService>();

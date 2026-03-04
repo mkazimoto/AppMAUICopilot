@@ -5,28 +5,35 @@ using System.Globalization;
 
 namespace CameraApp.ViewModels;
 
+/// <summary>
+/// Provides properties and commands for displaying the device's current location on a map.
+/// </summary>
 public partial class MapPageViewModel : ObservableObject
 {
     private readonly ILocationService _locationService;
-    
+
     [ObservableProperty]
     private bool isLoading;
-    
+
     [ObservableProperty]
     private bool hasLocation;
-    
+
     [ObservableProperty]
     private string locationText = string.Empty;
-    
+
     [ObservableProperty]
     private string lastUpdateText = string.Empty;
-    
+
     [ObservableProperty]
     private string mapUrl = "about:blank";
-    
+
     private double _currentLatitude;
     private double _currentLongitude;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MapPageViewModel" /> class and loads the default map view.
+    /// </summary>
+    /// <param name="locationService">The location service used to retrieve the device's geographic position.</param>
     public MapPageViewModel(ILocationService locationService)
     {
         _locationService = locationService;
@@ -39,18 +46,18 @@ public partial class MapPageViewModel : ObservableObject
         try
         {
             IsLoading = true;
-            
+
             var location = await _locationService.GetCurrentLocationAsync();
-            
+
             if (location != null)
             {
                 _currentLatitude = location.Latitude;
                 _currentLongitude = location.Longitude;
-                
+
                 HasLocation = true;
                 LocationText = $"Lat: {location.Latitude:F6}, Lng: {location.Longitude:F6}";
                 LastUpdateText = $"Atualizado em: {DateTime.Now:HH:mm:ss}";
-                
+
                 UpdateMapWithLocation(location.Latitude, location.Longitude);
             }
             else
@@ -58,20 +65,20 @@ public partial class MapPageViewModel : ObservableObject
                 HasLocation = false;
                 LocationText = string.Empty;
                 LastUpdateText = string.Empty;
-                
-                await Shell.Current.DisplayAlert(
-                    "Erro", 
-                    "Não foi possível obter sua localização. Verifique se as permissões estão habilitadas e se o GPS está ativo.", 
-                    "OK");
+
+                await (Shell.Current?.DisplayAlertAsync(
+                    "Erro",
+                    "Não foi possível obter sua localização. Verifique se as permissões estão habilitadas e se o GPS está ativo.",
+                    "OK") ?? Task.CompletedTask);
             }
         }
         catch (Exception ex)
         {
             HasLocation = false;
-            await Shell.Current.DisplayAlert(
-                "Erro", 
-                $"Erro ao obter localização: {ex.Message}", 
-                "OK");
+            await (Shell.Current?.DisplayAlertAsync(
+                "Erro",
+                $"Erro ao obter localização: {ex.Message}",
+                "OK") ?? Task.CompletedTask);
         }
         finally
         {
@@ -96,7 +103,7 @@ public partial class MapPageViewModel : ObservableObject
     {
         var lat = latitude.ToString("F6", CultureInfo.InvariantCulture);
         var lng = longitude.ToString("F6", CultureInfo.InvariantCulture);
-        
+
         var html = GenerateMapHtml(lat, lng);
         MapUrl = $"data:text/html;charset=utf-8,{Uri.EscapeDataString(html)}";
     }

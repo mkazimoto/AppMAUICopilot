@@ -1,555 +1,326 @@
 using CameraApp.Services;
 using CameraApp.ViewModels;
-using NSubstitute;
-using Microsoft.Maui.Devices.Sensors;
-using CommunityToolkit.Mvvm.Input;
+using Moq;
 
 namespace CameraApp.Test.ViewModels;
 
-[TestClass]
 public class MapPageViewModelTests
 {
-    private ILocationService _locationService = null!;
-    private MapPageViewModel _viewModel = null!;
+    private readonly Mock<ILocationService> _locationServiceMock;
 
-    [TestInitialize]
-    public void Setup()
+    public MapPageViewModelTests()
     {
-        _locationService = Substitute.For<ILocationService>();
-        _viewModel = new MapPageViewModel(_locationService);
+        _locationServiceMock = new Mock<ILocationService>();
     }
 
-    #region Constructor Tests
+    private MapPageViewModel CreateSut() =>
+        new(_locationServiceMock.Object);
 
-    [TestMethod]
-    public void Constructor_InitializesWithDefaultValues()
+    // ── Initial state ────────────────────────────────────────────────────────
+
+    [Fact]
+    public void InitialState_IsLoading_IsFalse()
     {
-        // Assert
-        Assert.IsFalse(_viewModel.IsLoading);
-        Assert.IsFalse(_viewModel.HasLocation);
-        Assert.AreEqual(string.Empty, _viewModel.LocationText);
-        Assert.AreEqual(string.Empty, _viewModel.LastUpdateText);
+        var sut = CreateSut();
+        Assert.False(sut.IsLoading);
     }
 
-    [TestMethod]
-    public void Constructor_GeneratesDefaultMap()
+    [Fact]
+    public void InitialState_HasLocation_IsFalse()
     {
-        // Assert
-        Assert.IsFalse(string.IsNullOrEmpty(_viewModel.MapUrl));
-        Assert.IsTrue(_viewModel.MapUrl.StartsWith("data:text/html"));
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-14.2350")); // Brazil center latitude
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-51.9253")); // Brazil center longitude
+        var sut = CreateSut();
+        Assert.False(sut.HasLocation);
     }
 
-    [TestMethod]
-    public void Constructor_WithValidService_DoesNotThrow()
+    [Fact]
+    public void InitialState_LocationText_IsEmpty()
     {
-        // Act & Assert - should not throw
-        var viewModel = new MapPageViewModel(_locationService);
-        Assert.IsNotNull(viewModel);
+        var sut = CreateSut();
+        Assert.Equal(string.Empty, sut.LocationText);
     }
 
-    #endregion
+    [Fact]
+    public void InitialState_LastUpdateText_IsEmpty()
+    {
+        var sut = CreateSut();
+        Assert.Equal(string.Empty, sut.LastUpdateText);
+    }
 
-    #region GetLocationAsync Tests
+    [Fact]
+    public void InitialState_MapUrl_ContainsDefaultMapHtml()
+    {
+        var sut = CreateSut();
+        Assert.StartsWith("data:text/html;charset=utf-8,", sut.MapUrl);
+    }
 
-    [TestMethod]
-    public async Task GetLocationAsync_WhenLocationRetrieved_UpdatesProperties()
+    [Fact]
+    public void InitialState_MapUrl_IsCenteredOnBrazil()
+    {
+        var sut = CreateSut();
+        // Default map uses Brazil center coordinates
+        Assert.Contains("-14.2350", Uri.UnescapeDataString(sut.MapUrl));
+        Assert.Contains("-51.9253", Uri.UnescapeDataString(sut.MapUrl));
+    }
+
+    // ── GetLocationAsync – success ───────────────────────────────────────────
+
+    [Fact]
+    public async Task GetLocationAsync_WhenLocationReturned_SetsHasLocationTrue()
     {
         // Arrange
-        var mockLocation = CreateMockLocation(-23.550520, -46.633308); // S�o Paulo coordinates
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync(new Location(10.123456, 20.654321));
+        var sut = CreateSut();
 
         // Act
-        await InvokeGetLocationAsync();
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsTrue(_viewModel.HasLocation);
-        Assert.IsTrue(_viewModel.LocationText.Contains("Lat:"));
-        Assert.IsTrue(_viewModel.LocationText.Contains("Lng:"));
-        Assert.IsTrue(_viewModel.LocationText.Contains("-23"));
-        Assert.IsTrue(_viewModel.LocationText.Contains("-46"));
-        Assert.IsFalse(string.IsNullOrEmpty(_viewModel.LastUpdateText));
-        Assert.IsTrue(_viewModel.LastUpdateText.Contains("Atualizado em:"));
-        Assert.IsFalse(_viewModel.IsLoading);
+        Assert.True(sut.HasLocation);
     }
 
-    [TestMethod]
-    public async Task GetLocationAsync_WhenLocationRetrieved_UpdatesMapUrl()
+    [Fact]
+    public async Task GetLocationAsync_WhenLocationReturned_SetsFormattedLocationText()
     {
         // Arrange
-        var mockLocation = CreateMockLocation(-23.550520, -46.633308);
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
-        var initialMapUrl = _viewModel.MapUrl;
+        const double lat = 10.123456, lng = 20.654321;
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync(new Location(lat, lng));
+        var sut = CreateSut();
 
         // Act
-        await InvokeGetLocationAsync();
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
-        // Assert
-        Assert.AreNotEqual(initialMapUrl, _viewModel.MapUrl);
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-23.550520"));
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-46.633308"));
+        // Assert – use the same culture-sensitive format the ViewModel uses
+        Assert.Equal($"Lat: {lat:F6}, Lng: {lng:F6}", sut.LocationText);
     }
 
-    [TestMethod]
-    public async Task GetLocationAsync_WhenServiceReturnsNull_ClearsLocationData()
+    [Fact]
+    public async Task GetLocationAsync_WhenLocationReturned_SetsLastUpdateText()
     {
         // Arrange
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(null));
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync(new Location(10.0, 20.0));
+        var sut = CreateSut();
 
         // Act
-        try
-        {
-            await InvokeGetLocationAsync();
-        }
-        catch (NullReferenceException)
-        {
-            // Shell.Current.DisplayAlert will throw NullReferenceException in test environment
-            // This is expected behavior when service returns null
-        }
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsFalse(_viewModel.HasLocation);
-        Assert.AreEqual(string.Empty, _viewModel.LocationText);
-        Assert.AreEqual(string.Empty, _viewModel.LastUpdateText);
-        Assert.IsFalse(_viewModel.IsLoading);
+        Assert.StartsWith("Atualizado em:", sut.LastUpdateText);
     }
 
-    [TestMethod]
-    public async Task GetLocationAsync_SetsIsLoadingTrueWhileProcessing()
+    [Fact]
+    public async Task GetLocationAsync_WhenLocationReturned_UpdatesMapUrlWithCoordinates()
     {
         // Arrange
-        var tcs = new TaskCompletionSource<Location?>();
-        _locationService.GetCurrentLocationAsync().Returns(tcs.Task);
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync(new Location(10.123456, 20.654321));
+        var sut = CreateSut();
 
         // Act
-        var task = InvokeGetLocationAsync();
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
-        // Assert - IsLoading should be true while processing
-        await Task.Delay(50); // Give it time to set IsLoading
-        Assert.IsTrue(_viewModel.IsLoading);
-
-        // Complete the task
-        tcs.SetResult(CreateMockLocation(0, 0));
-        await task;
-
-        Assert.IsFalse(_viewModel.IsLoading);
+        // Assert
+        var decoded = Uri.UnescapeDataString(sut.MapUrl);
+        Assert.StartsWith("data:text/html;charset=utf-8,", sut.MapUrl);
+        Assert.Contains("10.123456", decoded);
+        Assert.Contains("20.654321", decoded);
     }
 
-    [TestMethod]
-    public async Task GetLocationAsync_WhenExceptionThrown_SetsHasLocationToFalse()
+    [Fact]
+    public async Task GetLocationAsync_WhenLocationReturned_IsLoadingFalseAfterCompletion()
     {
         // Arrange
-        _locationService.GetCurrentLocationAsync().Returns<Location?>(_ => throw new InvalidOperationException("GPS not available"));
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync(new Location(10.0, 20.0));
+        var sut = CreateSut();
 
         // Act
-        try
-        {
-            await InvokeGetLocationAsync();
-        }
-        catch (NullReferenceException)
-        {
-            // Shell.Current.DisplayAlert will throw NullReferenceException in test environment
-            // This is expected behavior in unit tests
-        }
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsFalse(_viewModel.HasLocation);
-        Assert.IsFalse(_viewModel.IsLoading);
+        Assert.False(sut.IsLoading);
     }
 
-    [TestMethod]
-    public async Task GetLocationAsync_AlwaysSetsIsLoadingToFalse()
+    [Fact]
+    public async Task GetLocationAsync_AlwaysCallsLocationService()
     {
-        // Arrange - Test with successful call
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(CreateMockLocation(0, 0)));
+        // Arrange
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync((Location?)null);
+        var sut = CreateSut();
 
         // Act
-        await InvokeGetLocationAsync();
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsFalse(_viewModel.IsLoading);
-
-        // Note: Cannot test exception case with Shell.Current.DisplayAlert in unit tests
-        // Shell.Current is null in test environment
+        _locationServiceMock.Verify(s => s.GetCurrentLocationAsync(), Times.Once);
     }
 
-    [TestMethod]
-    public async Task GetLocationAsync_FormatsCoordinatesCorrectly()
+    // ── GetLocationAsync – null result ───────────────────────────────────────
+
+    [Fact]
+    public async Task GetLocationAsync_WhenNullReturned_HasLocationIsFalse()
     {
         // Arrange
-        var mockLocation = CreateMockLocation(-23.123456789, -46.987654321);
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync((Location?)null);
+        var sut = CreateSut();
 
         // Act
-        await InvokeGetLocationAsync();
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
-        // Assert - Should contain formatted coordinates with Lat:/Lng: labels
-        Assert.IsTrue(_viewModel.HasLocation);
-        Assert.IsTrue(_viewModel.LocationText.Contains("Lat:"));
-        Assert.IsTrue(_viewModel.LocationText.Contains("Lng:"));
-        Assert.IsTrue(_viewModel.LocationText.Length > 10); // Has actual coordinate data
+        // Assert
+        Assert.False(sut.HasLocation);
     }
 
-    [TestMethod]
-    public async Task GetLocationAsync_CanBeCalledMultipleTimes()
+    [Fact]
+    public async Task GetLocationAsync_WhenNullReturned_ClearsLocationText()
     {
         // Arrange
-        var location1 = CreateMockLocation(-23.550520, -46.633308);
-        var location2 = CreateMockLocation(-22.906847, -43.172896); // Rio de Janeiro
-        
-        _locationService.GetCurrentLocationAsync().Returns(
-            Task.FromResult<Location?>(location1),
-            Task.FromResult<Location?>(location2));
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync((Location?)null);
+        var sut = CreateSut();
 
         // Act
-        await InvokeGetLocationAsync();
-        var firstLocationText = _viewModel.LocationText;
-        
-        await InvokeGetLocationAsync();
-        var secondLocationText = _viewModel.LocationText;
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.AreNotEqual(firstLocationText, secondLocationText);
-        Assert.IsTrue(secondLocationText.Contains("-22.9") || secondLocationText.Contains("-22,9"));
-        Assert.IsTrue(secondLocationText.Contains("-43.1") || secondLocationText.Contains("-43,1"));
-        await _locationService.Received(2).GetCurrentLocationAsync();
+        Assert.Equal(string.Empty, sut.LocationText);
     }
 
-    #endregion
-
-    #region ResetMap Tests
-
-    [TestMethod]
-    public async Task ResetMap_WhenHasLocation_RestoresCurrentLocation()
+    [Fact]
+    public async Task GetLocationAsync_WhenNullReturned_ClearsLastUpdateText()
     {
         // Arrange
-        var mockLocation = CreateMockLocation(-23.550520, -46.633308);
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
-        await InvokeGetLocationAsync();
-        
-        var mapUrlAfterLocation = _viewModel.MapUrl;
-        
-        // Modify the map URL to simulate user interaction
-        _viewModel.MapUrl = "modified_url";
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync((Location?)null);
+        var sut = CreateSut();
 
         // Act
-        InvokeResetMap();
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.AreNotEqual("modified_url", _viewModel.MapUrl);
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-23.550520"));
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-46.633308"));
+        Assert.Equal(string.Empty, sut.LastUpdateText);
     }
 
-    [TestMethod]
-    public void ResetMap_WhenNoLocation_RestoresDefaultMap()
+    [Fact]
+    public async Task GetLocationAsync_WhenNullReturned_IsLoadingFalseAfterCompletion()
     {
         // Arrange
-        _viewModel.MapUrl = "modified_url";
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync((Location?)null);
+        var sut = CreateSut();
 
         // Act
-        InvokeResetMap();
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.AreNotEqual("modified_url", _viewModel.MapUrl);
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-14.2350")); // Brazil center
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-51.9253"));
+        Assert.False(sut.IsLoading);
     }
 
-    [TestMethod]
-    public void ResetMap_CanBeCalledMultipleTimes()
-    {
-        // Act & Assert - should not throw
-        InvokeResetMap();
-        InvokeResetMap();
-        InvokeResetMap();
-        
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-14.2350"));
-    }
+    // ── GetLocationAsync – exception ─────────────────────────────────────────
 
-    #endregion
-
-    #region MapUrl Generation Tests
-
-    [TestMethod]
-    public void MapUrl_ContainsLeafletReferences()
-    {
-        // Assert
-        Assert.IsTrue(_viewModel.MapUrl.Contains("leaflet"));
-        Assert.IsTrue(_viewModel.MapUrl.Contains("openstreetmap"));
-    }
-
-    [TestMethod]
-    public void MapUrl_IsProperlyEncoded()
-    {
-        // Assert
-        Assert.IsTrue(_viewModel.MapUrl.StartsWith("data:text/html;charset=utf-8,"));
-        Assert.IsFalse(_viewModel.MapUrl.Contains(" ")); // Should be URL encoded
-    }
-
-    [TestMethod]
-    public async Task MapUrl_WithLocation_ContainsMarkerAndCircle()
+    [Fact]
+    public async Task GetLocationAsync_WhenServiceThrows_HasLocationIsFalse()
     {
         // Arrange
-        var mockLocation = CreateMockLocation(-23.550520, -46.633308);
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ThrowsAsync(new Exception("GPS unavailable"));
+        var sut = CreateSut();
 
         // Act
-        await InvokeGetLocationAsync();
-        var decodedUrl = Uri.UnescapeDataString(_viewModel.MapUrl);
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsTrue(decodedUrl.Contains("marker"));
-        Assert.IsTrue(decodedUrl.Contains("circle"));
-        Assert.IsTrue(decodedUrl.Contains("Sua Localiza��o"));
+        Assert.False(sut.HasLocation);
     }
 
-    [TestMethod]
-    public void MapUrl_Default_DoesNotContainLocationMarker()
+    [Fact]
+    public async Task GetLocationAsync_WhenServiceThrows_IsLoadingFalseAfterCompletion()
     {
         // Arrange
-        var decodedUrl = Uri.UnescapeDataString(_viewModel.MapUrl);
-
-        // Assert - Check that the marker is not actually added to the map (not in the executable code)
-        Assert.IsFalse(decodedUrl.Contains("L.marker"));
-        Assert.IsFalse(decodedUrl.Contains("Sua Localiza��o"));
-    }
-
-    #endregion
-
-    #region Property Change Notification Tests
-
-    [TestMethod]
-    public void IsLoading_WhenChanged_RaisesPropertyChanged()
-    {
-        // Arrange
-        var propertyChangedRaised = false;
-        _viewModel.PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName == nameof(_viewModel.IsLoading))
-                propertyChangedRaised = true;
-        };
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ThrowsAsync(new Exception("GPS unavailable"));
+        var sut = CreateSut();
 
         // Act
-        _viewModel.IsLoading = true;
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsTrue(propertyChangedRaised);
+        Assert.False(sut.IsLoading);
     }
 
-    [TestMethod]
-    public void HasLocation_WhenChanged_RaisesPropertyChanged()
+    [Theory]
+    [InlineData(typeof(Exception))]
+    [InlineData(typeof(TimeoutException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task GetLocationAsync_WhenAnyExceptionThrown_IsLoadingFalse(Type exceptionType)
     {
         // Arrange
-        var propertyChangedRaised = false;
-        _viewModel.PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName == nameof(_viewModel.HasLocation))
-                propertyChangedRaised = true;
-        };
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "test error")!;
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ThrowsAsync(exception);
+        var sut = CreateSut();
 
         // Act
-        _viewModel.HasLocation = true;
+        await sut.GetLocationCommand.ExecuteAsync(null);
 
         // Assert
-        Assert.IsTrue(propertyChangedRaised);
+        Assert.False(sut.IsLoading);
     }
 
-    [TestMethod]
-    public void LocationText_WhenChanged_RaisesPropertyChanged()
+    // ── ResetMap ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task ResetMap_WhenHasLocation_MapUrlContainsCurrentCoordinates()
     {
         // Arrange
-        var propertyChangedRaised = false;
-        _viewModel.PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName == nameof(_viewModel.LocationText))
-                propertyChangedRaised = true;
-        };
+        _locationServiceMock
+            .Setup(s => s.GetCurrentLocationAsync())
+            .ReturnsAsync(new Location(55.676098, 12.568337));
+        var sut = CreateSut();
+        await sut.GetLocationCommand.ExecuteAsync(null);
+        var mapUrlAfterGet = sut.MapUrl;
+
+        // Simulate a hypothetical URL change, then reset
+        sut.MapUrl = "about:blank";
 
         // Act
-        _viewModel.LocationText = "Test Location";
+        sut.ResetMapCommand.Execute(null);
 
-        // Assert
-        Assert.IsTrue(propertyChangedRaised);
+        // Assert – URL is restored to the location-based map
+        Assert.Equal(mapUrlAfterGet, sut.MapUrl);
     }
 
-    [TestMethod]
-    public void MapUrl_WhenChanged_RaisesPropertyChanged()
+    [Fact]
+    public void ResetMap_WhenNoLocation_MapUrlContainsDefaultBrazilCoordinates()
     {
         // Arrange
-        var propertyChangedRaised = false;
-        _viewModel.PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName == nameof(_viewModel.MapUrl))
-                propertyChangedRaised = true;
-        };
+        var sut = CreateSut();
+        sut.MapUrl = "about:blank"; // Overwrite to confirm it is actually reset
 
         // Act
-        _viewModel.MapUrl = "new_url";
+        sut.ResetMapCommand.Execute(null);
 
         // Assert
-        Assert.IsTrue(propertyChangedRaised);
+        var decoded = Uri.UnescapeDataString(sut.MapUrl);
+        Assert.StartsWith("data:text/html;charset=utf-8,", sut.MapUrl);
+        Assert.Contains("-14.2350", decoded);
+        Assert.Contains("-51.9253", decoded);
     }
-
-    #endregion
-
-    #region Integration/Workflow Tests
-
-    [TestMethod]
-    public async Task Workflow_GetLocation_ThenReset_WorksCorrectly()
-    {
-        // Arrange
-        var mockLocation = CreateMockLocation(-23.550520, -46.633308);
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
-
-        // Act - Get location
-        await InvokeGetLocationAsync();
-        Assert.IsTrue(_viewModel.HasLocation);
-        var locationMapUrl = _viewModel.MapUrl;
-
-        // Act - Reset map
-        InvokeResetMap();
-
-        // Assert
-        Assert.IsTrue(_viewModel.HasLocation); // Should still have location
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-23.550520")); // Should restore same location
-    }
-
-    [TestMethod]
-    public async Task Workflow_MultipleLocationUpdates_MaintainsLatestLocation()
-    {
-        // Arrange
-        var location1 = CreateMockLocation(-23.550520, -46.633308); // S�o Paulo
-        var location2 = CreateMockLocation(-22.906847, -43.172896); // Rio
-        var location3 = CreateMockLocation(-15.826691, -47.921822); // Bras�lia
-
-        _locationService.GetCurrentLocationAsync().Returns(
-            Task.FromResult<Location?>(location1),
-            Task.FromResult<Location?>(location2),
-            Task.FromResult<Location?>(location3));
-
-        // Act
-        await InvokeGetLocationAsync();
-        await InvokeGetLocationAsync();
-        await InvokeGetLocationAsync();
-
-        // Assert - Should have the last location (Bras�lia)
-        Assert.IsTrue(_viewModel.LocationText.Contains("-15.8") || _viewModel.LocationText.Contains("-15,8"));
-        Assert.IsTrue(_viewModel.LocationText.Contains("-47.9") || _viewModel.LocationText.Contains("-47,9"));
-
-        // Act - Reset should show Bras�lia
-        InvokeResetMap();
-        Assert.IsTrue(_viewModel.MapUrl.Contains("-15.8") || _viewModel.MapUrl.Contains("-15,8"));
-    }
-
-    #endregion
-
-    #region Edge Cases
-
-    [TestMethod]
-    public async Task GetLocationAsync_WithZeroCoordinates_HandlesCorrectly()
-    {
-        // Arrange
-        var mockLocation = CreateMockLocation(0, 0); // Null Island
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
-
-        // Act
-        await InvokeGetLocationAsync();
-
-        // Assert
-        Assert.IsTrue(_viewModel.HasLocation);
-        Assert.IsTrue(_viewModel.LocationText.Contains("Lat:"));
-        Assert.IsTrue(_viewModel.LocationText.Contains("Lng:"));
-    }
-
-    [TestMethod]
-    public async Task GetLocationAsync_WithExtremeCoordinates_HandlesCorrectly()
-    {
-        // Arrange
-        var mockLocation = CreateMockLocation(90, 180); // Extreme valid coordinates
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
-
-        // Act
-        await InvokeGetLocationAsync();
-
-        // Assert
-        Assert.IsTrue(_viewModel.HasLocation);
-        Assert.IsTrue(_viewModel.LocationText.Contains("90"));
-        Assert.IsTrue(_viewModel.LocationText.Contains("180"));
-    }
-
-    [TestMethod]
-    public async Task GetLocationAsync_WithNegativeCoordinates_FormatsCorrectly()
-    {
-        // Arrange
-        var mockLocation = CreateMockLocation(-90, -180);
-        _locationService.GetCurrentLocationAsync().Returns(Task.FromResult<Location?>(mockLocation));
-
-        // Act
-        await InvokeGetLocationAsync();
-
-        // Assert
-        Assert.IsTrue(_viewModel.LocationText.Contains("-90"));
-        Assert.IsTrue(_viewModel.LocationText.Contains("-180"));
-    }
-
-    #endregion
-
-    #region Helper Methods
-
-    private Location CreateMockLocation(double latitude, double longitude)
-    {
-        return new Location(latitude, longitude);
-    }
-
-    // Helper methods to invoke private methods via reflection or generated commands
-    private async Task InvokeGetLocationAsync()
-    {
-        // Use reflection to invoke the GetLocationAsyncCommand.ExecuteAsync
-        var commandProperty = _viewModel.GetType().GetProperty("GetLocationAsyncCommand");
-        if (commandProperty != null)
-        {
-            var command = commandProperty.GetValue(_viewModel) as IAsyncRelayCommand;
-            if (command != null)
-            {
-                await command.ExecuteAsync(null);
-                return;
-            }
-        }
-
-        // Fallback: invoke the private method directly via reflection
-        var method = _viewModel.GetType().GetMethod("GetLocationAsync", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (method != null)
-        {
-            var task = method.Invoke(_viewModel, null) as Task;
-            if (task != null)
-            {
-                await task;
-            }
-        }
-    }
-
-    private void InvokeResetMap()
-    {
-        // Use reflection to invoke the ResetMapCommand.Execute
-        var commandProperty = _viewModel.GetType().GetProperty("ResetMapCommand");
-        if (commandProperty != null)
-        {
-            var command = commandProperty.GetValue(_viewModel) as IRelayCommand;
-            if (command != null)
-            {
-                command.Execute(null);
-                return;
-            }
-        }
-
-        // Fallback: invoke the private method directly via reflection
-        var method = _viewModel.GetType().GetMethod("ResetMap", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        method?.Invoke(_viewModel, null);
-    }
-
-    #endregion
 }

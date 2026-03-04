@@ -46,13 +46,13 @@ public partial class FormEditPage : ContentPage
         try
         {
             _viewModel.IsLoading = true;
-            
+
             System.Diagnostics.Debug.WriteLine($"[FormEditPage] LoadFormForEdit - Iniciando carregamento do formulário ID: {FormId}");
 
             var form = await _formService.GetFormByIdAsync(FormId);
-            
+
             System.Diagnostics.Debug.WriteLine($"[FormEditPage] Formulário carregado: {form != null}");
-            
+
             if (form != null)
             {
                 System.Diagnostics.Debug.WriteLine($"[FormEditPage] Configurando modo de edição para: {form.Title}");
@@ -61,7 +61,7 @@ public partial class FormEditPage : ContentPage
             else
             {
                 System.Diagnostics.Debug.WriteLine($"[FormEditPage] ERRO: Formulário não encontrado");
-                await DisplayAlert("Erro", "Formulário não encontrado.", "OK");
+                await DisplayAlertAsync("Erro", "Formulário não encontrado.", "OK");
                 await Shell.Current.GoToAsync("..");
             }
         }
@@ -69,7 +69,7 @@ public partial class FormEditPage : ContentPage
         {
             System.Diagnostics.Debug.WriteLine($"[FormEditPage] EXCEÇÃO ao carregar formulário: {ex.Message}");
             System.Diagnostics.Debug.WriteLine($"[FormEditPage] StackTrace: {ex.StackTrace}");
-            await DisplayAlert("Erro", $"Erro ao carregar formulário: {ex.Message}", "OK");
+            await DisplayAlertAsync("Erro", $"Erro ao carregar formulário: {ex.Message}", "OK");
             await Shell.Current.GoToAsync("..");
         }
         finally

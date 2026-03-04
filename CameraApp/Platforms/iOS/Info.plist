@@ -28,6 +28,13 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>pt</string>
+		<string>pt-BR</string>
+		<string>en</string>
+		<string>es</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Este app precisa acessar a câmera para tirar fotos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

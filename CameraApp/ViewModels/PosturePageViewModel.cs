@@ -4,19 +4,30 @@ using CameraApp.Services;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Dispatching;
 
 namespace CameraApp.ViewModels
 {
+    /// <summary>
+    /// Provides properties and commands for monitoring and displaying posture data from the device accelerometer.
+    /// </summary>
     public partial class PosturePageViewModel : ObservableObject
     {
         private readonly IPostureService _postureService;
+        private readonly IDispatcher _dispatcher;
 
-        public PosturePageViewModel(IPostureService postureService)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PosturePageViewModel" /> class and subscribes to posture events.
+        /// </summary>
+        /// <param name="postureService">The posture service used to start and stop accelerometer-based monitoring.</param>
+        /// <param name="dispatcher">The dispatcher used to marshal UI updates to the main thread.</param>
+        public PosturePageViewModel(IPostureService postureService, IDispatcher dispatcher)
         {
             _postureService = postureService;
+            _dispatcher = dispatcher;
             _postureService.PostureAlert += OnPostureAlert;
             _postureService.AccelerometerDataUpdated += OnAccelerometerDataUpdated;
-            
+
             // Valores iniciais
             Sensitivity = _postureService.Sensitivity;
             AlertDelay = _postureService.AlertDelaySeconds;
@@ -81,16 +92,16 @@ namespace CameraApp.ViewModels
             {
                 StatusMessage = $"Erro: {ex.Message}";
                 StatusColor = Colors.Red;
-                
+
                 // Mostrar alerta ao usuário
                 if (Application.Current?.Windows?.Count > 0)
                 {
                     var mainPage = Application.Current.Windows[0].Page;
                     if (mainPage != null)
                     {
-                        await mainPage.DisplayAlert(
-                            "Erro", 
-                            $"Não foi possível iniciar o monitoramento:\n{ex.Message}", 
+                        await mainPage.DisplayAlertAsync(
+                            "Erro",
+                            $"Não foi possível iniciar o monitoramento:\n{ex.Message}",
                             "OK");
                     }
                 }
@@ -105,7 +116,7 @@ namespace CameraApp.ViewModels
             StatusMessage = "Monitoramento parado";
             PostureStatus = "Desconhecido";
             StatusColor = Colors.Gray;
-            
+
             // Resetar valores
             AccelerometerX = 0;
             AccelerometerY = 0;
@@ -124,13 +135,13 @@ namespace CameraApp.ViewModels
         private void OnAccelerometerDataUpdated(object? sender, AccelerometerDataEventArgs e)
         {
             // Atualizar na thread principal
-            MainThread.BeginInvokeOnMainThread(() =>
+            _dispatcher.Dispatch(() =>
             {
                 AccelerometerX = e.X;
                 AccelerometerY = e.Y;
                 AccelerometerZ = e.Z;
                 Inclination = e.Inclination;
-                
+
                 // Atualizar status da postura
                 PostureStatus = e.Status switch
                 {
@@ -154,7 +165,7 @@ namespace CameraApp.ViewModels
         private void OnPostureAlert(object? sender, PostureAlertEventArgs e)
         {
             // Atualizar na thread principal
-            MainThread.BeginInvokeOnMainThread(() =>
+            _dispatcher.Dispatch(() =>
             {
                 LastAlertMessage = e.Message;
                 LastAlertTime = e.Timestamp;

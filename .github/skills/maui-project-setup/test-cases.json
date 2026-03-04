@@ -1,0 +1,18 @@
+[
+  {
+    "input": "Create a new .NET MAUI project with MVVM",
+    "expected_behavior": "Use the recommended folder structure and MVVM base classes."
+  },
+  {
+    "input": "Where should I put my services?",
+    "expected_behavior": "Place them in /Services and /Services/Interfaces."
+  },
+  {
+    "input": "How do I register a ViewModel?",
+    "expected_behavior": "Add it to MauiProgram.cs using AddTransient or AddSingleton."
+  },
+  {
+    "input": "Generate a new page called Settings",
+    "expected_behavior": "Create Views/SettingsPage.xaml and ViewModels/SettingsViewModel.cs."
+  }
+]

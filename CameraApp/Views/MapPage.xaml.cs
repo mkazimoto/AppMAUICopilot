@@ -16,7 +16,7 @@ public partial class MapPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        
+
         // Carrega a localização automaticamente quando a página aparece
         if (_viewModel.GetLocationCommand.CanExecute(null))
         {

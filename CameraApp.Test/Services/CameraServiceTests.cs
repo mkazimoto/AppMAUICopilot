@@ -1,602 +1,157 @@
 using CameraApp.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Maui.Media;
+using Microsoft.Maui.Storage;
+using Moq;
 
 namespace CameraApp.Test.Services;
 
-[TestClass]
+/// <summary>
+/// Unit tests for <see cref="CameraService" />.
+/// </summary>
 public class CameraServiceTests
 {
-    private CameraService _service = null!;
+    private readonly Mock<IMediaPicker> _mediaPickerMock = new();
+    private readonly Mock<IFileSystem> _fileSystemMock = new();
+    private readonly Mock<IPhotoCopier> _photoCopierMock = new();
+    private readonly string _cacheDir = Path.GetTempPath();
+    private readonly CameraService _sut;
 
-    [TestInitialize]
-    public void Setup()
+    public CameraServiceTests()
     {
-        _service = new CameraService();
+        _fileSystemMock.Setup(fs => fs.CacheDirectory).Returns(_cacheDir);
+        _photoCopierMock.Setup(c => c.CopyAsync(It.IsAny<FileResult>(), It.IsAny<string>()))
+                        .Returns(Task.CompletedTask);
+        _sut = new CameraService(_mediaPickerMock.Object, _fileSystemMock.Object, _photoCopierMock.Object);
     }
 
-    #region Constructor Tests
+    // ── TakePhotoAsync ────────────────────────────────────────────────────────
 
-    [TestMethod]
-    public void Constructor_CreatesInstance()
-    {
-        // Arrange & Act
-        var service = new CameraService();
-
-        // Assert
-        Assert.IsNotNull(service);
-    }
-
-    [TestMethod]
-    public void Constructor_ImplementsInterface()
-    {
-        // Arrange & Act
-        var service = new CameraService();
-
-        // Assert
-        Assert.IsInstanceOfType<ICameraService>(service);
-    }
-
-    #endregion
-
-    #region TakePhotoAsync Tests
-
-    [TestMethod]
-    public async Task TakePhotoAsync_ReturnsTask()
-    {
-        // Act
-        var task = _service.TakePhotoAsync();
-
-        // Assert
-        Assert.IsNotNull(task);
-        Assert.IsInstanceOfType<Task<string?>>(task);
-        
-        // Complete the task (will return null in test environment without camera)
-        var result = await task;
-        
-        // In test environment without actual camera hardware, expect null
-        Assert.IsNull(result);
-    }
-
-    [TestMethod]
-    public async Task TakePhotoAsync_ReturnsNullableString()
-    {
-        // Act
-        var result = await _service.TakePhotoAsync();
-
-        // Assert - result can be null (expected in test environment)
-        if (result == null)
-        {
-            Assert.IsNull(result);
-        }
-        else
-        {
-            Assert.IsInstanceOfType<string>(result);
-        }
-    }
-
-    [TestMethod]
-    public async Task TakePhotoAsync_DoesNotThrow()
-    {
-        // Act & Assert - should not throw even in test environment
-        try
-        {
-            var result = await _service.TakePhotoAsync();
-            
-            // In test environment, should return null gracefully
-            Assert.IsNull(result);
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail($"Should not throw exception: {ex.Message}");
-        }
-    }
-
-    [TestMethod]
-    public async Task TakePhotoAsync_CanBeCalledMultipleTimes()
-    {
-        // Act
-        var result1 = await _service.TakePhotoAsync();
-        var result2 = await _service.TakePhotoAsync();
-        var result3 = await _service.TakePhotoAsync();
-
-        // Assert - should not throw and can be called multiple times
-        // Results will be null in test environment
-        Assert.IsNull(result1);
-        Assert.IsNull(result2);
-        Assert.IsNull(result3);
-    }
-
-    #endregion
-
-    #region PickPhotoAsync Tests
-
-    [TestMethod]
-    public async Task PickPhotoAsync_ReturnsTask()
-    {
-        // Act
-        var task = _service.PickPhotoAsync();
-
-        // Assert
-        Assert.IsNotNull(task);
-        Assert.IsInstanceOfType<Task<string?>>(task);
-        
-        // Complete the task
-        var result = await task;
-        
-        // In test environment without photo picker, expect null
-        Assert.IsNull(result);
-    }
-
-    [TestMethod]
-    public async Task PickPhotoAsync_ReturnsNullableString()
-    {
-        // Act
-        var result = await _service.PickPhotoAsync();
-
-        // Assert - result can be null (expected in test environment)
-        if (result == null)
-        {
-            Assert.IsNull(result);
-        }
-        else
-        {
-            Assert.IsInstanceOfType<string>(result);
-        }
-    }
-
-    [TestMethod]
-    public async Task PickPhotoAsync_DoesNotThrow()
-    {
-        // Act & Assert - should not throw even in test environment
-        try
-        {
-            var result = await _service.PickPhotoAsync();
-            
-            // In test environment, should return null gracefully
-            Assert.IsNull(result);
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail($"Should not throw exception: {ex.Message}");
-        }
-    }
-
-    [TestMethod]
-    public async Task PickPhotoAsync_CanBeCalledMultipleTimes()
-    {
-        // Act
-        var result1 = await _service.PickPhotoAsync();
-        var result2 = await _service.PickPhotoAsync();
-        var result3 = await _service.PickPhotoAsync();
-
-        // Assert - should not throw and can be called multiple times
-        // Results will be null in test environment
-        Assert.IsNull(result1);
-        Assert.IsNull(result2);
-        Assert.IsNull(result3);
-    }
-
-    #endregion
-
-    #region Interface Implementation Tests
-
-    [TestMethod]
-    public void CameraService_ImplementsICameraService()
-    {
-        // Assert
-        Assert.IsInstanceOfType<ICameraService>(_service);
-    }
-
-    [TestMethod]
-    public void CameraService_HasTakePhotoAsyncMethod()
+    [Fact]
+    public async Task TakePhotoAsync_WhenCaptureSupported_AndPhotoTaken_ReturnsFilePath()
     {
         // Arrange
-        var method = typeof(CameraService).GetMethod(nameof(ICameraService.TakePhotoAsync));
+        var fileName = "take_photo.jpg";
+        var fileResult = new FileResult(fileName);
 
-        // Assert
-        Assert.IsNotNull(method);
-        Assert.AreEqual(typeof(Task<string?>), method.ReturnType);
-    }
+        _mediaPickerMock.Setup(mp => mp.IsCaptureSupported).Returns(true);
+        _mediaPickerMock.Setup(mp => mp.CapturePhotoAsync(It.IsAny<MediaPickerOptions?>()))
+                        .ReturnsAsync(fileResult);
 
-    [TestMethod]
-    public void CameraService_HasPickPhotoAsyncMethod()
-    {
-        // Arrange
-        var method = typeof(CameraService).GetMethod(nameof(ICameraService.PickPhotoAsync));
-
-        // Assert
-        Assert.IsNotNull(method);
-        Assert.AreEqual(typeof(Task<string?>), method.ReturnType);
-    }
-
-    #endregion
-
-    #region Multiple Instance Tests
-
-    [TestMethod]
-    public void MultipleInstances_CanBeCreated()
-    {
-        // Arrange & Act
-        var service1 = new CameraService();
-        var service2 = new CameraService();
-        var service3 = new CameraService();
-
-        // Assert
-        Assert.IsNotNull(service1);
-        Assert.IsNotNull(service2);
-        Assert.IsNotNull(service3);
-        Assert.AreNotSame(service1, service2);
-        Assert.AreNotSame(service2, service3);
-    }
-
-    [TestMethod]
-    public async Task MultipleInstances_OperateIndependently()
-    {
-        // Arrange
-        var service1 = new CameraService();
-        var service2 = new CameraService();
+        var expectedPath = Path.Combine(_cacheDir, fileName);
 
         // Act
-        var task1 = service1.TakePhotoAsync();
-        var task2 = service2.PickPhotoAsync();
-
-        var result1 = await task1;
-        var result2 = await task2;
-
-        // Assert - both should complete independently
-        Assert.IsNull(result1);
-        Assert.IsNull(result2);
-    }
-
-    #endregion
-
-    #region Concurrent Access Tests
-
-    [TestMethod]
-    public async Task TakePhotoAsync_ConcurrentCalls_DoNotInterfere()
-    {
-        // Arrange
-        var tasks = new List<Task<string?>>();
-
-        // Act - call method concurrently
-        for (int i = 0; i < 3; i++)
-        {
-            tasks.Add(_service.TakePhotoAsync());
-        }
-
-        var results = await Task.WhenAll(tasks);
-
-        // Assert - all should complete successfully
-        Assert.AreEqual(3, results.Length);
-        foreach (var result in results)
-        {
-            // In test environment, all should be null
-            Assert.IsNull(result);
-        }
-    }
-
-    [TestMethod]
-    public async Task PickPhotoAsync_ConcurrentCalls_DoNotInterfere()
-    {
-        // Arrange
-        var tasks = new List<Task<string?>>();
-
-        // Act - call method concurrently
-        for (int i = 0; i < 3; i++)
-        {
-            tasks.Add(_service.PickPhotoAsync());
-        }
-
-        var results = await Task.WhenAll(tasks);
-
-        // Assert - all should complete successfully
-        Assert.AreEqual(3, results.Length);
-        foreach (var result in results)
-        {
-            // In test environment, all should be null
-            Assert.IsNull(result);
-        }
-    }
-
-    [TestMethod]
-    public async Task MixedOperations_ConcurrentCalls_DoNotInterfere()
-    {
-        // Arrange & Act
-        var takePhotoTask1 = _service.TakePhotoAsync();
-        var pickPhotoTask1 = _service.PickPhotoAsync();
-        var takePhotoTask2 = _service.TakePhotoAsync();
-        var pickPhotoTask2 = _service.PickPhotoAsync();
-
-        var results = await Task.WhenAll(takePhotoTask1, pickPhotoTask1, takePhotoTask2, pickPhotoTask2);
+        var result = await _sut.TakePhotoAsync();
 
         // Assert
-        Assert.AreEqual(4, results.Length);
-        foreach (var result in results)
-        {
-            Assert.IsNull(result);
-        }
+        Assert.Equal(expectedPath, result);
+        _photoCopierMock.Verify(c => c.CopyAsync(fileResult, expectedPath), Times.Once);
     }
 
-    #endregion
-
-    #region Exception Handling Tests
-
-    [TestMethod]
-    public async Task TakePhotoAsync_HandlesExceptionsGracefully()
-    {
-        // Act & Assert - should handle any platform exceptions gracefully
-        try
-        {
-            var result = await _service.TakePhotoAsync();
-            
-            // Should return null instead of throwing
-            Assert.IsNull(result);
-        }
-        catch
-        {
-            Assert.Fail("Method should handle exceptions internally and return null");
-        }
-    }
-
-    [TestMethod]
-    public async Task PickPhotoAsync_HandlesExceptionsGracefully()
-    {
-        // Act & Assert - should handle any platform exceptions gracefully
-        try
-        {
-            var result = await _service.PickPhotoAsync();
-            
-            // Should return null instead of throwing
-            Assert.IsNull(result);
-        }
-        catch
-        {
-            Assert.Fail("Method should handle exceptions internally and return null");
-        }
-    }
-
-    #endregion
-
-    #region Task Completion Tests
-
-    [TestMethod]
-    public async Task TakePhotoAsync_CompletesWithinReasonableTime()
+    [Fact]
+    public async Task TakePhotoAsync_WhenCaptureNotSupported_ReturnsNull()
     {
         // Arrange
-        var timeout = TimeSpan.FromSeconds(10);
-        var cts = new CancellationTokenSource(timeout);
+        _mediaPickerMock.Setup(mp => mp.IsCaptureSupported).Returns(false);
 
-        // Act & Assert
-        try
-        {
-            var task = _service.TakePhotoAsync();
-            var completedTask = await Task.WhenAny(task, Task.Delay(timeout, cts.Token));
-            
-            if (completedTask != task)
-            {
-                Assert.Fail("Method took longer than expected timeout");
-            }
-
-            var result = await task;
-            
-            // Should complete successfully (even if result is null)
-            Assert.IsTrue(task.IsCompleted);
-        }
-        finally
-        {
-            cts.Cancel();
-        }
-    }
-
-    [TestMethod]
-    public async Task PickPhotoAsync_CompletesWithinReasonableTime()
-    {
-        // Arrange
-        var timeout = TimeSpan.FromSeconds(10);
-        var cts = new CancellationTokenSource(timeout);
-
-        // Act & Assert
-        try
-        {
-            var task = _service.PickPhotoAsync();
-            var completedTask = await Task.WhenAny(task, Task.Delay(timeout, cts.Token));
-            
-            if (completedTask != task)
-            {
-                Assert.Fail("Method took longer than expected timeout");
-            }
-
-            var result = await task;
-            
-            // Should complete successfully
-            Assert.IsTrue(task.IsCompleted);
-        }
-        finally
-        {
-            cts.Cancel();
-        }
-    }
-
-    #endregion
-
-    #region Null Safety Tests
-
-    [TestMethod]
-    public async Task TakePhotoAsync_ReturnsNullWhenCameraNotAvailable()
-    {
         // Act
-        var result = await _service.TakePhotoAsync();
-
-        // Assert - in test environment without camera, should return null
-        Assert.IsNull(result);
-    }
-
-    [TestMethod]
-    public async Task PickPhotoAsync_ReturnsNullWhenUserCancels()
-    {
-        // Act
-        var result = await _service.PickPhotoAsync();
-
-        // Assert - when user cancels or no photo picker available, should return null
-        Assert.IsNull(result);
-    }
-
-    #endregion
-
-    #region Service Lifecycle Tests
-
-    [TestMethod]
-    public async Task CameraService_CanBeReusedAfterCalls()
-    {
-        // Arrange
-        var service = new CameraService();
-
-        // Act - use service multiple times
-        var result1 = await service.TakePhotoAsync();
-        var result2 = await service.PickPhotoAsync();
-        
-        var result3 = await service.TakePhotoAsync();
-        var result4 = await service.PickPhotoAsync();
-
-        // Assert - service should remain functional
-        Assert.IsNull(result1);
-        Assert.IsNull(result2);
-        Assert.IsNull(result3);
-        Assert.IsNull(result4);
-    }
-
-    [TestMethod]
-    public async Task CameraService_SupportsSequentialOperations()
-    {
-        // Act - sequential calls in order
-        var photoPath1 = await _service.TakePhotoAsync();
-        var photoPath2 = await _service.PickPhotoAsync();
-        var photoPath3 = await _service.TakePhotoAsync();
-
-        // Assert - all operations should complete
-        Assert.IsNull(photoPath1); // No camera in test environment
-        Assert.IsNull(photoPath2); // No photo picker in test environment
-        Assert.IsNull(photoPath3); // No camera in test environment
-    }
-
-    [TestMethod]
-    public async Task CameraService_SupportsInterleavedOperations()
-    {
-        // Act - start both operations, then await
-        var takePhotoTask = _service.TakePhotoAsync();
-        var pickPhotoTask = _service.PickPhotoAsync();
-
-        var takePhotoResult = await takePhotoTask;
-        var pickPhotoResult = await pickPhotoTask;
-
-        // Assert - both should complete independently
-        Assert.IsNull(takePhotoResult);
-        Assert.IsNull(pickPhotoResult);
-    }
-
-    #endregion
-
-    #region Return Value Tests
-
-    [TestMethod]
-    public async Task TakePhotoAsync_WhenSuccessful_ShouldReturnFilePath()
-    {
-        // Note: This test verifies the contract - actual success requires real hardware
-        
-        // Act
-        var result = await _service.TakePhotoAsync();
+        var result = await _sut.TakePhotoAsync();
 
         // Assert
-        if (result != null)
-        {
-            // If result is not null (on real device), it should be a valid path
-            Assert.IsTrue(!string.IsNullOrEmpty(result));
-            // Path should be in cache directory
-            Assert.IsTrue(result.Contains(FileSystem.CacheDirectory) || 
-                         Path.IsPathRooted(result));
-        }
-        else
-        {
-            // In test environment, null is expected
-            Assert.IsNull(result);
-        }
+        Assert.Null(result);
+        _mediaPickerMock.Verify(mp => mp.CapturePhotoAsync(It.IsAny<MediaPickerOptions?>()), Times.Never);
     }
 
-    [TestMethod]
-    public async Task PickPhotoAsync_WhenSuccessful_ShouldReturnFilePath()
+    [Fact]
+    public async Task TakePhotoAsync_WhenUserCancels_ReturnsNull()
     {
-        // Note: This test verifies the contract - actual success requires photo picker
-        
+        // Arrange
+        _mediaPickerMock.Setup(mp => mp.IsCaptureSupported).Returns(true);
+        _mediaPickerMock.Setup(mp => mp.CapturePhotoAsync(It.IsAny<MediaPickerOptions?>()))
+                        .ReturnsAsync((FileResult?)null);
+
         // Act
-        var result = await _service.PickPhotoAsync();
+        var result = await _sut.TakePhotoAsync();
 
         // Assert
-        if (result != null)
-        {
-            // If result is not null (user selected photo), it should be a valid path
-            Assert.IsTrue(!string.IsNullOrEmpty(result));
-            // Path should be in cache directory
-            Assert.IsTrue(result.Contains(FileSystem.CacheDirectory) || 
-                         Path.IsPathRooted(result));
-        }
-        else
-        {
-            // In test environment or when user cancels, null is expected
-            Assert.IsNull(result);
-        }
+        Assert.Null(result);
     }
 
-    #endregion
-
-    #region Edge Cases
-
-    [TestMethod]
-    public async Task TakePhotoAsync_CalledRapidly_HandlesGracefully()
+    [Fact]
+    public async Task TakePhotoAsync_WhenExceptionThrown_ReturnsNull()
     {
-        // Arrange - simulate rapid button clicks
-        var tasks = new List<Task<string?>>();
+        // Arrange
+        _mediaPickerMock.Setup(mp => mp.IsCaptureSupported).Returns(true);
+        _mediaPickerMock.Setup(mp => mp.CapturePhotoAsync(It.IsAny<MediaPickerOptions?>()))
+                        .ThrowsAsync(new Exception("Camera hardware error"));
 
-        // Act - 10 rapid calls
-        for (int i = 0; i < 10; i++)
-        {
-            tasks.Add(_service.TakePhotoAsync());
-        }
+        // Act
+        var result = await _sut.TakePhotoAsync();
 
-        // Assert - all should complete without errors
-        try
-        {
-            var results = await Task.WhenAll(tasks);
-            Assert.AreEqual(10, results.Length);
-        }
-        catch
-        {
-            Assert.Fail("Should handle rapid calls gracefully");
-        }
+        // Assert
+        Assert.Null(result);
     }
 
-    [TestMethod]
-    public async Task PickPhotoAsync_CalledRapidly_HandlesGracefully()
+    // ── PickPhotoAsync ────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task PickPhotoAsync_WhenPhotoSelected_ReturnsFilePath()
     {
-        // Arrange - simulate rapid button clicks
-        var tasks = new List<Task<string?>>();
+        // Arrange
+        var fileName = "picked_photo.jpg";
+        var fileResult = new FileResult(fileName);
 
-        // Act - 10 rapid calls
-        for (int i = 0; i < 10; i++)
-        {
-            tasks.Add(_service.PickPhotoAsync());
-        }
+        _mediaPickerMock.Setup(mp => mp.PickPhotosAsync(It.IsAny<MediaPickerOptions?>()))
+                        .Returns(Task.FromResult(new List<FileResult> { fileResult }));
 
-        // Assert - all should complete without errors
-        try
-        {
-            var results = await Task.WhenAll(tasks);
-            Assert.AreEqual(10, results.Length);
-        }
-        catch
-        {
-            Assert.Fail("Should handle rapid calls gracefully");
-        }
+        var expectedPath = Path.Combine(_cacheDir, fileName);
+
+        // Act
+        var result = await _sut.PickPhotoAsync();
+
+        // Assert
+        Assert.Equal(expectedPath, result);
+        _photoCopierMock.Verify(c => c.CopyAsync(fileResult, expectedPath), Times.Once);
     }
 
-    #endregion
+    [Fact]
+    public async Task PickPhotoAsync_WhenUserCancels_ReturnsNull()
+    {
+        // Arrange
+        _mediaPickerMock.Setup(mp => mp.PickPhotosAsync(It.IsAny<MediaPickerOptions?>()))
+                        .Returns(Task.FromResult<List<FileResult>>(null!));
+
+        // Act
+        var result = await _sut.PickPhotoAsync();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task PickPhotoAsync_WhenEmptyListReturned_ReturnsNull()
+    {
+        // Arrange
+        _mediaPickerMock.Setup(mp => mp.PickPhotosAsync(It.IsAny<MediaPickerOptions?>()))
+                        .Returns(Task.FromResult(new List<FileResult>()));
+
+        // Act
+        var result = await _sut.PickPhotoAsync();
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task PickPhotoAsync_WhenExceptionThrown_ReturnsNull()
+    {
+        // Arrange
+        _mediaPickerMock.Setup(mp => mp.PickPhotosAsync(It.IsAny<MediaPickerOptions?>()))
+                        .ThrowsAsync(new Exception("Picker error"));
+
+        // Act
+        var result = await _sut.PickPhotoAsync();
+
+        // Assert
+        Assert.Null(result);
+    }
 }

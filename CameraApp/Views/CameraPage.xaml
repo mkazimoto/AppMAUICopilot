@@ -3,14 +3,15 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:CameraApp.ViewModels"
-             Title="Câmera"
+             xmlns:services="clr-namespace:CameraApp.Services"
+             Title="{Binding [Camera_AppTitle], Source={x:Static services:LocalizationResourceManager.Instance}}"
              x:DataType="vm:CameraPageViewModel">
     
     <ScrollView>
         <StackLayout Padding="20" Spacing="20">
             
             <!-- Título -->
-            <Label Text="App de Câmera"
+            <Label Text="{Binding [Camera_AppTitle], Source={x:Static services:LocalizationResourceManager.Instance}}"
                    FontSize="24"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
@@ -19,14 +20,14 @@
             <!-- Botões de ação -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                 <Button Grid.Column="0"
-                        Text="Tirar Foto"
+                        Text="{Binding [Camera_TakePhoto], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding TakePhotoCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         CornerRadius="8" />
                 
                 <Button Grid.Column="1"
-                        Text="Galeria"
+                        Text="{Binding [Camera_Gallery], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding PickPhotoCommand}"
                         BackgroundColor="{StaticResource Secondary}"
                         TextColor="White"
@@ -50,7 +51,7 @@
                            WidthRequest="300" />
                     
                     <!-- Botão para limpar -->
-                    <Button Text="Limpar Foto"
+                    <Button Text="{Binding [Camera_ClearPhoto], Source={x:Static services:LocalizationResourceManager.Instance}}"
                             Command="{Binding ClearPhotoCommand}"
                             BackgroundColor="Red"
                             TextColor="White"
@@ -69,7 +70,7 @@
                     <RoundRectangle CornerRadius="10"/>
                 </Border.StrokeShape>
                 
-                <Label Text="Nenhuma foto selecionada.&#x0a;Use os botões acima para tirar uma foto ou selecionar da galeria."
+                <Label Text="{Binding [Camera_NoPhotoMessage], Source={x:Static services:LocalizationResourceManager.Instance}}"
                        FontSize="16"
                        TextColor="Gray"
                        HorizontalTextAlignment="Center"

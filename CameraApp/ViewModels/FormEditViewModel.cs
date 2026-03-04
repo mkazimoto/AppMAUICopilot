@@ -7,6 +7,9 @@ using CameraApp.Services;
 
 namespace CameraApp.ViewModels;
 
+/// <summary>
+/// Provides properties and commands for creating and editing a <see cref="Form" /> entity.
+/// </summary>
 public partial class FormEditViewModel : ObservableObject
 {
     private readonly IFormService _formService;
@@ -48,6 +51,10 @@ public partial class FormEditViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<StatusItem> statusItems = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FormEditViewModel" /> class and populates the picker lists.
+    /// </summary>
+    /// <param name="formService">The form service used to create, update, and delete forms.</param>
     public FormEditViewModel(IFormService formService)
     {
         _formService = formService;
@@ -68,6 +75,10 @@ public partial class FormEditViewModel : ObservableObject
         StatusItems.Add(new StatusItem { Id = 2, Name = "Inativo" });
     }
 
+    /// <summary>
+    /// Configures the ViewModel for editing an existing form.
+    /// </summary>
+    /// <param name="form">The form to edit.</param>
     public void SetEditMode(Form form)
     {
         IsEditMode = true;
@@ -82,6 +93,9 @@ public partial class FormEditViewModel : ObservableObject
         TotalScore = form.TotalScore;
     }
 
+    /// <summary>
+    /// Configures the ViewModel for creating a new form with default values.
+    /// </summary>
     public void SetCreateMode()
     {
         IsEditMode = false;
@@ -173,7 +187,7 @@ public partial class FormEditViewModel : ObservableObject
         var currentPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
         if (currentPage == null) return;
 
-        var confirm = await currentPage.DisplayAlert("Confirmar", 
+        var confirm = await currentPage.DisplayAlertAsync("Confirmar", 
             "Tem certeza que deseja excluir este formulário?", "Sim", "Não");
 
         if (!confirm) return;
@@ -221,14 +235,16 @@ public partial class FormEditViewModel : ObservableObject
     {
         if (Application.Current?.Windows?.FirstOrDefault()?.Page is Page currentPage)
         {
-            await currentPage.DisplayAlert(title, message, "OK");
+            await currentPage.DisplayAlertAsync(title, message, "OK");
         }
     }
 
 
 }
 
-// Classes auxiliares para os Pickers
+/// <summary>
+/// Represents a form category item used in a picker control.
+/// </summary>
 public partial class CategoryItem : ObservableObject
 {
     [ObservableProperty]
@@ -237,6 +253,9 @@ public partial class CategoryItem : ObservableObject
     private string name = string.Empty;
 }
 
+/// <summary>
+/// Represents a form status item used in a picker control.
+/// </summary>
 public partial class StatusItem : ObservableObject
 {
     [ObservableProperty]

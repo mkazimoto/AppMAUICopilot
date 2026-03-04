@@ -6,6 +6,9 @@ using Microsoft.Maui.ApplicationModel; // Para MainThread
 
 namespace CameraApp.ViewModels
 {
+    /// <summary>
+    /// Provides properties and commands for the login page, including credential entry and session restoration.
+    /// </summary>
     public partial class LoginViewModel : ObservableObject
     {
         private readonly IAuthService _authService;
@@ -32,18 +35,23 @@ namespace CameraApp.ViewModels
         [ObservableProperty]
         private string loginButtonText = "Entrar";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginViewModel" /> class and attempts to restore any saved session.
+        /// </summary>
+        /// <param name="authService">The authentication service used to log in and monitor session state.</param>
+        /// <param name="logger">The logger used to record authentication events.</param>
         public LoginViewModel(IAuthService authService, ILogger<LoginViewModel> logger)
         {
             _authService = authService;
             _logger = logger;
-            
+
             // Escutar mudanças na autenticação
             _authService.AuthenticationChanged += OnAuthenticationChanged;
-            
+
             // Verificar se já está autenticado
             IsAuthenticated = _authService.IsAuthenticated;
             UpdateButtonText();
-            
+
             // Tentar restaurar sessão automaticamente
             _ = Task.Run(async () => await TryRestoreSessionAsync());
         }
@@ -71,13 +79,13 @@ namespace CameraApp.ViewModels
                     return;
                 }
 
-                var token = await _authService.LoginAsync(Username, Password, 
+                var token = await _authService.LoginAsync(Username, Password,
                     string.IsNullOrWhiteSpace(ServiceAlias) ? null : ServiceAlias);
 
                 if (token != null)
                 {
                     _logger.LogInformation("Login realizado com sucesso");
-                    
+
                     // Navegar para o app principal
                     Application.Current!.Windows[0].Page = new MainShell(_authService);
                 }
@@ -104,7 +112,7 @@ namespace CameraApp.ViewModels
 
             // Exibir confirmação antes de prosseguir
             bool confirm = await MainThread.InvokeOnMainThreadAsync(async () =>
-                await (Shell.Current?.DisplayAlert("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
+                await (Shell.Current?.DisplayAlertAsync("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
             if (!confirm)
             {
                 return; // Usuário cancelou
@@ -114,13 +122,13 @@ namespace CameraApp.ViewModels
             {
                 IsLoading = true;
                 await _authService.LogoutAsync();
-                
+
                 // Limpar campos
                 Username = string.Empty;
                 Password = string.Empty;
                 ServiceAlias = string.Empty;
                 ErrorMessage = string.Empty;
-                
+
                 _logger.LogInformation("Logout realizado com sucesso");
             }
             catch (Exception ex)
@@ -147,7 +155,7 @@ namespace CameraApp.ViewModels
         {
             IsAuthenticated = isAuthenticated;
             UpdateButtonText();
-            
+
             if (isAuthenticated)
             {
                 ErrorMessage = "Login realizado com sucesso!";
@@ -166,7 +174,7 @@ namespace CameraApp.ViewModels
                 if (_authService is AuthService authService)
                 {
                     var tokenRestored = await authService.TryRestoreTokenAsync();
-                    
+
                     if (tokenRestored && _authService.IsAuthenticated)
                     {
                         // Se conseguiu restaurar a sessão, navegar para o app principal
