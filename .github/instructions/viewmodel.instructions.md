@@ -1,5 +1,5 @@
 ---
-description: "Use when creating, refactoring, or reviewing MAUI ViewModels with CommunityToolkit.Mvvm. Covers DI, RelayCommand, ObservableProperty, async flows, validation, navigation, and UI-state patterns."
+description: "Use ao criar, refatorar ou revisar ViewModels MAUI com CommunityToolkit.Mvvm. Cobre DI, RelayCommand, ObservableProperty, fluxos assíncronos, validação, navegação e padrões de estado de UI."
 applyTo: "**/ViewModels/*.cs"
 ---
 
