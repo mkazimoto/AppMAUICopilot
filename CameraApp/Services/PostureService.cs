@@ -3,6 +3,7 @@ using System;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Devices.Sensors;
 
 namespace CameraApp.Services
@@ -15,6 +16,7 @@ namespace CameraApp.Services
         private readonly IAccelerometer _accelerometer;
         private readonly IVibration _vibration;
         private readonly Func<DateTime> _clock;
+        private readonly ILogger<PostureService>? _logger;
 
         private Timer? _monitoringTimer;
         private DateTime _lastPoorPostureTime;
@@ -38,7 +40,7 @@ namespace CameraApp.Services
         /// Initializes a new instance of <see cref="PostureService" /> using the default MAUI implementations.
         /// </summary>
         public PostureService()
-            : this(Accelerometer.Default, Vibration.Default, () => DateTime.Now)
+            : this(Accelerometer.Default, Vibration.Default, null, null)
         {
         }
 
@@ -47,11 +49,13 @@ namespace CameraApp.Services
         /// </summary>
         /// <param name="accelerometer">The accelerometer sensor provider.</param>
         /// <param name="vibration">The vibration provider.</param>
+        /// <param name="logger">The logger instance for structured logging.</param>
         /// <param name="clock">A delegate that returns the current date and time; defaults to <see cref="DateTime.Now" />.</param>
-        public PostureService(IAccelerometer accelerometer, IVibration vibration, Func<DateTime>? clock = null)
+        public PostureService(IAccelerometer accelerometer, IVibration vibration, ILogger<PostureService>? logger = null, Func<DateTime>? clock = null)
         {
             _accelerometer = accelerometer;
             _vibration = vibration;
+            _logger = logger;
             _clock = clock ?? (() => DateTime.Now);
         }
 
@@ -65,7 +69,10 @@ namespace CameraApp.Services
             try
             {
                 if (!_accelerometer.IsSupported)
+                {
+                    _logger?.LogWarning("Acelerômetro não está disponível neste dispositivo");
                     throw new NotSupportedException("Acelerômetro não está disponível neste dispositivo.");
+                }
 
                 if (!_accelerometer.IsMonitoring)
                 {
@@ -79,10 +86,12 @@ namespace CameraApp.Services
 
                 _monitoringTimer = new Timer(CheckPostureStatus, null, 0, MonitoringIntervalMs);
 
+                _logger?.LogInformation("Monitoramento de postura iniciado");
                 await Task.CompletedTask;
             }
             catch (Exception ex)
             {
+                _logger?.LogError(ex, "Erro ao iniciar monitoramento de postura");
                 throw new InvalidOperationException($"Erro ao iniciar monitoramento: {ex.Message}", ex);
             }
         }
@@ -102,6 +111,8 @@ namespace CameraApp.Services
                 _accelerometer.ReadingChanged -= OnAccelerometerReadingChanged;
                 _accelerometer.Stop();
             }
+
+            _logger?.LogInformation("Monitoramento de postura parado");
         }
 
         private void OnAccelerometerReadingChanged(object? sender, AccelerometerChangedEventArgs e)
@@ -175,28 +186,37 @@ namespace CameraApp.Services
 
         private async void HandlePostureAlert(PostureStatus status, double inclination)
         {
-            var now = _clock();
+            try
+            {
+                var now = _clock();
 
-            if (status == PostureStatus.Poor)
-            {
-                if (!_isInPoorPosture)
+                if (status == PostureStatus.Poor)
                 {
-                    _isInPoorPosture = true;
-                    _lastPoorPostureTime = now;
+                    if (!_isInPoorPosture)
+                    {
+                        _isInPoorPosture = true;
+                        _lastPoorPostureTime = now;
+                    }
+                    else if ((now - _lastPoorPostureTime).TotalSeconds >= AlertDelaySeconds)
+                    {
+                        TriggerAlert("Postura incorreta detectada! Endireite as costas.", status, inclination);
+                        _lastPoorPostureTime = now;
+                    }
                 }
-                else if ((now - _lastPoorPostureTime).TotalSeconds >= AlertDelaySeconds)
+                else
                 {
-                    await TriggerAlert("Postura incorreta detectada! Endireite as costas.", status, inclination);
-                    _lastPoorPostureTime = now;
+                    _isInPoorPosture = false;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                _isInPoorPosture = false;
+                _logger?.LogError(ex, "Erro ao processar alerta de postura");
             }
+
+            await Task.CompletedTask;
         }
 
-        private async Task TriggerAlert(string message, PostureStatus status, double inclination)
+        private void TriggerAlert(string message, PostureStatus status, double inclination)
         {
             try
             {
@@ -209,18 +229,20 @@ namespace CameraApp.Services
                     _vibration.Vibrate(duration);
                 }
 
+                var alertMessage = $"{message} (Inclinação: {inclination:F1}°)";
+                _logger?.LogWarning("Alerta de postura: {Message}, Status: {Status}, Inclinação: {Inclination:F1}°", 
+                    message, status, inclination);
+
                 PostureAlert?.Invoke(this, new PostureAlertEventArgs
                 {
-                    Message = $"{message} (Inclinação: {inclination:F1}°)",
+                    Message = alertMessage,
                     Status = status
                 });
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Erro ao disparar alerta: {ex.Message}");
+                _logger?.LogError(ex, "Erro ao disparar alerta de postura");
             }
-
-            await Task.CompletedTask;
         }
     }
 }
