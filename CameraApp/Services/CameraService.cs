@@ -1,5 +1,7 @@
 using Microsoft.Maui.Media;
 using Microsoft.Maui.Storage;
+using Microsoft.Extensions.Logging;
+using CameraApp.Exceptions;
 
 namespace CameraApp.Services;
 
@@ -32,6 +34,7 @@ public class CameraService : ICameraService
     private readonly IMediaPicker _mediaPicker;
     private readonly IFileSystem _fileSystem;
     private readonly IPhotoCopier _photoCopier;
+    private readonly ILogger<CameraService> _logger;
 
     /// <summary>
     /// Initializes a new instance of <see cref="CameraService" />.
@@ -39,11 +42,13 @@ public class CameraService : ICameraService
     /// <param name="mediaPicker">The media picker implementation (use <see cref="MediaPicker.Default" /> in production).</param>
     /// <param name="fileSystem">The file-system abstraction (use <see cref="FileSystem.Current" /> in production).</param>
     /// <param name="photoCopier">Strategy for copying a <see cref="FileResult" /> to a local path.</param>
-    public CameraService(IMediaPicker mediaPicker, IFileSystem fileSystem, IPhotoCopier photoCopier)
+    /// <param name="logger">The logger used to record camera operations and errors.</param>
+    public CameraService(IMediaPicker mediaPicker, IFileSystem fileSystem, IPhotoCopier photoCopier, ILogger<CameraService> logger)
     {
         _mediaPicker = mediaPicker;
         _fileSystem = fileSystem;
         _photoCopier = photoCopier;
+        _logger = logger;
     }
 
     /// <summary>
@@ -54,29 +59,41 @@ public class CameraService : ICameraService
     {
         try
         {
-            if (_mediaPicker.IsCaptureSupported)
+            if (!_mediaPicker.IsCaptureSupported)
             {
-                var photo = await _mediaPicker.CapturePhotoAsync();
-
-                if (photo != null)
-                {
-                    // Salvar em local storage
-                    var localFilePath = Path.Combine(_fileSystem.CacheDirectory, photo.FileName);
-
-                    await _photoCopier.CopyAsync(photo, localFilePath);
-
-                    return localFilePath;
-                }
+                _logger.LogWarning("Photo capture is not supported on this device");
+                return null;
             }
+
+            var photo = await _mediaPicker.CapturePhotoAsync();
+
+            if (photo == null)
+            {
+                _logger.LogInformation("Photo capture was cancelled by user");
+                return null;
+            }
+
+            var localFilePath = Path.Combine(_fileSystem.CacheDirectory, photo.FileName);
+            await _photoCopier.CopyAsync(photo, localFilePath);
+
+            _logger.LogInformation("Photo captured successfully: {FilePath}", localFilePath);
+            return localFilePath;
+        }
+        catch (FeatureNotSupportedException ex)
+        {
+            _logger.LogWarning(ex, "Camera feature not supported on this device");
+            throw new CameraException("Camera is not available on this device", ex);
+        }
+        catch (PermissionException ex)
+        {
+            _logger.LogWarning(ex, "Camera permission denied");
+            throw new CameraException("Camera permission was denied", ex);
         }
         catch (Exception ex)
         {
-            var mainPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
-            if (mainPage != null)
-                await mainPage.DisplayAlertAsync("Erro", $"Erro ao tirar foto: {ex.Message}", "OK");
+            _logger.LogError(ex, "Failed to capture photo");
+            throw new CameraException("Failed to capture photo", ex);
         }
-
-        return null;
     }
 
     /// <summary>
@@ -90,22 +107,32 @@ public class CameraService : ICameraService
             var photos = await _mediaPicker.PickPhotosAsync();
             var photo = photos?.FirstOrDefault();
 
-            if (photo != null)
+            if (photo == null)
             {
-                var localFilePath = Path.Combine(_fileSystem.CacheDirectory, photo.FileName);
-
-                await _photoCopier.CopyAsync(photo, localFilePath);
-
-                return localFilePath;
+                _logger.LogInformation("Photo selection was cancelled by user");
+                return null;
             }
+
+            var localFilePath = Path.Combine(_fileSystem.CacheDirectory, photo.FileName);
+            await _photoCopier.CopyAsync(photo, localFilePath);
+
+            _logger.LogInformation("Photo selected successfully: {FilePath}", localFilePath);
+            return localFilePath;
+        }
+        catch (FeatureNotSupportedException ex)
+        {
+            _logger.LogWarning(ex, "Photo picker not supported on this device");
+            throw new CameraException("Photo picker is not available on this device", ex);
+        }
+        catch (PermissionException ex)
+        {
+            _logger.LogWarning(ex, "Photo library permission denied");
+            throw new CameraException("Photo library permission was denied", ex);
         }
         catch (Exception ex)
         {
-            var mainPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
-            if (mainPage != null)
-                await mainPage.DisplayAlertAsync("Erro", $"Erro ao selecionar foto: {ex.Message}", "OK");
+            _logger.LogError(ex, "Failed to pick photo");
+            throw new CameraException("Failed to select photo", ex);
         }
-
-        return null;
     }
 }

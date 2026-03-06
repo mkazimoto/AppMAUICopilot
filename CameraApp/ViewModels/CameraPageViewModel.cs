@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CameraApp.Services;
+using CameraApp.Exceptions;
 
 namespace CameraApp.ViewModels;
 
@@ -29,24 +30,55 @@ public partial class CameraPageViewModel : ObservableObject
     [RelayCommand]
     private async Task TakePhotoAsync()
     {
-        var photoPath = await _cameraService.TakePhotoAsync();
-
-        if (!string.IsNullOrEmpty(photoPath))
+        try
         {
-            PhotoPath = photoPath;
-            HasPhoto = true;
+            var photoPath = await _cameraService.TakePhotoAsync();
+
+            if (!string.IsNullOrEmpty(photoPath))
+            {
+                PhotoPath = photoPath;
+                HasPhoto = true;
+            }
+        }
+        catch (CameraException ex)
+        {
+            await ShowErrorAsync(LocalizationResourceManager.Instance["Camera_CaptureError"].ToString() ?? "Error capturing photo", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ShowErrorAsync(LocalizationResourceManager.Instance["Camera_UnexpectedError"].ToString() ?? "Unexpected error", ex.Message);
         }
     }
 
     [RelayCommand]
     private async Task PickPhotoAsync()
     {
-        var photoPath = await _cameraService.PickPhotoAsync();
-
-        if (!string.IsNullOrEmpty(photoPath))
+        try
         {
-            PhotoPath = photoPath;
-            HasPhoto = true;
+            var photoPath = await _cameraService.PickPhotoAsync();
+
+            if (!string.IsNullOrEmpty(photoPath))
+            {
+                PhotoPath = photoPath;
+                HasPhoto = true;
+            }
+        }
+        catch (CameraException ex)
+        {
+            await ShowErrorAsync(LocalizationResourceManager.Instance["Camera_PickError"].ToString() ?? "Error selecting photo", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await ShowErrorAsync(LocalizationResourceManager.Instance["Camera_UnexpectedError"].ToString() ?? "Unexpected error", ex.Message);
+        }
+    }
+
+    private static async Task ShowErrorAsync(string title, string message)
+    {
+        var mainPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
+        if (mainPage != null)
+        {
+            await mainPage.DisplayAlert(title, message, "OK");
         }
     }
 
