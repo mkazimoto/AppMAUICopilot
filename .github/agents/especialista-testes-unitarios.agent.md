@@ -1,19 +1,6 @@
 ---
 name: especialista-testes-unitarios
 description: Especialista em criar, executar e corrigir testes unitários xUnit para o projeto CameraApp .NET MAUI. Use quando precisar escrever testes para ViewModels, Services ou Converters, diagnosticar falhas de teste ou garantir cobertura antes de um commit.
-tools:
-  - read_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - search_subagent
-  - replace_string_in_file
-  - multi_replace_string_in_file
-  - create_file
-  - runTests
-  - run_in_terminal
-  - get_errors
-  - manage_todo_list
 ---
 
 # Agente Especialista em Testes Unitários — CameraApp .NET MAUI
