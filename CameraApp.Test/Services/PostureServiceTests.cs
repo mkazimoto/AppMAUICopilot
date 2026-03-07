@@ -1,6 +1,7 @@
 using System.Numerics;
 using CameraApp.Services;
 using Microsoft.Maui.Devices.Sensors;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace CameraApp.Test.Services;
@@ -13,6 +14,7 @@ public class PostureServiceTests : IDisposable
     // Default Sensitivity = 0.3  →  goodThreshold = 10.5°,  warningThreshold = 25.5°
     private readonly Mock<IAccelerometer> _accelerometerMock = new();
     private readonly Mock<IVibration> _vibrationMock = new();
+    private readonly Mock<ILogger<PostureService>> _loggerMock = new();
     private DateTime _fakeNow = new(2026, 1, 1, 12, 0, 0);
     private readonly PostureService _sut;
 
@@ -22,7 +24,7 @@ public class PostureServiceTests : IDisposable
         _accelerometerMock.Setup(a => a.IsMonitoring).Returns(false);
         _vibrationMock.Setup(v => v.IsSupported).Returns(true);
 
-        _sut = new PostureService(_accelerometerMock.Object, _vibrationMock.Object, () => _fakeNow);
+        _sut = new PostureService(_accelerometerMock.Object, _vibrationMock.Object, _loggerMock.Object);
     }
 
     public void Dispose() => _sut.StopMonitoring();

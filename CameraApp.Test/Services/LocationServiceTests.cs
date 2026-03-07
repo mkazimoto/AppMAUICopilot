@@ -1,4 +1,5 @@
 using CameraApp.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Devices.Sensors;
 
 namespace CameraApp.Test.Services;
@@ -10,11 +11,12 @@ public class LocationServiceTests
 {
     private readonly Mock<IGeolocation> _geolocationMock = new();
     private readonly Mock<ILocationPermissions> _permissionsMock = new();
+    private readonly Mock<ILogger<LocationService>> _loggerMock = new();
     private readonly LocationService _sut;
 
     public LocationServiceTests()
     {
-        _sut = new LocationService(_geolocationMock.Object, _permissionsMock.Object);
+        _sut = new LocationService(_geolocationMock.Object, _permissionsMock.Object, _loggerMock.Object);
     }
 
     // ── GetCurrentLocationAsync ───────────────────────────────────────────────

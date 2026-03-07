@@ -1,4 +1,5 @@
 using CameraApp.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Media;
 using Microsoft.Maui.Storage;
 using Moq;
@@ -13,6 +14,7 @@ public class CameraServiceTests
     private readonly Mock<IMediaPicker> _mediaPickerMock = new();
     private readonly Mock<IFileSystem> _fileSystemMock = new();
     private readonly Mock<IPhotoCopier> _photoCopierMock = new();
+    private readonly Mock<ILogger<CameraService>> _loggerMock = new();
     private readonly string _cacheDir = Path.GetTempPath();
     private readonly CameraService _sut;
 
@@ -21,7 +23,7 @@ public class CameraServiceTests
         _fileSystemMock.Setup(fs => fs.CacheDirectory).Returns(_cacheDir);
         _photoCopierMock.Setup(c => c.CopyAsync(It.IsAny<FileResult>(), It.IsAny<string>()))
                         .Returns(Task.CompletedTask);
-        _sut = new CameraService(_mediaPickerMock.Object, _fileSystemMock.Object, _photoCopierMock.Object);
+        _sut = new CameraService(_mediaPickerMock.Object, _fileSystemMock.Object, _photoCopierMock.Object, _loggerMock.Object);
     }
 
     // ── TakePhotoAsync ────────────────────────────────────────────────────────
