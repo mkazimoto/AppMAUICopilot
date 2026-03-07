@@ -5,7 +5,7 @@
              xmlns:viewmodels="clr-namespace:CameraApp.ViewModels"
              xmlns:services="clr-namespace:CameraApp.Services"
              x:DataType="viewmodels:MapPageViewModel"
-             Title="Mapa - Localização GPS">
+             Title="{Binding [Map_Title], Source={x:Static services:LocalizationResourceManager.Instance}}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -19,17 +19,17 @@
             <Label Text="{Binding [Map_CurrentLocation], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                    FontSize="18" 
                    FontAttributes="Bold" 
-                   TextColor="White" 
+                   TextColor="{StaticResource White}" 
                    HorizontalOptions="Center" />
             
             <StackLayout IsVisible="{Binding HasLocation}">
                 <Label Text="{Binding LocationText}" 
                        FontSize="14" 
-                       TextColor="White" 
+                       TextColor="{StaticResource White}" 
                        HorizontalOptions="Center" />
                 <Label Text="{Binding LastUpdateText}" 
                        FontSize="12" 
-                       TextColor="White" 
+                       TextColor="{StaticResource White}" 
                        HorizontalOptions="Center" 
                        Opacity="0.8" />
             </StackLayout>
@@ -37,15 +37,16 @@
             <Label Text="{Binding [Map_LocationUnavailable], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                    IsVisible="{Binding HasLocation, Converter={StaticResource InvertedBoolConverter}}"
                    FontSize="14" 
-                   TextColor="White" 
+                   TextColor="{StaticResource White}" 
                    HorizontalOptions="Center" />
         </StackLayout>
 
         <!-- WebView para o mapa -->
         <WebView Grid.Row="1" 
                  x:Name="MapWebView"
+                 AutomationId="MapWebView"
                  Source="{Binding MapUrl}" 
-                 BackgroundColor="LightGray" />
+                 BackgroundColor="{StaticResource Gray200}" />
 
         <!-- Loading indicator -->
         <ActivityIndicator Grid.Row="1" 
@@ -60,13 +61,17 @@
             <Button Text="{Binding [Map_UpdateLocation], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     Command="{Binding GetLocationCommand}"
                     BackgroundColor="{StaticResource Primary}"
-                    TextColor="White"
+                    TextColor="{StaticResource White}"
+                    AutomationId="UpdateLocationButton"
+                    SemanticProperties.Description="Atualizar localização GPS"
                     HorizontalOptions="FillAndExpand" />
             
             <Button Text="{Binding [Map_ResetZoom], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     Command="{Binding ResetMapCommand}"
                     BackgroundColor="{StaticResource Secondary}"
-                    TextColor="White"
+                    TextColor="{StaticResource White}"
+                    AutomationId="ResetMapButton"
+                    SemanticProperties.Description="Resetar zoom do mapa"
                     HorizontalOptions="FillAndExpand" />
         </StackLayout>
     </Grid>

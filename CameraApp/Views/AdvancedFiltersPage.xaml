@@ -25,6 +25,7 @@
                             ItemsSource="{Binding Categories}"
                             ItemDisplayBinding="{Binding Name}"                           
                             SelectedItem="{Binding SelectedCategoryItem}"
+                            AutomationId="CategoryFilterPicker"
                             TextColor="{StaticResource Gray900}" />
                 </VerticalStackLayout>
             </Border>
@@ -43,6 +44,7 @@
                             ItemsSource="{Binding StatusItems}"
                             ItemDisplayBinding="{Binding Name}"
                             SelectedItem="{Binding SelectedStatusItem}"
+                            AutomationId="StatusFilterPicker"
                             TextColor="{StaticResource Gray900}" />
                 </VerticalStackLayout>
             </Border>
@@ -70,6 +72,7 @@
                                    TextColor="{StaticResource Gray600}" />
                             <DatePicker Date="{Binding StartDate}"
                                         Format="dd/MM/yyyy"
+                                        AutomationId="StartDatePicker"
                                         TextColor="{StaticResource Gray900}" />
                         </VerticalStackLayout>
 
@@ -85,6 +88,7 @@
                                    TextColor="{StaticResource Gray600}" />
                             <DatePicker Date="{Binding EndDate}"
                                         Format="dd/MM/yyyy"
+                                        AutomationId="EndDatePicker"
                                         TextColor="{StaticResource Gray900}" />
                         </VerticalStackLayout>
                     </Grid>
@@ -104,6 +108,7 @@
                     <Entry Placeholder="{Binding [Filter_CreatedByPlaceholder], Source={x:Static services:LocalizationResourceManager.Instance}}"
                            Text="{Binding CreatedBy}"
                            PlaceholderColor="{StaticResource Gray600}"
+                           AutomationId="CreatedByEntry"
                            TextColor="{StaticResource Gray900}" />
                 </VerticalStackLayout>
             </Border>
@@ -120,7 +125,8 @@
                     
                     <HorizontalStackLayout Spacing="20">
                         <CheckBox IsChecked="{Binding FilterSequentialScript}"
-                                  Color="{StaticResource Primary}" />
+                                  Color="{StaticResource Primary}"
+                                  SemanticProperties.Description="Filtrar apenas scripts sequenciais" />
                         <Label Text="{Binding [Filter_OnlySequential], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                VerticalOptions="Center"
                                TextColor="{StaticResource Gray900}" />
@@ -153,6 +159,7 @@
                                    Text="{Binding MinScore}"
                                    Keyboard="Numeric"
                                    PlaceholderColor="{StaticResource Gray600}"
+                                   AutomationId="MinScoreEntry"
                                    TextColor="{StaticResource Gray900}" />
                         </VerticalStackLayout>
 
@@ -170,6 +177,7 @@
                                    Text="{Binding MaxScore}"
                                    Keyboard="Numeric"
                                    PlaceholderColor="{StaticResource Gray600}"
+                                   AutomationId="MaxScoreEntry"
                                    TextColor="{StaticResource Gray900}" />
                         </VerticalStackLayout>
                     </Grid>
@@ -200,7 +208,8 @@
 
                     <HorizontalStackLayout Spacing="20">
                         <CheckBox IsChecked="{Binding OrderAscending}"
-                                  Color="{StaticResource Primary}" />
+                                  Color="{StaticResource Primary}"
+                                  SemanticProperties.Description="Ordenar resultados em ordem crescente" />
                         <Label Text="{Binding [Filter_OrderAscending], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                VerticalOptions="Center"
                                TextColor="{StaticResource Gray900}" />
@@ -221,6 +230,8 @@
                         BackgroundColor="{StaticResource Secondary}"
                         TextColor="White"
                         CornerRadius="8"
+                        AutomationId="ClearFiltersButton"
+                        SemanticProperties.Description="Limpar todos os filtros"
                         Padding="0,15" />
 
                 <Button Grid.Column="1"
@@ -229,6 +240,8 @@
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         CornerRadius="8"
+                        AutomationId="ApplyFiltersButton"
+                        SemanticProperties.Description="Aplicar filtros selecionados"
                         Padding="0,15" />
             </Grid>
 

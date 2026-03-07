@@ -8,7 +8,7 @@
              x:DataType="vm:CameraPageViewModel">
     
     <ScrollView>
-        <StackLayout Padding="20" Spacing="20">
+        <VerticalStackLayout Padding="20" Spacing="20">
             
             <!-- Título -->
             <Label Text="{Binding [Camera_AppTitle], Source={x:Static services:LocalizationResourceManager.Instance}}"
@@ -23,46 +23,54 @@
                         Text="{Binding [Camera_TakePhoto], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding TakePhotoCommand}"
                         BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
+                        TextColor="{StaticResource White}"
+                        AutomationId="TakePhotoButton"
+                        SemanticProperties.Description="Tirar foto com a câmera"
                         CornerRadius="8" />
                 
                 <Button Grid.Column="1"
                         Text="{Binding [Camera_Gallery], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding PickPhotoCommand}"
                         BackgroundColor="{StaticResource Secondary}"
-                        TextColor="White"
+                        TextColor="{StaticResource White}"
+                        AutomationId="PickPhotoButton"
+                        SemanticProperties.Description="Selecionar foto da galeria"
                         CornerRadius="8" />
             </Grid>
             
             <!-- Área da foto -->
             <Border IsVisible="{Binding HasPhoto}"
-                    BackgroundColor="LightGray"
+                    BackgroundColor="{StaticResource Gray200}"
                     Padding="0"
                     StrokeThickness="0">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10"/>
                 </Border.StrokeShape>
                 
-                <StackLayout Spacing="10">
+                <VerticalStackLayout Spacing="10">
                     <!-- Imagem -->
                     <Image Source="{Binding PhotoPath}"
                            Aspect="AspectFit"
                            HeightRequest="300"
-                           WidthRequest="300" />
+                           HorizontalOptions="Fill"
+                           AutomationId="PhotoImage"
+                           SemanticProperties.Description="Foto selecionada" />
                     
                     <!-- Botão para limpar -->
                     <Button Text="{Binding [Camera_ClearPhoto], Source={x:Static services:LocalizationResourceManager.Instance}}"
                             Command="{Binding ClearPhotoCommand}"
-                            BackgroundColor="Red"
-                            TextColor="White"
+                            BackgroundColor="{StaticResource Danger}"
+                            TextColor="{StaticResource White}"
+                            AutomationId="ClearPhotoButton"
+                            SemanticProperties.Description="Remover foto selecionada"
                             CornerRadius="8"
                             Margin="10" />
-                </StackLayout>
+                </VerticalStackLayout>
             </Border>
             
             <!-- Mensagem quando não há foto -->
             <Border IsVisible="{Binding HasPhoto, Converter={StaticResource InvertedBoolConverter}}"
-                    BackgroundColor="LightGray"
+                    BackgroundColor="{StaticResource Gray200}"
                     HeightRequest="300"
                     Padding="20"
                     StrokeThickness="0">
@@ -72,12 +80,18 @@
                 
                 <Label Text="{Binding [Camera_NoPhotoMessage], Source={x:Static services:LocalizationResourceManager.Instance}}"
                        FontSize="16"
-                       TextColor="Gray"
+                       TextColor="{StaticResource Gray500}"
                        HorizontalTextAlignment="Center"
                        VerticalTextAlignment="Center" />
             </Border>
+
+            <!-- Indicador de carregamento -->
+            <ActivityIndicator IsVisible="{Binding IsLoading}"
+                               IsRunning="{Binding IsLoading}"
+                               Color="{StaticResource Primary}"
+                               HorizontalOptions="Center" />
             
-        </StackLayout>
+        </VerticalStackLayout>
     </ScrollView>
     
 </ContentPage>

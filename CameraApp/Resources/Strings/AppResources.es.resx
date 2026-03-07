@@ -389,4 +389,10 @@
   <data name="Posture_InstructionStep4" xml:space="preserve">
     <value>Ajuste la sensibilidad según sea necesario</value>
   </data>
+  <data name="Posture_Title" xml:space="preserve">
+    <value>Monitor de Postura</value>
+  </data>
+  <data name="Map_Title" xml:space="preserve">
+    <value>Mapa - Ubicación GPS</value>
+  </data>
 </root>

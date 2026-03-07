@@ -53,6 +53,7 @@
                                PlaceholderColor="{StaticResource Gray600}"
                                BackgroundColor="Transparent"
                                VerticalOptions="Center"
+                               AutomationId="SearchEntry"
                                ReturnCommand="{Binding SearchByTitleCommand}" />
                     </Grid>
                 </Border>             
@@ -65,6 +66,8 @@
                         TextColor="{StaticResource Primary}"
                         CornerRadius="8"
                         WidthRequest="50"
+                        AutomationId="SearchButton"
+                        SemanticProperties.Description="Buscar formulários"
                         Padding="5" />
             </Grid>
         </Border>
@@ -101,6 +104,7 @@
                     TextColor="{StaticResource Primary}"
                     CornerRadius="8"
                     Padding="15,5"
+                    AutomationId="AdvancedFiltersButton"
                     Margin="0,0,5,0" />
 
 
@@ -110,7 +114,8 @@
                     Command="{Binding CreateNewFormCommand}"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="White"
-                    CornerRadius="5"
+                    CornerRadius="8"
+                    AutomationId="NewFormButton"
                     Padding="15,5" />
 
             <!-- Botão Limpar Filtros -->
@@ -119,7 +124,8 @@
                     Command="{Binding ClearFiltersCommand}"
                     BackgroundColor="{StaticResource Secondary}"
                     TextColor="White"
-                    CornerRadius="5"
+                    CornerRadius="8"
+                    AutomationId="ClearFiltersButton"
                     Padding="15,5"
                     IsVisible="{Binding HasActiveFilters}" />
         </Grid>
@@ -135,13 +141,13 @@
                     <DataTemplate x:DataType="models:Form">
                         <Grid Padding="10">
                             <Border BackgroundColor="{StaticResource White}"
-                                    Padding="5"
+                                    Padding="15"
                                     StrokeShape="RoundRectangle 10">
-                            <StackLayout BackgroundColor="White" Padding="5">
-                                <StackLayout.GestureRecognizers>
+                                <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FormListViewModel}}, Path=EditFormCommand}"
-                                                        CommandParameter="{Binding .}" />
-                                </StackLayout.GestureRecognizers>
+                                                        CommandParameter="{Binding .}"
+                                                        SemanticProperties.Description="Abrir formulário para edição" />
+                                </Border.GestureRecognizers>
                                 
                                 <Grid>
                                     <Grid.RowDefinitions>
@@ -242,7 +248,6 @@
                                            HorizontalOptions="End"
                                            Margin="0,0,0,5" />
                                 </Grid>
-                            </StackLayout>
                             </Border>
                         </Grid>
                     </DataTemplate>
