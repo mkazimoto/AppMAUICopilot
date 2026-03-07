@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Gera testes xUnit completos para uma classe do projeto CameraApp (Converter, Service ou ViewModel), seguindo as convenções do projeto.
 ---
 
