@@ -19,10 +19,10 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
 
 **Arquivo:** `CameraApp/Resources/Styles/Colors.xaml`
 
-- [ ] Adicionar `<Color x:Key="Danger">#D32F2F</Color>`
-- [ ] Adicionar `<Color x:Key="Success">#388E3C</Color>`
-- [ ] Adicionar `<SolidColorBrush x:Key="DangerBrush" Color="{StaticResource Danger}"/>`
-- [ ] Adicionar `<SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource Success}"/>`
+- [x] Adicionar `<Color x:Key="Danger">#D32F2F</Color>`
+- [x] Adicionar `<Color x:Key="Success">#388E3C</Color>`
+- [x] Adicionar `<SolidColorBrush x:Key="DangerBrush" Color="{StaticResource Danger}"/>`
+- [x] Adicionar `<SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource Success}"/>`
 
 > **Motivo:** `LoginPage`, `CameraPage` e `PosturePage` referenciam `Danger` e `Success` via `DynamicResource`/hardcode. Sem os tokens, a UI pode exibir fallback silencioso ou crash em release.
 
@@ -33,23 +33,23 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
 **Arquivo:** `CameraApp/Views/LoginPage.xaml`
 
 ### 🔴 Crítico
-- [ ] Corrigir `TextColor="Red"` para `TextColor="White"` dentro do `Border` de erro (fundo `Danger`)
-- [ ] Substituir `TextColor="White"` hardcoded por `TextColor="{StaticResource White}"` (3 ocorrências)
+- [x] Corrigir `TextColor="Red"` para `TextColor="White"` dentro do `Border` de erro (fundo `Danger`)
+- [x] Substituir `TextColor="White"` hardcoded por `TextColor="{StaticResource White}"` (3 ocorrências)
 
 ### 🟡 Aviso
-- [ ] Adicionar `AutomationId` nos controles interativos:
+- [x] Adicionar `AutomationId` nos controles interativos:
   - `Entry` username → `AutomationId="UsernameEntry"`
   - `Entry` password → `AutomationId="PasswordEntry"`
   - `Entry` serviceAlias → `AutomationId="ServiceAliasEntry"`
   - `Button` Entrar → `AutomationId="LoginButton"`
   - `Button` Limpar → `AutomationId="ClearButton"`
   - `Button` Sair → `AutomationId="LogoutButton"`
-- [ ] Adicionar `SemanticProperties.Description` nos botões
+- [x] Adicionar `SemanticProperties.Description` nos botões
 - [ ] Mover bloco de mensagem de erro para dentro do `Border` do formulário (Row 1), logo acima dos botões, para proximidade visual com o contexto
 
 ### 🔵 Sugestão
-- [ ] Substituir `StackLayout` genérico por `VerticalStackLayout` (6 ocorrências)
-- [ ] Adicionar `SemanticProperties.HeadingLevel="Level2"` no Label "Dados de Acesso"
+- [x] Substituir `StackLayout` genérico por `VerticalStackLayout` (6 ocorrências)
+- [x] Adicionar `SemanticProperties.HeadingLevel="Level2"` no Label "Dados de Acesso"
 
 ---
 
@@ -58,19 +58,19 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
 **Arquivo:** `CameraApp/Views/FormListPage.xaml`
 
 ### 🔴 Crítico
-- [ ] Substituir `BackgroundColor="White"` hardcoded por `{StaticResource White}` (2 ocorrências no `DataTemplate`)
-- [ ] Remover `StackLayout` redundante dentro de `Border > StackLayout` no `DataTemplate` — mover o conteúdo (Grid) direto para o `Border`, eliminando 2 níveis de aninhamento
+- [x] Substituir `BackgroundColor="White"` hardcoded por `{StaticResource White}` (2 ocorrências no `DataTemplate`)
+- [x] Remover `StackLayout` redundante dentro de `Border > StackLayout` no `DataTemplate` — mover o conteúdo (Grid) direto para o `Border`, eliminando 2 níveis de aninhamento
 
 ### 🟡 Aviso
-- [ ] Adicionar `SemanticProperties.Description` nos botões emoji (🔍)
-- [ ] Adicionar `SemanticProperties.Description` no `TapGestureRecognizer` do item de lista
-- [ ] Adicionar `AutomationId` em:
+- [x] Adicionar `SemanticProperties.Description` nos botões emoji (🔍)
+- [x] Adicionar `SemanticProperties.Description` no `TapGestureRecognizer` do item de lista
+- [x] Adicionar `AutomationId` em:
   - `Entry` de busca → `AutomationId="SearchEntry"`
   - `Button` buscar → `AutomationId="SearchButton"`
   - `Button` Filtros Avançados → `AutomationId="AdvancedFiltersButton"`
   - `Button` Novo → `AutomationId="NewFormButton"`
   - `Button` Limpar Filtros → `AutomationId="ClearFiltersButton"`
-- [ ] Padronizar `CornerRadius="8"` nos botões de ação (atualmente mistura `8` e `5`)
+- [x] Padronizar `CornerRadius="8"` nos botões de ação (atualmente mistura `8` e `5`)
 
 ### 🔵 Sugestão
 - [ ] Adicionar feedback visual de toque no `Border` do item de lista via `VisualStateManager`
@@ -82,14 +82,14 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
 **Arquivo:** `CameraApp/Views/FormEditPage.xaml`
 
 ### 🔴 Crítico
-- [ ] Remover `StackLayout` internos redundantes nas seções que duplicam `BackgroundColor` e `Padding` já definidos no `Border` pai — afeta 4 seções:
+- [x] Remover `StackLayout` internos redundantes nas seções que duplicam `BackgroundColor` e `Padding` já definidos no `Border` pai — afeta 4 seções:
   - Header (Primary)
   - Seções de campo com `BackgroundColor="White" Padding="15"` (4×)
-- [ ] Remover `IsVisible` e `BackgroundColor` duplicados do `StackLayout` interno na seção "Informações de ID"
-- [ ] Substituir `TextColor="White"` hardcoded por `{StaticResource White}`
+- [x] Remover `IsVisible` e `BackgroundColor` duplicados do `StackLayout` interno na seção "Informações de ID"
+- [x] Substituir `TextColor="White"` hardcoded por `{StaticResource White}`
 
 ### 🟡 Aviso
-- [ ] Adicionar `AutomationId` em:
+- [x] Adicionar `AutomationId` em:
   - `Entry` Título → `AutomationId="TitleEntry"`
   - `Picker` Categoria → `AutomationId="CategoryPicker"`
   - `Picker` Status → `AutomationId="StatusPicker"`
@@ -98,12 +98,12 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
   - `Button` Salvar → `AutomationId="SaveButton"`
   - `Button` Excluir → `AutomationId="DeleteButton"`
   - `Button` Cancelar → `AutomationId="CancelButton"`
-- [ ] Adicionar `SemanticProperties.Description` nos botões de ação
+- [x] Adicionar `SemanticProperties.Description` nos botões de ação
 
 ### 🔵 Sugestão
-- [ ] Substituir `StackLayout` por `VerticalStackLayout` nas seções internas
+- [x] Substituir `StackLayout` por `VerticalStackLayout` nas seções internas
 - [ ] Criar `Style` local `x:Key="CardSection"` para as seções `BackgroundColor="White" Padding="15"` (reutilizado em 4 locais)
-- [ ] Adicionar `SemanticProperties.HeadingLevel="Level2"` nos títulos de seção
+- [x] Adicionar `SemanticProperties.HeadingLevel="Level2"` nos títulos de seção
 
 ---
 
@@ -112,24 +112,24 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
 **Arquivo:** `CameraApp/Views/CameraPage.xaml`
 
 ### 🔴 Crítico
-- [ ] Substituir `BackgroundColor="LightGray"` por `{StaticResource Gray200}` (2 `Border`s)
-- [ ] Substituir `BackgroundColor="Red"` no botão Limpar por `{StaticResource Danger}`
-- [ ] Substituir `TextColor="Gray"` no label de placeholder por `{StaticResource Gray500}`
-- [ ] Substituir `TextColor="White"` hardcoded nos botões por `{StaticResource White}`
+- [x] Substituir `BackgroundColor="LightGray"` por `{StaticResource Gray200}` (2 `Border`s)
+- [x] Substituir `BackgroundColor="Red"` no botão Limpar por `{StaticResource Danger}`
+- [x] Substituir `TextColor="Gray"` no label de placeholder por `{StaticResource Gray500}`
+- [x] Substituir `TextColor="White"` hardcoded nos botões por `{StaticResource White}`
 - [ ] Adicionar estado de loading: `ActivityIndicator IsVisible="{Binding IsLoading}"` e label de erro
 
 ### 🟡 Aviso
-- [ ] Adicionar `SemanticProperties.Description` na `Image` de foto
-- [ ] Adicionar `SemanticProperties.Description` nos botões
-- [ ] Adicionar `AutomationId` em:
+- [x] Adicionar `SemanticProperties.Description` na `Image` de foto
+- [x] Adicionar `SemanticProperties.Description` nos botões
+- [x] Adicionar `AutomationId` em:
   - `Button` Tirar Foto → `AutomationId="TakePhotoButton"`
   - `Button` Galeria → `AutomationId="PickPhotoButton"`
   - `Button` Limpar → `AutomationId="ClearPhotoButton"`
   - `Image` foto → `AutomationId="PhotoImage"`
-- [ ] Remover `WidthRequest="300"` fixo da `Image` — usar `HorizontalOptions="Fill"` para responsividade
+- [x] Remover `WidthRequest="300"` fixo da `Image` — usar `HorizontalOptions="Fill"` para responsividade
 
 ### 🔵 Sugestão
-- [ ] Substituir `StackLayout` por `VerticalStackLayout`
+- [x] Substituir `StackLayout` por `VerticalStackLayout`
 
 ---
 
@@ -138,13 +138,13 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
 **Arquivo:** `CameraApp/Views/MapPage.xaml`
 
 ### 🔴 Crítico
-- [ ] Substituir `BackgroundColor="LightGray"` no `WebView` por `{StaticResource Gray200}`
-- [ ] Substituir `TextColor="White"` hardcoded por `{StaticResource White}` (múltiplas ocorrências no header)
+- [x] Substituir `BackgroundColor="LightGray"` no `WebView` por `{StaticResource Gray200}`
+- [x] Substituir `TextColor="White"` hardcoded por `{StaticResource White}` (múltiplas ocorrências no header)
 
 ### 🟡 Aviso
-- [ ] Localizar `Title="Mapa - Localização GPS"` usando `LocalizationResourceManager`
-- [ ] Adicionar `SemanticProperties.Description` nos botões
-- [ ] Adicionar `AutomationId` em:
+- [x] Localizar `Title="Mapa - Localização GPS"` usando `LocalizationResourceManager`
+- [x] Adicionar `SemanticProperties.Description` nos botões
+- [x] Adicionar `AutomationId` em:
   - `Button` Atualizar Localização → `AutomationId="UpdateLocationButton"`
   - `Button` Resetar Zoom → `AutomationId="ResetMapButton"`
   - `WebView` → `AutomationId="MapWebView"`
@@ -156,23 +156,23 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
 **Arquivo:** `CameraApp/Views/PosturePage.xaml`
 
 ### 🔴 Crítico
-- [ ] Substituir cores de seção hardcoded por tokens:
+- [x] Substituir cores de seção hardcoded por tokens:
   - `LightGray` → `{StaticResource Gray100}`
   - `LightBlue` → `{StaticResource Secondary}` com opacity ou novo token
   - `LightYellow` → `{StaticResource Gray100}`
   - `LightPink` → `{StaticResource Gray100}`
   - `LightGreen` → `{StaticResource Gray100}`
-- [ ] Substituir `BackgroundColor="Green"` (botão Start) por `{StaticResource Success}`
-- [ ] Substituir `BackgroundColor="Red"` (botão Stop) por `{StaticResource Danger}`
-- [ ] Substituir `BackgroundColor="Gray"` (botão Reset) por `{StaticResource Gray500}`
-- [ ] Substituir `ThumbColor="Blue"` por `{StaticResource Primary}`
-- [ ] Substituir `ThumbColor="Orange"` por `{StaticResource Tertiary}` (ou novo token `Warning`)
-- [ ] Substituir `TextColor="Gray"` (2×) por `{StaticResource Gray500}`
-- [ ] Localizar `Title="Monitor de Postura"` usando `LocalizationResourceManager`
+- [x] Substituir `BackgroundColor="Green"` (botão Start) por `{StaticResource Success}`
+- [x] Substituir `BackgroundColor="Red"` (botão Stop) por `{StaticResource Danger}`
+- [x] Substituir `BackgroundColor="Gray"` (botão Reset) por `{StaticResource Gray500}`
+- [x] Substituir `ThumbColor="Blue"` por `{StaticResource Primary}`
+- [x] Substituir `ThumbColor="Orange"` por `{StaticResource Tertiary}` (ou novo token `Warning`)
+- [x] Substituir `TextColor="Gray"` (2×) por `{StaticResource Gray500}`
+- [x] Localizar `Title="Monitor de Postura"` usando `LocalizationResourceManager`
 
 ### 🟡 Aviso
-- [ ] Adicionar `SemanticProperties.Description` nos `Slider`s e botões
-- [ ] Adicionar `AutomationId` em:
+- [x] Adicionar `SemanticProperties.Description` nos `Slider`s e botões
+- [x] Adicionar `AutomationId` em:
   - `Button` Iniciar → `AutomationId="StartMonitoringButton"`
   - `Button` Parar → `AutomationId="StopMonitoringButton"`
   - `Slider` Sensibilidade → `AutomationId="SensitivitySlider"`
@@ -191,8 +191,8 @@ Baseado na análise do checklist UX do agente `especialista-ux`.
 **Arquivo:** `CameraApp/Views/AdvancedFiltersPage.xaml`
 
 ### 🟡 Aviso
-- [ ] Adicionar `SemanticProperties.Description` no `CheckBox` de Script Sequencial e Ordenação Crescente
-- [ ] Adicionar `AutomationId` em:
+- [x] Adicionar `SemanticProperties.Description` no `CheckBox` de Script Sequencial e Ordenação Crescente
+- [x] Adicionar `AutomationId` em:
   - `Picker` Categoria → `AutomationId="CategoryFilterPicker"`
   - `Picker` Status → `AutomationId="StatusFilterPicker"`
   - `DatePicker` início → `AutomationId="StartDatePicker"`
