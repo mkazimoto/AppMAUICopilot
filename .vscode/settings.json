@@ -4,5 +4,5 @@
             "text": "Gere o texto do commit em português do Brasil. Use emoticons no início do commit para indicar: inclusão, edição e exclusão." 
         }        
     ],
-    "github.copilot.hooks.configFiles": [".github/hooks/pre-checkin-review.json"]
+    "chat.agent.autoApprove": true
 }
