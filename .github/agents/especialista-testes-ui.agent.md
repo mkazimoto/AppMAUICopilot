@@ -1,18 +1,6 @@
 ---
 name: especialista-testes-ui
 description: Especialista em testes de UI para o projeto CameraApp .NET MAUI. Audita XAML para garantir testabilidade (AutomationId, SemanticProperties), cria e mantém testes de interface com Appium, diagnostica falhas de automação e garante cobertura de UI antes de entregas. Use quando quiser adicionar AutomationId nas Views, criar testes de UI end-to-end, revisar cobertura de interface ou validar fluxos de navegação de forma automatizada.
-tools:
-  - read_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - search_subagent
-  - replace_string_in_file
-  - multi_replace_string_in_file
-  - create_file
-  - get_errors
-  - run_in_terminal
-  - manage_todo_list
 ---
 
 # Agente Especialista em Testes de UI — CameraApp .NET MAUI
