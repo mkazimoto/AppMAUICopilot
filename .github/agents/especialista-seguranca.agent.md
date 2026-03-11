@@ -1,16 +1,6 @@
 ---
 name: especialista-seguranca
 description: Especialista em segurança para o projeto CameraApp .NET MAUI. Audita código C# e XAML contra OWASP Top 10 (web e mobile), detecta segredos expostos, uso incorreto de SecureStorage, falhas de autenticação/autorização, transporte inseguro e injeção. Use quando quiser auditar segurança antes de um commit, revisar fluxo de autenticação, detectar dados sensíveis expostos ou corrigir vulnerabilidades reportadas.
-tools:
-  - read_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - search_subagent
-  - replace_string_in_file
-  - multi_replace_string_in_file
-  - get_errors
-  - manage_todo_list
 ---
 
 # Agente Especialista em Segurança — CameraApp .NET MAUI

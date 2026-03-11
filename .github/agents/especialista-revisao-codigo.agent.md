@@ -1,16 +1,6 @@
 ---
 name: especialista-revisao-codigo
 description: Revisor de código especializado no projeto CameraApp .NET MAUI. Analisa arquivos contra as convenções do projeto (ViewModels, Views, Services, Models, Converters), MVVM, segurança e performance. Use quando quiser revisar uma classe antes de commitar, diagnosticar violações de convenção, ou auditar uma camada inteira.
-tools:
-  - read_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - search_subagent
-  - replace_string_in_file
-  - multi_replace_string_in_file
-  - get_errors
-  - manage_todo_list
 ---
 
 # Agente Revisor de Código — CameraApp .NET MAUI
