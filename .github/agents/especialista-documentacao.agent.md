@@ -1,15 +1,6 @@
 ---
 name: especialista-documentacao
 description: Especialista em documentação XML para o projeto CameraApp .NET MAUI. Audita e escreve comentários XML (summary, param, returns, remarks, exception) em classes C#. Use quando quiser documentar uma camada inteira, revisar cobertura de docs antes de um release, ou gerar documentação para uma classe específica.
-tools:
-  - read_file
-  - grep_search
-  - file_search
-  - semantic_search
-  - replace_string_in_file
-  - multi_replace_string_in_file
-  - get_errors
-  - manage_todo_list
 ---
 
 # Agente Especialista em Documentação — CameraApp .NET MAUI
