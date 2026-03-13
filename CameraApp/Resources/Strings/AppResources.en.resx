@@ -106,6 +106,13 @@
   </data>
   <data name="Login_Authenticating" xml:space="preserve">
     <value>Authenticating...</value>
+    <comment>Loading text shown during the authentication process</comment>
+  </data>
+  <data name="Login_ServiceAliasPlaceholder" xml:space="preserve">
+    <value>e.g.: CorporeRM</value>
+  </data>
+  <data name="Login_LogoutConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to sign out?</value>
   </data>
 
   <!-- Forms List -->
@@ -144,6 +151,7 @@
   </data>
   <data name="FormList_By" xml:space="preserve">
     <value>by</value>
+    <comment>Used in the pattern "Created at: X by Y"</comment>
   </data>
   <data name="FormList_Empty" xml:space="preserve">
     <value>No forms found</value>
@@ -187,6 +195,12 @@
   </data>
   <data name="Map_ResetZoom" xml:space="preserve">
     <value>🌍 Reset Zoom</value>
+  </data>
+  <data name="Map_LocationError" xml:space="preserve">
+    <value>Could not get your location. Please check that permissions are enabled and GPS is active.</value>
+  </data>
+  <data name="Map_LocationFetchError" xml:space="preserve">
+    <value>Error getting location:</value>
   </data>
 
   <!-- Posture -->
@@ -252,6 +266,15 @@
   <data name="Camera_Send" xml:space="preserve">
     <value>Send</value>
   </data>
+  <data name="Camera_CaptureError" xml:space="preserve">
+    <value>Error capturing photo</value>
+  </data>
+  <data name="Camera_UnexpectedError" xml:space="preserve">
+    <value>Unexpected error</value>
+  </data>
+  <data name="Camera_PickError" xml:space="preserve">
+    <value>Error selecting photo</value>
+  </data>
 
   <!-- Advanced Filters -->
   <data name="Filter_Title" xml:space="preserve">
@@ -277,6 +300,7 @@
   </data>
   <data name="Filter_Until" xml:space="preserve">
     <value>to</value>
+    <comment>Separator "from ... to" in the period filter (short value: "to")</comment>
   </data>
   <data name="Filter_UntilLabel" xml:space="preserve">
     <value>To:</value>
@@ -295,6 +319,7 @@
   </data>
   <data name="Filter_Score" xml:space="preserve">
     <value>Score</value>
+    <comment>Section for minimum/maximum score in advanced filters</comment>
   </data>
   <data name="Filter_ScoreMin" xml:space="preserve">
     <value>Minimum:</value>
@@ -355,6 +380,15 @@
   <data name="Common_Processing" xml:space="preserve">
     <value>Processing...</value>
   </data>
+  <data name="Common_Confirm" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="Common_SessionExpired" xml:space="preserve">
+    <value>Session Expired</value>
+  </data>
+  <data name="Common_SessionExpiredMessage" xml:space="preserve">
+    <value>Your session has expired. You will be redirected to log in again.</value>
+  </data>
 
   <!-- Form Edit (additional) -->
   <data name="FormEdit_ScoreHint" xml:space="preserve">
@@ -371,6 +405,18 @@
   </data>
   <data name="FormEdit_Delete" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="FormEdit_IdLabel" xml:space="preserve">
+    <value>ID:</value>
+  </data>
+  <data name="FormEdit_DeleteConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this form?</value>
+  </data>
+  <data name="FormEdit_DeleteSuccess" xml:space="preserve">
+    <value>Form deleted successfully!</value>
+  </data>
+  <data name="FormEdit_DeleteError" xml:space="preserve">
+    <value>Error deleting form.</value>
   </data>
 
   <!-- Posture (additional) -->
@@ -392,7 +438,75 @@
   <data name="Posture_Title" xml:space="preserve">
     <value>Posture Monitor</value>
   </data>
+  <data name="Posture_StartError" xml:space="preserve">
+    <value>Could not start monitoring:</value>
+  </data>
   <data name="Map_Title" xml:space="preserve">
     <value>Map - GPS Location</value>
+  </data>
+
+  <!-- Accessibility -->
+  <data name="Accessibility_FilterSequential" xml:space="preserve">
+    <value>Filter sequential scripts only</value>
+  </data>
+  <data name="Accessibility_SortAscending" xml:space="preserve">
+    <value>Sort results in ascending order</value>
+  </data>
+  <data name="Accessibility_ClearFilters" xml:space="preserve">
+    <value>Clear all filters</value>
+  </data>
+  <data name="Accessibility_ApplyFilters" xml:space="preserve">
+    <value>Apply selected filters</value>
+  </data>
+  <data name="Accessibility_TakePhoto" xml:space="preserve">
+    <value>Take a photo with the camera</value>
+  </data>
+  <data name="Accessibility_SelectFromGallery" xml:space="preserve">
+    <value>Select a photo from gallery</value>
+  </data>
+  <data name="Accessibility_SelectedPhoto" xml:space="preserve">
+    <value>Selected photo</value>
+  </data>
+  <data name="Accessibility_RemovePhoto" xml:space="preserve">
+    <value>Remove selected photo</value>
+  </data>
+  <data name="Accessibility_SearchForms" xml:space="preserve">
+    <value>Search forms</value>
+  </data>
+  <data name="Accessibility_OpenFormEdit" xml:space="preserve">
+    <value>Open form for editing</value>
+  </data>
+  <data name="Accessibility_StartPostureMonitor" xml:space="preserve">
+    <value>Start posture monitoring</value>
+  </data>
+  <data name="Accessibility_StopPostureMonitor" xml:space="preserve">
+    <value>Stop posture monitoring</value>
+  </data>
+  <data name="Accessibility_AdjustSensitivity" xml:space="preserve">
+    <value>Adjust posture detector sensitivity</value>
+  </data>
+  <data name="Accessibility_AdjustAlertDelay" xml:space="preserve">
+    <value>Adjust posture alert delay time</value>
+  </data>
+  <data name="Accessibility_ResetAlertStats" xml:space="preserve">
+    <value>Reset alert statistics</value>
+  </data>
+  <data name="Accessibility_SaveForm" xml:space="preserve">
+    <value>Save form</value>
+  </data>
+  <data name="Accessibility_DeleteForm" xml:space="preserve">
+    <value>Delete form</value>
+  </data>
+  <data name="Accessibility_CancelEdit" xml:space="preserve">
+    <value>Cancel edit</value>
+  </data>
+  <data name="Accessibility_UpdateLocation" xml:space="preserve">
+    <value>Update GPS location</value>
+  </data>
+  <data name="Accessibility_ResetMapZoom" xml:space="preserve">
+    <value>Reset map zoom</value>
+  </data>
+  <data name="Accessibility_ClearCredentials" xml:space="preserve">
+    <value>Clear credentials</value>
   </data>
 </root>

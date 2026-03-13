@@ -25,7 +25,7 @@
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="{StaticResource White}"
                         AutomationId="TakePhotoButton"
-                        SemanticProperties.Description="Tirar foto com a câmera"
+                        SemanticProperties.Description="{Binding [Accessibility_TakePhoto], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         CornerRadius="8" />
                 
                 <Button Grid.Column="1"
@@ -34,7 +34,7 @@
                         BackgroundColor="{StaticResource Secondary}"
                         TextColor="{StaticResource White}"
                         AutomationId="PickPhotoButton"
-                        SemanticProperties.Description="Selecionar foto da galeria"
+                        SemanticProperties.Description="{Binding [Accessibility_SelectFromGallery], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         CornerRadius="8" />
             </Grid>
             
@@ -54,7 +54,7 @@
                            HeightRequest="300"
                            HorizontalOptions="Fill"
                            AutomationId="PhotoImage"
-                           SemanticProperties.Description="Foto selecionada" />
+                           SemanticProperties.Description="{Binding [Accessibility_SelectedPhoto], Source={x:Static services:LocalizationResourceManager.Instance}}" />
                     
                     <!-- Botão para limpar -->
                     <Button Text="{Binding [Camera_ClearPhoto], Source={x:Static services:LocalizationResourceManager.Instance}}"
@@ -62,7 +62,7 @@
                             BackgroundColor="{StaticResource Danger}"
                             TextColor="{StaticResource White}"
                             AutomationId="ClearPhotoButton"
-                            SemanticProperties.Description="Remover foto selecionada"
+                            SemanticProperties.Description="{Binding [Accessibility_RemovePhoto], Source={x:Static services:LocalizationResourceManager.Instance}}"
                             CornerRadius="8"
                             Margin="10" />
                 </VerticalStackLayout>

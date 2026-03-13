@@ -47,6 +47,8 @@ public static class AppResources
     public static string Login_AuthenticatedMessage => Get("Login_AuthenticatedMessage");
     public static string Login_SignOut => Get("Login_SignOut");
     public static string Login_Authenticating => Get("Login_Authenticating");
+    public static string Login_ServiceAliasPlaceholder => Get("Login_ServiceAliasPlaceholder");
+    public static string Login_LogoutConfirmMessage => Get("Login_LogoutConfirmMessage");
 
     // ── Lista de Formulários ───────────────────────────────────────────────
     public static string FormList_Title => Get("FormList_Title");
@@ -102,6 +104,9 @@ public static class AppResources
     public static string Camera_NoPhotoMessage => Get("Camera_NoPhotoMessage");
     public static string Camera_SelectPhoto => Get("Camera_SelectPhoto");
     public static string Camera_Send => Get("Camera_Send");
+    public static string Camera_CaptureError => Get("Camera_CaptureError");
+    public static string Camera_UnexpectedError => Get("Camera_UnexpectedError");
+    public static string Camera_PickError => Get("Camera_PickError");
 
     // ── Filtros Avançados ─────────────────────────────────────────────────
     public static string Filter_Title => Get("Filter_Title");
@@ -141,6 +146,9 @@ public static class AppResources
 
     // ── Geral (adicional) ──────────────────────────────────────────────────
     public static string Common_Processing => Get("Common_Processing");
+    public static string Common_Confirm => Get("Common_Confirm");
+    public static string Common_SessionExpired => Get("Common_SessionExpired");
+    public static string Common_SessionExpiredMessage => Get("Common_SessionExpiredMessage");
 
     // ── Edição de Formulário (adicional) ──────────────────────────────────
     public static string FormEdit_ScoreHint => Get("FormEdit_ScoreHint");
@@ -148,6 +156,10 @@ public static class AppResources
     public static string FormEdit_SequentialScriptHint => Get("FormEdit_SequentialScriptHint");
     public static string FormEdit_SystemInfo => Get("FormEdit_SystemInfo");
     public static string FormEdit_Delete => Get("FormEdit_Delete");
+    public static string FormEdit_IdLabel => Get("FormEdit_IdLabel");
+    public static string FormEdit_DeleteConfirmMessage => Get("FormEdit_DeleteConfirmMessage");
+    public static string FormEdit_DeleteSuccess => Get("FormEdit_DeleteSuccess");
+    public static string FormEdit_DeleteError => Get("FormEdit_DeleteError");
 
     // ── Postura (adicional) ────────────────────────────────────────────────
     public static string Posture_Inclination => Get("Posture_Inclination");
@@ -155,6 +167,33 @@ public static class AppResources
     public static string Posture_InstructionStep2 => Get("Posture_InstructionStep2");
     public static string Posture_InstructionStep3 => Get("Posture_InstructionStep3");
     public static string Posture_InstructionStep4 => Get("Posture_InstructionStep4");
+    public static string Posture_Title => Get("Posture_Title");
+    public static string Posture_StartError => Get("Posture_StartError");
+    public static string Map_LocationError => Get("Map_LocationError");
+    public static string Map_LocationFetchError => Get("Map_LocationFetchError");
+
+    // ── Acessibilidade ──────────────────────────────────────────────────────
+    public static string Accessibility_FilterSequential => Get("Accessibility_FilterSequential");
+    public static string Accessibility_SortAscending => Get("Accessibility_SortAscending");
+    public static string Accessibility_ClearFilters => Get("Accessibility_ClearFilters");
+    public static string Accessibility_ApplyFilters => Get("Accessibility_ApplyFilters");
+    public static string Accessibility_TakePhoto => Get("Accessibility_TakePhoto");
+    public static string Accessibility_SelectFromGallery => Get("Accessibility_SelectFromGallery");
+    public static string Accessibility_SelectedPhoto => Get("Accessibility_SelectedPhoto");
+    public static string Accessibility_RemovePhoto => Get("Accessibility_RemovePhoto");
+    public static string Accessibility_SearchForms => Get("Accessibility_SearchForms");
+    public static string Accessibility_OpenFormEdit => Get("Accessibility_OpenFormEdit");
+    public static string Accessibility_StartPostureMonitor => Get("Accessibility_StartPostureMonitor");
+    public static string Accessibility_StopPostureMonitor => Get("Accessibility_StopPostureMonitor");
+    public static string Accessibility_AdjustSensitivity => Get("Accessibility_AdjustSensitivity");
+    public static string Accessibility_AdjustAlertDelay => Get("Accessibility_AdjustAlertDelay");
+    public static string Accessibility_ResetAlertStats => Get("Accessibility_ResetAlertStats");
+    public static string Accessibility_SaveForm => Get("Accessibility_SaveForm");
+    public static string Accessibility_DeleteForm => Get("Accessibility_DeleteForm");
+    public static string Accessibility_CancelEdit => Get("Accessibility_CancelEdit");
+    public static string Accessibility_UpdateLocation => Get("Accessibility_UpdateLocation");
+    public static string Accessibility_ResetMapZoom => Get("Accessibility_ResetMapZoom");
+    public static string Accessibility_ClearCredentials => Get("Accessibility_ClearCredentials");
 
     // ── Helpers ────────────────────────────────────────────────────────────
     private static string Get(string key) =>

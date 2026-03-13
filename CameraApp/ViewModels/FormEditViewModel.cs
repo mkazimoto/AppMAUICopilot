@@ -187,8 +187,12 @@ public partial class FormEditViewModel : ObservableObject
         var currentPage = Application.Current?.Windows?.FirstOrDefault()?.Page;
         if (currentPage == null) return;
 
-        var confirm = await currentPage.DisplayAlertAsync("Confirmar", 
-            "Tem certeza que deseja excluir este formulário?", "Sim", "Não");
+        var loc = LocalizationResourceManager.Instance;
+        var confirm = await currentPage.DisplayAlertAsync(
+            loc["Common_Confirm"].ToString()!,
+            loc["FormEdit_DeleteConfirmMessage"].ToString()!,
+            loc["Common_Yes"].ToString()!,
+            loc["Common_No"].ToString()!);
 
         if (!confirm) return;
 
@@ -200,17 +204,17 @@ public partial class FormEditViewModel : ObservableObject
 
             if (success)
             {
-                await ShowAlertAsync("Sucesso", "Formulário excluído com sucesso!");
+                await ShowAlertAsync(loc["Common_Success"].ToString()!, loc["FormEdit_DeleteSuccess"].ToString()!);
                 await Shell.Current.GoToAsync("..");
             }
             else
             {
-                await ShowAlertAsync("Erro", "Erro ao excluir formulário.");
+                await ShowAlertAsync(loc["Common_Error"].ToString()!, loc["FormEdit_DeleteError"].ToString()!);
             }
         }
         catch (Exception ex)
         {
-            await ShowAlertAsync("Erro", $"Erro inesperado: {ex.Message}");
+            await ShowAlertAsync(loc["Common_Error"].ToString()!, $"Erro inesperado: {ex.Message}");
         }
         finally
         {

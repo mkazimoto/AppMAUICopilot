@@ -63,7 +63,7 @@
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="{StaticResource White}"
                     AutomationId="UpdateLocationButton"
-                    SemanticProperties.Description="Atualizar localização GPS"
+                    SemanticProperties.Description="{Binding [Accessibility_UpdateLocation], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     HorizontalOptions="FillAndExpand" />
             
             <Button Text="{Binding [Map_ResetZoom], Source={x:Static services:LocalizationResourceManager.Instance}}"
@@ -71,7 +71,7 @@
                     BackgroundColor="{StaticResource Secondary}"
                     TextColor="{StaticResource White}"
                     AutomationId="ResetMapButton"
-                    SemanticProperties.Description="Resetar zoom do mapa"
+                    SemanticProperties.Description="{Binding [Accessibility_ResetMapZoom], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     HorizontalOptions="FillAndExpand" />
         </StackLayout>
     </Grid>

@@ -67,7 +67,7 @@
                         CornerRadius="8"
                         WidthRequest="50"
                         AutomationId="SearchButton"
-                        SemanticProperties.Description="Buscar formulários"
+                        SemanticProperties.Description="{Binding [Accessibility_SearchForms], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Padding="5" />
             </Grid>
         </Border>
@@ -146,7 +146,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FormListViewModel}}, Path=EditFormCommand}"
                                                         CommandParameter="{Binding .}"
-                                                        SemanticProperties.Description="Abrir formulário para edição" />
+                                                        SemanticProperties.Description="{Binding [Accessibility_OpenFormEdit], Source={x:Static services:LocalizationResourceManager.Instance}}" />
                                 </Border.GestureRecognizers>
                                 
                                 <Grid>

@@ -42,7 +42,7 @@
                         BackgroundColor="{StaticResource Success}"
                         TextColor="{StaticResource White}"
                         AutomationId="StartMonitoringButton"
-                        SemanticProperties.Description="Iniciar monitoramento de postura"/>
+                        SemanticProperties.Description="{Binding [Accessibility_StartPostureMonitor], Source={x:Static services:LocalizationResourceManager.Instance}}"/>
                 
                 <Button Grid.Column="1"
                         Text="{Binding [Posture_Stop], Source={x:Static services:LocalizationResourceManager.Instance}}"
@@ -51,7 +51,7 @@
                         BackgroundColor="{StaticResource Danger}"
                         TextColor="{StaticResource White}"
                         AutomationId="StopMonitoringButton"
-                        SemanticProperties.Description="Parar monitoramento de postura"/>
+                        SemanticProperties.Description="{Binding [Accessibility_StopPostureMonitor], Source={x:Static services:LocalizationResourceManager.Instance}}"/>
             </Grid>
 
             <!-- Dados do Acelerômetro -->
@@ -100,7 +100,7 @@
                                 Value="{Binding Sensitivity}"
                                 ThumbColor="{StaticResource Primary}"
                                 AutomationId="SensitivitySlider"
-                                SemanticProperties.Description="Ajustar sensibilidade do detector de postura"/>
+                                SemanticProperties.Description="{Binding [Accessibility_AdjustSensitivity], Source={x:Static services:LocalizationResourceManager.Instance}}"/>
                         <Label Text="{Binding [Posture_SensitivityHint], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                                FontSize="12" 
                                TextColor="{StaticResource Gray500}" 
@@ -115,7 +115,7 @@
                                 Value="{Binding AlertDelay}"
                                 ThumbColor="{StaticResource Tertiary}"
                                 AutomationId="AlertDelaySlider"
-                                SemanticProperties.Description="Ajustar tempo de atraso para alerta de postura"/>
+                                SemanticProperties.Description="{Binding [Accessibility_AdjustAlertDelay], Source={x:Static services:LocalizationResourceManager.Instance}}"/>
                         <Label Text="{Binding [Posture_AlertTimeHint], Source={x:Static services:LocalizationResourceManager.Instance}}" 
                                FontSize="12" 
                                TextColor="{StaticResource Gray500}" 
@@ -143,7 +143,7 @@
                                 BackgroundColor="{StaticResource Gray500}"
                                 TextColor="{StaticResource White}"
                                 AutomationId="ResetStatsButton"
-                                SemanticProperties.Description="Resetar estatísticas de alertas"
+                                SemanticProperties.Description="{Binding [Accessibility_ResetAlertStats], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                 FontSize="12"
                                 Padding="10,5"/>
                     </Grid>

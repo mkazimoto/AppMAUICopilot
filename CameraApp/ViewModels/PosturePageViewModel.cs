@@ -99,10 +99,11 @@ namespace CameraApp.ViewModels
                     var mainPage = Application.Current.Windows[0].Page;
                     if (mainPage != null)
                     {
+                        var loc = LocalizationResourceManager.Instance;
                         await mainPage.DisplayAlertAsync(
-                            "Erro",
-                            $"Não foi possível iniciar o monitoramento:\n{ex.Message}",
-                            "OK");
+                            loc["Common_Error"].ToString()!,
+                            $"{loc["Posture_StartError"]}\n{ex.Message}",
+                            loc["Common_Ok"].ToString()!);
                     }
                 }
             }

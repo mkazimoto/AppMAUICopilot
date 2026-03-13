@@ -383,11 +383,15 @@ public partial class FormListViewModel : ObservableObject
         if (Application.Current?.Windows?.FirstOrDefault()?.Page is not Page currentPage)
             return;
 
+        var loc = LocalizationResourceManager.Instance;
+
         if (ex is UnauthorizedAccessException)
         {
             // Erro de autenticação - redirecionar para login
-            await currentPage.DisplayAlertAsync("Sessão Expirada",
-                "Sua sessão expirou. Você será redirecionado para fazer login novamente.", "OK");
+            await currentPage.DisplayAlertAsync(
+                loc["Common_SessionExpired"].ToString()!,
+                loc["Common_SessionExpiredMessage"].ToString()!,
+                loc["Common_Ok"].ToString()!);
 
             // Trocar a página raiz para AppShell (que contém LoginPage)
             var window = Application.Current?.Windows?.FirstOrDefault();
@@ -407,12 +411,14 @@ public partial class FormListViewModel : ObservableObject
                 message += "\n\nDica: Verifique se os filtros estão corretos ou tente limpar os filtros.";
             }
 
-            await currentPage.DisplayAlertAsync(title, message, "OK");
+            await currentPage.DisplayAlertAsync(title, message, loc["Common_Ok"].ToString()!);
         }
         else
         {
-            await currentPage.DisplayAlertAsync("Erro",
-                $"Erro inesperado ao {operation}: {ex.Message}", "OK");
+            await currentPage.DisplayAlertAsync(
+                loc["Common_Error"].ToString()!,
+                $"Erro inesperado ao {operation}: {ex.Message}",
+                loc["Common_Ok"].ToString()!);
         }
     }
 

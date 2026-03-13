@@ -162,7 +162,7 @@
                             RowSpacing="5">
                         <Label Grid.Row="0"
                                 Grid.Column="0"
-                               Text="ID:"
+                               Text="{Binding [FormEdit_IdLabel], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                FontSize="12"
                                FontAttributes="Bold"
                                TextColor="{StaticResource Gray600}"/>
@@ -184,7 +184,7 @@
                     FontAttributes="Bold"
                     HeightRequest="50"
                     AutomationId="SaveButton"
-                    SemanticProperties.Description="Salvar formulário"
+                    SemanticProperties.Description="{Binding [Accessibility_SaveForm], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
 
             <!-- Botões de ação secundária -->
@@ -193,14 +193,14 @@
 
                 <!-- Botão Excluir (apenas no modo de edição) -->
                 <Button Grid.Column="0"
-                        Text="{Binding [FormEdit_Delete], Source={x:Static services:LocalizationResourceManager.Instance}}"
+                        Text="{Binding [Common_Delete], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Command="{Binding DeleteCommand}"
                         BackgroundColor="{StaticResource Secondary}"
                         TextColor="{StaticResource Primary}"
                         FontSize="14"
                         HeightRequest="45"
                         AutomationId="DeleteButton"
-                        SemanticProperties.Description="Excluir formulário"
+                        SemanticProperties.Description="{Binding [Accessibility_DeleteForm], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         IsVisible="{Binding CanDelete}"
                         IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
 
@@ -215,7 +215,7 @@
                         FontSize="14"
                         HeightRequest="45"
                         AutomationId="CancelButton"
-                        SemanticProperties.Description="Cancelar edição"
+                        SemanticProperties.Description="{Binding [Accessibility_CancelEdit], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
             </Grid>
 

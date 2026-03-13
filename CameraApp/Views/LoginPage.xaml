@@ -6,7 +6,7 @@
              xmlns:converters="clr-namespace:CameraApp.Converters"
              xmlns:services="clr-namespace:CameraApp.Services"
              x:DataType="viewmodels:LoginViewModel"
-             Title="TOTVS RM - Login"
+             Title="{Binding [AppTitle], Source={x:Static services:LocalizationResourceManager.Instance}}"
              Shell.NavBarIsVisible="False">
 
     <ContentPage.Resources>
@@ -92,7 +92,7 @@
                                FontSize="14" 
                                TextColor="{DynamicResource Gray900}" />
                         <Entry Text="{Binding ServiceAlias}"
-                               Placeholder="Ex: CorporeRM"
+                               Placeholder="{Binding [Login_ServiceAliasPlaceholder], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
                                ReturnType="Done"
                                AutomationId="ServiceAliasEntry" />
@@ -109,7 +109,7 @@
                                 BackgroundColor="{DynamicResource Gray300}"
                                 TextColor="{DynamicResource Gray900}"
                                 AutomationId="ClearButton"
-                                SemanticProperties.Description="Limpar credenciais"
+                                SemanticProperties.Description="{Binding [Accessibility_ClearCredentials], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                 IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}" />
                         
                         <Button Grid.Column="1"

@@ -111,8 +111,13 @@ namespace CameraApp.ViewModels
             if (IsLoading) return;
 
             // Exibir confirmação antes de prosseguir
+            var loc = LocalizationResourceManager.Instance;
             bool confirm = await MainThread.InvokeOnMainThreadAsync(async () =>
-                await (Shell.Current?.DisplayAlertAsync("Confirmação", "Deseja realmente sair?", "Sair", "Cancelar") ?? Task.FromResult(false)));
+                await (Shell.Current?.DisplayAlertAsync(
+                    loc["Common_Confirm"].ToString()!,
+                    loc["Login_LogoutConfirmMessage"].ToString()!,
+                    loc["Login_SignOut"].ToString()!,
+                    loc["Common_Cancel"].ToString()!) ?? Task.FromResult(false)));
             if (!confirm)
             {
                 return; // Usuário cancelou

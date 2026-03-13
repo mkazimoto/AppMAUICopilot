@@ -126,7 +126,7 @@
                     <HorizontalStackLayout Spacing="20">
                         <CheckBox IsChecked="{Binding FilterSequentialScript}"
                                   Color="{StaticResource Primary}"
-                                  SemanticProperties.Description="Filtrar apenas scripts sequenciais" />
+                                  SemanticProperties.Description="{Binding [Accessibility_FilterSequential], Source={x:Static services:LocalizationResourceManager.Instance}}" />
                         <Label Text="{Binding [Filter_OnlySequential], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                VerticalOptions="Center"
                                TextColor="{StaticResource Gray900}" />
@@ -209,7 +209,7 @@
                     <HorizontalStackLayout Spacing="20">
                         <CheckBox IsChecked="{Binding OrderAscending}"
                                   Color="{StaticResource Primary}"
-                                  SemanticProperties.Description="Ordenar resultados em ordem crescente" />
+                                  SemanticProperties.Description="{Binding [Accessibility_SortAscending], Source={x:Static services:LocalizationResourceManager.Instance}}" />
                         <Label Text="{Binding [Filter_OrderAscending], Source={x:Static services:LocalizationResourceManager.Instance}}"
                                VerticalOptions="Center"
                                TextColor="{StaticResource Gray900}" />
@@ -231,7 +231,7 @@
                         TextColor="White"
                         CornerRadius="8"
                         AutomationId="ClearFiltersButton"
-                        SemanticProperties.Description="Limpar todos os filtros"
+                        SemanticProperties.Description="{Binding [Accessibility_ClearFilters], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Padding="0,15" />
 
                 <Button Grid.Column="1"
@@ -241,7 +241,7 @@
                         TextColor="White"
                         CornerRadius="8"
                         AutomationId="ApplyFiltersButton"
-                        SemanticProperties.Description="Aplicar filtros selecionados"
+                        SemanticProperties.Description="{Binding [Accessibility_ApplyFilters], Source={x:Static services:LocalizationResourceManager.Instance}}"
                         Padding="0,15" />
             </Grid>
 
