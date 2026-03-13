@@ -8,7 +8,7 @@ namespace CameraApp.Config;
 public static class ApiConfig
 {
     /// <summary>The base URL of the TOTVS API server.</summary>
-    public const string BaseUrl = "http://10.82.138.36:8051";
+    public const string BaseUrl = "http://192.168.1.11:8051";
 
     /// <summary>
     /// Provides the relative path constants for each API endpoint.
