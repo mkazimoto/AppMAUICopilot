@@ -1,0 +1,4 @@
+// Add the following line inside MauiProgram.CreateMauiApp(),
+// after the existing service registrations (e.g. after IFormService):
+
+builder.Services.AddSingleton<IEmployeeService, EmployeeService>();

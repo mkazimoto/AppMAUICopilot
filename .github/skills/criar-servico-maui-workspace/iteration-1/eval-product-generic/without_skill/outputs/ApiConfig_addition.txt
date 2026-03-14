@@ -1,0 +1,5 @@
+// Add the following constant inside the ApiConfig.Endpoints static class,
+// alongside the existing Auth and Forms entries:
+
+/// <summary>The relative path to the products resource endpoint.</summary>
+public const string Products = "/api/v1/products";

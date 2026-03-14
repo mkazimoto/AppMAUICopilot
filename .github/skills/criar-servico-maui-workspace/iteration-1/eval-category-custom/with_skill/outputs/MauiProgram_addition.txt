@@ -1,0 +1,13 @@
+// Add inside MauiProgram.CreateMauiApp(), in the "Registrar serviços" block,
+// after the existing IFormService registration line:
+
+builder.Services.AddSingleton<ICategoryService, CategoryService>();
+
+
+// Context — existing block for reference:
+//
+//     builder.Services.AddSingleton<IFormService, FormService>();
+//     builder.Services.AddSingleton<ICategoryService, CategoryService>();   // <-- add here
+//
+// AddSingleton is correct because CategoryService is stateless (holds no per-request state).
+// The shared HttpClient (already registered as singleton) is injected via constructor.

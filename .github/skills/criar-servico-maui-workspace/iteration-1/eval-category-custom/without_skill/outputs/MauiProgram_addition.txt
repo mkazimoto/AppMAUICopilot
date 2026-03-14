@@ -1,0 +1,4 @@
+// Add the following line inside MauiProgram.CreateMauiApp(), in the
+// "Registrar serviços" section of MauiProgram.cs, alongside other service registrations:
+
+builder.Services.AddSingleton<ICategoryService, CategoryService>();

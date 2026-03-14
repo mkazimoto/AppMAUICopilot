@@ -1,0 +1,5 @@
+// Add the following constant inside the Endpoints static class in Config/ApiConfig.cs,
+// after the existing Forms constant:
+
+/// <summary>The relative path to the employees resource endpoint.</summary>
+public const string Employees = "/api/construction-projects/v1/employees";

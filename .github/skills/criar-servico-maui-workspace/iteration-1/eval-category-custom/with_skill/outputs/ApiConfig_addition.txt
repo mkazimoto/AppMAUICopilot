@@ -1,0 +1,17 @@
+// Add inside the ApiConfig.Endpoints static class, after the existing Forms constant:
+
+/// <summary>The relative path to the categories resource endpoint.</summary>
+public const string Categories = "/api/v1/categories";
+
+
+// Full Endpoints class after addition:
+//
+// public static class Endpoints
+// {
+//     /// <summary>The relative path to the OAuth 2.0 token endpoint.</summary>
+//     public const string Auth = "/api/connect/token";
+//     /// <summary>The relative path to the forms resource endpoint.</summary>
+//     public const string Forms = "/api/construction-projects/v1/forms";
+//     /// <summary>The relative path to the categories resource endpoint.</summary>
+//     public const string Categories = "/api/v1/categories";
+// }
