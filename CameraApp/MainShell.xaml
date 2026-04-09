@@ -33,6 +33,12 @@
             Icon="document"
             ContentTemplate="{DataTemplate views:FormListPage}"
             Route="FormListPage" />
+
+        <ShellContent
+            Title="Editor"
+            Icon="edit"
+            ContentTemplate="{DataTemplate views:RichTextEditorPage}"
+            Route="RichTextEditorPage" />
     </TabBar>
 
     <!-- Toolbar com botão de logout -->

@@ -74,6 +74,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<LoginViewModel>();
 		builder.Services.AddTransient<FormListViewModel>();
 		builder.Services.AddTransient<FormEditViewModel>();
+		builder.Services.AddTransient<RichTextEditorViewModel>();
 		
 		// Registrar Views
 		builder.Services.AddTransient<CameraPage>();
@@ -83,6 +84,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<FormListPage>();
 		builder.Services.AddTransient<FormEditPage>();
 		builder.Services.AddTransient<AdvancedFiltersPage>();
+		builder.Services.AddTransient<RichTextEditorPage>();
 		builder.Services.AddTransient<MainShell>();
 
 #if DEBUG

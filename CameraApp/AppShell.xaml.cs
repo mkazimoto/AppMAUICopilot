@@ -12,5 +12,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("LoginPage", typeof(LoginPage));
         Routing.RegisterRoute("FormEditPage", typeof(FormEditPage));
         Routing.RegisterRoute(nameof(AdvancedFiltersPage), typeof(AdvancedFiltersPage));
+        Routing.RegisterRoute(nameof(RichTextEditorPage), typeof(RichTextEditorPage));
     }
 }

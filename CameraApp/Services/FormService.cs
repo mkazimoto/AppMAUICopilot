@@ -188,6 +188,27 @@ public class FormService : IFormService
     }
 
 
+    async Task<PaginatedResponse<Form>> IBaseService<Form>.GetAllAsync(int page, int pageSize)
+    {
+        var filter = new FormFilter { Page = page, PageSize = pageSize };
+        var result = await GetFormsAsync(filter);
+        return new PaginatedResponse<Form>
+        {
+            Items = result.Items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = result.Items.Count
+        };
+    }
+
+    Task<Form?> IBaseService<Form>.GetByIdAsync(string id) => GetFormByIdAsync(id);
+
+    Task<Form?> IBaseService<Form>.CreateAsync(Form entity) => CreateFormAsync(entity);
+
+    Task<Form?> IBaseService<Form>.UpdateAsync(string id, Form entity) => UpdateFormAsync(id, entity);
+
+    Task<bool> IBaseService<Form>.DeleteAsync(string id) => DeleteFormAsync(id);
+
     private static JsonSerializerOptions GetJsonOptions()
     {
         return new JsonSerializerOptions
