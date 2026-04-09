@@ -1,5 +1,0 @@
-// Add the following line in MauiProgram.cs inside CreateMauiApp(),
-// in the "Registrar serviços" section alongside the other service registrations
-// (e.g., after the IFormService line):
-
-builder.Services.AddSingleton<IProductService, ProductService>();

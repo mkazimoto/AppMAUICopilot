@@ -1,3 +1,0 @@
-// Add inside MauiProgram.cs, in the "Registrar serviços" block, after the existing IFormService registration:
-
-builder.Services.AddSingleton<IProductService, ProductService>();
