@@ -1,0 +1,37 @@
+## Summary — Product Service Generation (with_skill)
+
+### Task
+Create a REST service for the `Product` entity at endpoint `/api/v1/products` (standard CRUD).
+
+### Variant chosen: `generic` (BaseService<T>)
+The task explicitly states "É CRUD padrão" (standard CRUD), so the `generic` variant was used.
+This means `ProductService` inherits `BaseService<Models.Product>`, gaining all CRUD operations
+(GetAllAsync, GetByIdAsync, CreateAsync, UpdateAsync, DeleteAsync) automatically via the base class.
+
+### Files generated
+
+| File | Purpose |
+|---|---|
+| `Model_Product.cs` | `Product` model inheriting `BaseEntity` (file-scoped namespace, XML docs, TODO placeholder for properties) |
+| `IProductService.cs` | Interface inheriting `IBaseService<Product>` (no extra contracts needed for standard CRUD) |
+| `ProductService.cs` | Implementation inheriting `BaseService<Models.Product>` and `IProductService`; overrides `EndpointPath` |
+| `ApiConfig_addition.txt` | One constant to add inside `ApiConfig.Endpoints`: `public const string Products = "/api/v1/products";` |
+| `MauiProgram_addition.txt` | One DI registration line: `builder.Services.AddSingleton<IProductService, ProductService>();` |
+
+### Decisions made
+
+- **Variant = generic**: The skill instructs to use `generic` when the endpoint follows standard GET/GET-by-id/POST/PUT/DELETE, which matches "É CRUD padrão".
+- **`AddSingleton`**: Matches the project convention observed in `MauiProgram.cs` (all other services use `AddSingleton`). `ProductService` is stateless.
+- **Endpoint constant name**: `Products` (plural), matching the existing pattern (`Forms = "/api/construction-projects/v1/forms"`).
+- **Namespace**: `CameraApp.Models` and `CameraApp.Services`, matching file-scoped namespace convention in the project.
+- **No extra properties on model**: The model is generated with a TODO comment as instructed by the skill, since no specific properties were provided.
+- **XML docs**: All public members documented with `///` XML comments per the skill's quality criteria.
+- **No existing conflicts**: Neither `IProductService.cs` nor `ProductService.cs` existed in the project before generation. No `Products` endpoint was in `ApiConfig.cs`.
+
+### Skill compliance
+All steps from the SKILL.md workflow were followed:
+1. ✅ Context validated (Models/, Services/, Config/ApiConfig.cs, MauiProgram.cs confirmed present)
+2. ✅ Model created (Product : BaseEntity)
+3. ✅ Endpoint constant generated for ApiConfig.Endpoints
+4. ✅ Generic variant used (BaseService<Product> + IProductService : IBaseService<Product>)
+5. ✅ DI registration line generated (AddSingleton)

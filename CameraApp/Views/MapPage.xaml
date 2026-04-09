@@ -64,7 +64,7 @@
                     TextColor="{StaticResource White}"
                     AutomationId="UpdateLocationButton"
                     SemanticProperties.Description="{Binding [Accessibility_UpdateLocation], Source={x:Static services:LocalizationResourceManager.Instance}}"
-                    HorizontalOptions="FillAndExpand" />
+                    HorizontalOptions="Fill" />
             
             <Button Text="{Binding [Map_ResetZoom], Source={x:Static services:LocalizationResourceManager.Instance}}"
                     Command="{Binding ResetMapCommand}"
@@ -72,7 +72,7 @@
                     TextColor="{StaticResource White}"
                     AutomationId="ResetMapButton"
                     SemanticProperties.Description="{Binding [Accessibility_ResetMapZoom], Source={x:Static services:LocalizationResourceManager.Instance}}"
-                    HorizontalOptions="FillAndExpand" />
+                    HorizontalOptions="Fill" />
         </StackLayout>
     </Grid>
 

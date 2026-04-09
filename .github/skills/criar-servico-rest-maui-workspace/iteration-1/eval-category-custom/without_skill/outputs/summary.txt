@@ -1,0 +1,59 @@
+## Summary — Category REST Service (without skill)
+
+### What was generated
+
+5 artifacts were produced to add a fully functional Category REST service to the CameraApp project.
+
+---
+
+### Artifacts
+
+#### Model_Category.cs
+- **`CategoryStatus` enum** — `Active` / `Inactive` values representing the filter dimension.
+- **`Category : BaseEntity`** — Model class with `Name`, `Description`, and `Status` properties.
+  All JSON property names are explicitly mapped with `[JsonPropertyName]` using camelCase (`"name"`,
+  `"description"`, `"status"`).
+- **`CategoryPagedResponse`** — Custom envelope class for the non-standard pagination format returned
+  by `/api/v1/categories`. Uses `data` (list), `total`, `page`, and `pageSize` fields instead of the
+  standard TOTVS `items` / `hasNext` envelope used by other endpoints. Includes computed `TotalPages`
+  and `HasNext` properties (`[JsonIgnore]`).
+
+#### ICategoryService.cs
+- Extends `IBaseService<Category>` to inherit the full CRUD contract.
+- Adds one extra method: `GetByStatusAsync(CategoryStatus, int, int)` which returns a
+  `CategoryPagedResponse` (the raw non-standard response is preserved so callers have access to all
+  pagination metadata).
+
+#### CategoryService.cs
+- Extends `BaseService<Category>` (inherits `GetByIdAsync`, `CreateAsync`, `UpdateAsync`, `DeleteAsync`,
+  and `HandleErrorResponseAsync`).
+- **`EndpointPath`** → `ApiConfig.Endpoints.Categories` (`/api/v1/categories`).
+- **`GetAllAsync` override** — Deserializes the non-standard `CategoryPagedResponse` envelope and maps
+  it to the standard `PaginatedResponse<Category>` that the rest of the app expects.
+- **`GetByStatusAsync`** — Appends `?status=active` or `?status=inactive` to the query string, along
+  with `page` and `pageSize`. Returns the raw `CategoryPagedResponse` so callers can read `HasNext`,
+  `TotalPages`, and `Total` directly.
+- All methods follow the same try/catch/rethrow pattern used by `FormService` and `BaseService`:
+  `ApiException` is re-thrown, unexpected exceptions are wrapped.
+- Debug logging follows the `[ServiceName] MethodName:` prefix convention observed in `FormService`.
+
+#### ApiConfig_addition.txt
+- One constant to add inside `ApiConfig.Endpoints`:
+  `public const string Categories = "/api/v1/categories";`
+
+#### MauiProgram_addition.txt
+- One DI registration line to add in the "Registrar serviços" section:
+  `builder.Services.AddSingleton<ICategoryService, CategoryService>();`
+  Registered as `Singleton` to match the pattern used for `IFormService`.
+
+---
+
+### Design decisions
+
+| Decision | Rationale |
+|---|---|
+| Separate `CategoryPagedResponse` model | The API uses `data`/`total`/`page`/`pageSize` — incompatible with `ApiResponse<T>` (`items`/`hasNext`). A dedicated model is the clearest and safest approach. |
+| `Override GetAllAsync` | Callers that only need a standard `PaginatedResponse<Category>` don't need to know about the non-standard format — the override hides it. |
+| `GetByStatusAsync` returns `CategoryPagedResponse` | Callers performing filtered queries benefit from the full pagination metadata (especially `Total`). |
+| `CategoryStatus` enum with string mapping | Status values `"active"` / `"inactive"` are API-contract strings mapped with a simple ternary; avoids a JSON converter for this simple two-value case. |
+| `Singleton` DI lifetime | Consistent with `IFormService` registration in `MauiProgram.cs`. `HttpClient` is also `Singleton`, so there is no lifetime mismatch. |

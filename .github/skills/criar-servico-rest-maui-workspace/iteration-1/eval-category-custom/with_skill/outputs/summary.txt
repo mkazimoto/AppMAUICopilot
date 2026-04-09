@@ -1,0 +1,63 @@
+## Summary — Category REST Service Generation
+
+### Task
+Create a complete REST service for the `Category` entity with a Status (ativo/inativo) filter,
+targeting the endpoint `/api/v1/categories` in an existing .NET MAUI project.
+
+---
+
+### Artifacts generated
+
+| File | Purpose |
+|------|---------|
+| `Model_Category.cs`       | `Category` model inheriting `BaseEntity`; adds `Name`, `Description`, and `Status` properties with `[JsonPropertyName]` attributes |
+| `ICategoryService.cs`     | Service interface with full CRUD contract + `GetAllByStatusAsync(string status, ...)` for status filtering |
+| `CategoryService.cs`      | Custom service implementation; handles non-standard pagination envelope; includes private DTOs |
+| `ApiConfig_addition.txt`  | Constant `Categories = "/api/v1/categories"` to add inside `ApiConfig.Endpoints` |
+| `MauiProgram_addition.txt`| DI registration line `builder.Services.AddSingleton<ICategoryService, CategoryService>()` |
+
+---
+
+### Why the **custom** variant was chosen
+
+The task explicitly states: _"A API retorna formato não-padrão na paginação"_ (the API returns
+a non-standard pagination format).
+
+The project's `BaseService<T>` is designed to parse either the TOTVS `ApiResponse<T>` envelope
+(`{ "items": [...] }`) or a plain `List<T>`. A custom pagination shape — for example
+`{ "data": [...], "pagination": { "total": n, "page": n, "limit": n } }` — cannot be handled
+by the base class without modification.
+
+The SKILL.md decision table confirms this:
+
+> | API tem filtros ou formatos distintos | Usar variante `custom` e implementar os métodos necessários |
+
+Choosing the `custom` variant means:
+- `ICategoryService` does **not** extend `IBaseService<Category>` — it declares its own contract,
+  including the extra `GetAllByStatusAsync` method needed for Status filtering.
+- `CategoryService` does **not** extend `BaseService<Category>` — it owns the deserialization
+  of the non-standard pagination envelope via private `CategoryApiPagedResponse` /
+  `CategoryApiPagination` DTOs, keeping all mapping logic inside the service and leaving
+  `BaseService<T>` untouched.
+- All URLs use `ApiConfig.BaseUrl` + `ApiConfig.Endpoints.Categories`; no hardcoded strings.
+- Error handling follows the established pattern: `HandleErrorResponseAsync` deserializes
+  `ApiError`, throws `ApiException` with status code; all `catch` blocks re-throw
+  `ApiException` and wrap unexpected exceptions as new `ApiException` with context.
+- All public members are documented with XML `///` comments.
+- DI registration uses `AddSingleton` (stateless service, consistent with `IFormService`).
+
+---
+
+### Notes for integration
+
+1. **Adjust the pagination DTO** — `CategoryApiPagedResponse` and `CategoryApiPagination` in
+   `CategoryService.cs` use the shape `{ "data": [...], "pagination": { "total", "page", "limit" } }`.
+   Update the `[JsonPropertyName]` attributes and property types once the real API contract
+   is confirmed.
+
+2. **Status values** — `GetAllByStatusAsync` accepts any string. Consider an `enum` or string
+   constants (e.g. `CategoryStatus.Active = "ativo"`) if the values are fixed across the project.
+
+3. **Build validation** — Run `dotnet build -f net10.0-android` and confirm no errors related
+   to missing namespaces (`CameraApp.Services`, `CameraApp.Models`, `CameraApp.Config`) or
+   unresolved `PaginatedResponse<Category>` (defined in `IBaseService.cs`).

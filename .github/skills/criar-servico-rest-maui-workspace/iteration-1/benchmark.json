@@ -1,0 +1,75 @@
+{
+  "skill_name": "criar-servico-maui",
+  "iteration": 1,
+  "configs": [
+    {
+      "name": "with_skill",
+      "label": "With Skill (criar-servico-maui)"
+    },
+    {
+      "name": "without_skill",
+      "label": "Baseline (no skill)"
+    }
+  ],
+  "evals": [
+    {
+      "id": "eval-product-generic",
+      "prompt": "Criar um serviço para a entidade Product no endpoint /api/v1/products. É CRUD padrão.",
+      "assertions": [
+        { "text": "Model inherits BaseEntity", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Service inherits BaseService<T>", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Interface extends IBaseService<T>", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Endpoint constant added to ApiConfig", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "DI registration line present", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "No hardcoded URL in service", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "XML docs on service class", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "File-scoped namespace", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Model is minimal (TODO placeholder, no invented domain fields)", "with_skill": true, "baseline": false, "discriminating": true, "note": "Baseline invented Price, Stock, Description fields that may not match API contract" }
+      ],
+      "pass_rate": { "with_skill": 1.0, "baseline": 0.889 }
+    },
+    {
+      "id": "eval-category-custom",
+      "prompt": "Preciso de um serviço REST para Category com filtro por Status (ativo/inativo). Endpoint: /api/v1/categories. A API retorna formato não-padrão na paginação.",
+      "assertions": [
+        { "text": "Model inherits BaseEntity", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Interface has status-filter method", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Custom pagination handling (private DTO class)", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "ApiException thrown and re-thrown correctly", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Endpoint constant in ApiConfig", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "DI registration present", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "XML docs on interface", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Custom service does NOT inherit BaseService<T> (pure custom interface)", "with_skill": true, "baseline": false, "discriminating": true, "note": "Baseline used hybrid approach (BaseService<T> + override), skill correctly chose fully custom implementation" }
+      ],
+      "pass_rate": { "with_skill": 1.0, "baseline": 0.875 }
+    },
+    {
+      "id": "eval-employee-minimal",
+      "prompt": "Criar serviço para Employee.",
+      "assertions": [
+        { "text": "Model inherits BaseEntity", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Service inherits BaseService<T>", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Endpoint constant in ApiConfig", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "DI registration present", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "No hardcoded URL", "with_skill": true, "baseline": true, "discriminating": false },
+        { "text": "Missing inputs documented with questions to ask", "with_skill": true, "baseline": false, "discriminating": true, "note": "With skill: documented 3 specific questions (endpoint path, variant, model exists). Without skill: just made assumptions silently." }
+      ],
+      "pass_rate": { "with_skill": 1.0, "baseline": 0.833 }
+    }
+  ],
+  "overall": {
+    "with_skill": { "pass_rate": 1.0, "passed": 21, "total": 21 },
+    "baseline": { "pass_rate": 0.905, "passed": 19, "total": 21 }
+  },
+  "discriminating_assertions": {
+    "with_skill_wins": 3,
+    "baseline_wins": 0,
+    "note": "3 skill-specific assertions where skill outperformed baseline: minimal model discipline, correct custom variant selection, documentation of missing inputs"
+  },
+  "analyst_observations": [
+    "Most basic assertions (BaseEntity, BaseService, DI, ApiConfig, XML docs) pass for BOTH — these are non-discriminating and reflect that a capable LLM follows patterns regardless.",
+    "The 3 discriminating assertions reveal real skill value: (1) model restraint — baseline invents fields; skill leaves TODO; (2) variant selection fidelity — baseline chose hybrid BaseService<T>+override for custom case; skill chose pure custom interface as designed; (3) missing-input guidance — skill documents questions explicitly, baseline assumes silently.",
+    "High baseline scores suggest this skill is best thought of as a 'guardrail' that prevents common mistakes rather than unlocking new capabilities — which is appropriate for a project convention skill.",
+    "Potential skill improvement: the custom variant template could more explicitly distinguish between the two valid approaches (pure-custom vs BaseService+override) and explain WHEN each is appropriate, since the baseline's hybrid approach is actually valid in some scenarios."
+  ]
+}
